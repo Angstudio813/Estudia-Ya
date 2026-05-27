@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Usuarios | EstudiaYa</title>
+  <link rel="stylesheet" th:href="@{/inicioEjemplo.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">Estudia<span>Ya</span></div>
+    </div>
+
+    <div class="user-info">
+      <div class="avatar" th:text="${#authentication != null ? #authentication.name.substring(0, 2).toUpperCase() : 'CL'}">CL</div>
+      <div>
+        <div class="user-name" th:text="${#authentication != null ? #authentication.name : 'Carlos López'}">Carlos López</div>
+      </div>
+    </div>
+
+    <div class="xp-bar-wrap">
+      <div class="xp-label">Nivel 8 — Explorador</div>
+      <div class="xp-bar"><div class="xp-fill"></div></div>
+      <div class="xp-text">620 / 1000 XP</div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item"><div class="nav-dot"></div><span class="nav-label"><a th:href="@{/}" href="/">Inicio</a></span></div>
+      <div class="nav-item"><div class="nav-dot"></div><span class="nav-label"><a th:href="@{/mis-cursos}" href="/mis-cursos">Mis cursos</a></span></div>
+      <div class="nav-item"><div class="nav-dot"></div><span class="nav-label"><a th:href="@{/practica-inteligente}" href="/practica-inteligente">Práctica inteligente</a></span></div>
+      <div class="nav-item"><div class="nav-dot"></div><span class="nav-label"><a th:href="@{/asistente-ia/1}" href="/asistente-ia/1">Asistente IA</a></span></div>
+      <div class="nav-item"><div class="nav-dot"></div><span class="nav-label"><a th:href="@{/progreso/1}" href="/progreso/1">Mi progreso</a></span></div>
+      <div class="nav-item"><div class="nav-dot"></div><span class="nav-label"><a th:href="@{/plan-estudio}" href="/plan-estudio">Plan de estudio</a></span></div>
+      <div class="nav-item"><div class="nav-dot"></div><span class="nav-label"><a th:href="@{/logros-retos}" href="/logros-retos">Logros y retos</a></span></div>
+      <div class="nav-item active"><div class="nav-dot"></div><span class="nav-label"><a th:href="@{/gestion-usuarios}" href="/gestion-usuarios">Gestión de usuarios</a></span></div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a class="logout" th:href="@{/logout}" href="/logout">Cerrar sesión</a>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="top-bar">
+      <div>
+        <div class="greeting">Gestión de usuarios</div>
+        <div class="greeting-sub">Añade, edita o elimina usuarios desde aquí</div>
+      </div>
+    </div>
+
+    <div class="section-title">Usuarios registrados</div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Nivel</th>
+            <th>Grado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.id}">1</td>
+            <td th:text="${usuario.nombre}">Carlos</td>
+            <td th:text="${usuario.apellido}">Lopez</td>
+            <td th:text="${usuario.email}">carlos@estudiaya.pe</td>
+            <td th:text="${usuario.nivel}">SECUNDARIA</td>
+            <td th:text="${usuario.grado}">3</td>
+            <td>
+              <a th:href="@{/gestion-usuarios/editar/{id}(id=${usuario.id})}" class="action-btn">Editar</a>
+              <form th:action="@{/gestion-usuarios/eliminar/{id}(id=${usuario.id})}" method="post" style="display:inline;">
+                <button type="submit" class="action-btn danger">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title" th:text="${usuarioDTO.id != null} ? 'Editar usuario' : 'Agregar nuevo usuario'">Agregar nuevo usuario</div>
+    <div class="form-card">
+      <form th:action="@{/gestion-usuarios/guardar}" method="post" th:object="${usuarioDTO}" autocomplete="off">
+        <input type="hidden" th:field="*{id}" />
+        <input type="text" name="fake-email" style="display:none" autocomplete="email" />
+        <input type="password" name="fake-password" style="display:none" autocomplete="new-password" />
+        <div class="form-error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+        <div class="field-row">
+          <label>
+            Nombre
+            <input type="text" th:field="*{nombre}" autocomplete="off" required />
+          </label>
+          <label>
+            Apellido
+            <input type="text" th:field="*{apellido}" autocomplete="off" required />
+          </label>
+        </div>
+        <div class="field-row">
+          <label>
+            Email
+            <input type="email" th:field="*{email}" autocomplete="off" required />
+          </label>
+          <label>
+            Contraseña
+            <input type="password" th:field="*{password}" autocomplete="new-password" th:placeholder="${usuarioDTO.id != null} ? 'Dejar vacío para mantener' : ''" th:attr="required=${usuarioDTO.id == null}" />
+          </label>
+        </div>
+        <div class="field-row">
+          <label>
+            Nivel educativo
+            <select id="nivelEducativo" th:field="*{nivel}" autocomplete="off" required>
+              <option value="" th:text="'Seleccione nivel'"></option>
+              <option th:each="nivel : ${niveles}" th:value="${nivel}" th:text="${nivel}"></option>
+            </select>
+          </label>
+          <label>
+            Grado
+            <input id="gradoUsuario" type="number" th:field="*{grado}" min="1" max="6" autocomplete="off" required />
+          </label>
+        </div>
+        <div class="buttons-row">
+          <button type="submit">Guardar usuario</button>
+          <a th:href="@{/gestion-usuarios}" class="cancel-btn">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .table-container { overflow-x:auto; margin-bottom:24px; }
+  .data-table { width:100%; border-collapse: collapse; }
+  .data-table th, .data-table td { padding:12px 14px; border-bottom:1px solid #e2e8f0; text-align:left; }
+  .data-table th { background:#f8fafc; font-weight:700; }
+  .action-btn { display:inline-block; margin-right:8px; padding:6px 12px; border:none; color:#fff; background:#2563eb; border-radius:8px; text-decoration:none; }
+  .action-btn.danger { background:#dc2626; }
+  .form-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:24px; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .field-row label { display:block; font-weight:600; color:#334155; }
+  .field-row input, .field-row select { width:100%; margin-top:8px; padding:10px 12px; border:1px solid #cbd5e1; border-radius:12px; }
+  .form-error { margin-bottom:16px; padding:12px 14px; background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:12px; }
+  .buttons-row { display:flex; gap:12px; align-items:center; }
+  .buttons-row button, .buttons-row .cancel-btn { padding:12px 18px; border-radius:12px; text-decoration:none; font-weight:700; }
+  .buttons-row button { border:none; background:#2563eb; color:#fff; }
+  .buttons-row .cancel-btn { background:#f8fafc; color:#0f172a; border:1px solid #cbd5e1; }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const nivelSelect = document.getElementById('nivelEducativo');
+    const gradoInput = document.getElementById('gradoUsuario');
+
+    function actualizarRangoGrado() {
+      const nivel = nivelSelect.value;
+      if (nivel === 'PRIMARIA') {
+        gradoInput.min = 1;
+        gradoInput.max = 6;
+        if (gradoInput.value) {
+          let valor = parseInt(gradoInput.value, 10);
+          if (valor > 6) valor = 6;
+          if (valor < 1) valor = 1;
+          gradoInput.value = valor;
+        }
+      } else if (nivel === 'SECUNDARIA') {
+        gradoInput.min = 1;
+        gradoInput.max = 5;
+        if (gradoInput.value) {
+          let valor = parseInt(gradoInput.value, 10);
+          if (valor > 5) valor = 5;
+          if (valor < 1) valor = 1;
+          gradoInput.value = valor;
+        }
+      } else {
+        gradoInput.min = 1;
+        gradoInput.max = 6;
+      }
+    }
+
+    if (nivelSelect) {
+      nivelSelect.addEventListener('change', function() {
+        actualizarRangoGrado();
+        gradoInput.value = '';
+      });
+      actualizarRangoGrado();
+    }
+  });
+</script>
+
+</body>
+</html>
