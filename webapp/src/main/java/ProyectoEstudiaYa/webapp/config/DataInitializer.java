@@ -4,12 +4,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner loadInitialData(JdbcTemplate jdbc) {
+    CommandLineRunner loadInitialData(JdbcTemplate jdbc, PasswordEncoder passwordEncoder) {
         return args -> {
             Long totalUsuarios = jdbc.queryForObject("SELECT COUNT(*) FROM usuarios", Long.class);
             if (totalUsuarios != null && totalUsuarios > 0) {
@@ -21,8 +22,8 @@ public class DataInitializer {
                 INSERT INTO usuarios
                 (id, nombre, apellido, email, password, nivel, grado, xp_total, nivel_juego, racha_actual, racha_mas_alta, fecha_registro, ultimo_acceso)
                 VALUES
-                (1, 'Carlos', 'Lopez', 'carlos@estudiaya.pe', '123456', 'SECUNDARIA', 3, 620, 8, 7, 12, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-            """);
+                (1, 'Carlos', 'Lopez', 'carlos@estudiaya.pe', ?, 'SECUNDARIA', 3, 620, 8, 7, 12, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            """, passwordEncoder.encode("123456"));
 
             // CURSOS
             jdbc.update("""

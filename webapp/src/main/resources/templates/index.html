@@ -17,10 +17,9 @@
     </div>
 
     <div class="user-info">
-      <div class="avatar">CL</div>
+      <div class="avatar" th:text="${#authentication != null ? #authentication.name.substring(0, 2).toUpperCase() : 'CL'}">CL</div>
       <div>
-        <div class="user-name">Carlos López</div>
-        <div class="user-grade">3ro Secundaria</div>
+        <div class="user-name" th:text="${#authentication != null ? #authentication.name : 'Carlos López'}">Carlos López</div>
       </div>
     </div>
 

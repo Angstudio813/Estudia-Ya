@@ -64,5 +64,11 @@ public class Usuario {
         PRIMARIA, SECUNDARIA
     }
 
+    public String getEmail() {
+        return email;
+    }
 
+    public String getPassword() {
+        return password;
+    }
 }
