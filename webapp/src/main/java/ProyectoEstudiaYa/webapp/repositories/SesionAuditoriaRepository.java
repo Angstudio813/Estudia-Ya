@@ -15,7 +15,6 @@ public interface SesionAuditoriaRepository extends JpaRepository<SesionAuditoria
     List<SesionAuditoria> findByUsuarioIdAndTipoEvento(Long usuarioId, SesionAuditoria.TipoEvento tipoEvento);
     long countByUsuarioIdAndTipoEvento(Long usuarioId, SesionAuditoria.TipoEvento tipoEvento);
 
-    // Eventos de un usuario en un rango de fechas (útil para reportes de actividad)
     @Query("SELECT s FROM SesionAuditoria s WHERE s.usuario.id = :usuarioId AND s.fechaEvento BETWEEN :desde AND :hasta ORDER BY s.fechaEvento DESC")
     List<SesionAuditoria> findByUsuarioIdEntreFechas(
         @Param("usuarioId") Long usuarioId,
@@ -23,11 +22,9 @@ public interface SesionAuditoriaRepository extends JpaRepository<SesionAuditoria
         @Param("hasta") LocalDateTime hasta
     );
 
-    // Últimos N eventos de un usuario (para mostrar actividad reciente)
     @Query("SELECT s FROM SesionAuditoria s WHERE s.usuario.id = :usuarioId ORDER BY s.fechaEvento DESC")
     List<SesionAuditoria> findUltimosEventos(@Param("usuarioId") Long usuarioId);
 
-    // Conteo de intentos anti-trampa (SALIO_VIEWPORT + CAMBIO_PESTANA) en una sesión
     @Query("""
         SELECT COUNT(s) FROM SesionAuditoria s
         WHERE s.usuario.id = :usuarioId
@@ -43,7 +40,6 @@ public interface SesionAuditoriaRepository extends JpaRepository<SesionAuditoria
         @Param("hasta") LocalDateTime hasta
     );
 
-    // Módulos más visitados por un usuario
     @Query("SELECT s.modulo, COUNT(s) FROM SesionAuditoria s WHERE s.usuario.id = :usuarioId AND s.tipoEvento = ProyectoEstudiaYa.webapp.entities.SesionAuditoria.TipoEvento.VISITA_MODULO GROUP BY s.modulo ORDER BY COUNT(s) DESC")
     List<Object[]> modulosMasVisitados(@Param("usuarioId") Long usuarioId);
 }

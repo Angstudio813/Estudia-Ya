@@ -14,11 +14,10 @@ public interface CursoRepository extends JpaRepository<Curso, Long> {
     List<Curso> findByNivelAndGrado(Usuario.NivelEducativo nivel, Integer grado);
     List<Curso> findByNivel(Usuario.NivelEducativo nivel);
 
-    // Cursos en los que un usuario está inscrito
+    
     @Query("SELECT uc.curso FROM UsuarioCurso uc WHERE uc.usuario.id = :usuarioId")
     List<Curso> findCursosDeUsuario(@Param("usuarioId") Long usuarioId);
 
-    // Cursos en los que el usuario NO está inscrito (para sugerencias)
     @Query("""
         SELECT c FROM Curso c
         WHERE c.nivel = :nivel AND c.grado = :grado
@@ -32,7 +31,7 @@ public interface CursoRepository extends JpaRepository<Curso, Long> {
         @Param("grado") Integer grado
     );
 
-    // Cantidad de temas por curso
+  
     @Query("SELECT c.nombre, COUNT(t) FROM Curso c JOIN c.temas t WHERE c.id = :cursoId GROUP BY c.nombre")
     List<Object[]> contarTemasPorCurso(@Param("cursoId") Long cursoId);
 }
