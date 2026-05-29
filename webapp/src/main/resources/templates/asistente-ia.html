@@ -18,10 +18,10 @@
         </div>
 
         <div class="user-info">
-            <div class="avatar">CL</div>
+            <div class="avatar" th:text="${usuario != null ? (usuario.nombre.substring(0, 1) + usuario.apellido.substring(0, 1)).toUpperCase() : 'CL'}">CL</div>
             <div>
-                <div class="user-name">Carlos Lopez</div>
-                <div class="user-grade">3ro Secundaria</div>
+                <div class="user-name" th:text="${usuario != null ? usuario.nombre + ' ' + usuario.apellido : 'Carlos Lopez'}">Carlos Lopez</div>
+                <div class="user-grade" th:text="${usuario != null ? usuario.grado + '° ' + usuario.nivel : '3ro Secundaria'}">3ro Secundaria</div>
             </div>
         </div>
 
@@ -56,7 +56,7 @@
             </div>
 
             <div class="detail-hero">
-                <h2 id="saludoUsuario">Hola, estudiante</h2>
+                <h2 id="saludoUsuario" th:text="${usuario != null ? 'Hola, ' + usuario.nombre : 'Hola, estudiante'}">Hola, estudiante</h2>
                 <p id="mensajePrincipalIA">Analizando tu perfil académico y preparando tus recomendaciones... 🤖</p>
             </div>
 

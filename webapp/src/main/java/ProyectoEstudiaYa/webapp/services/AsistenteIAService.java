@@ -1,5 +1,6 @@
 package ProyectoEstudiaYa.webapp.services;
 
+import ProyectoEstudiaYa.webapp.entities.Usuario;
 import ProyectoEstudiaYa.webapp.dto.AsistenteIARespuestaDTO;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -12,6 +13,8 @@ import java.util.List;
 @Service
 public class AsistenteIAService {
 
+    private final UsuarioService usuarioService;
+
     // Cambiamos las anotaciones Value para que lean las nuevas variables de Groq
     @Value("${app.ai.custom.groq.api-key}")
     private String apiKey;
@@ -19,11 +22,16 @@ public class AsistenteIAService {
     @Value("${app.ai.custom.groq.model}")
     private String model;
 
+    public AsistenteIAService(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
     /**
      * Genera un reporte personalizado analizando el perfil del alumno
      */
     public AsistenteIARespuestaDTO generarAsistencia(Long usuarioId) {
-        String nombreAlumno = "Juan Pérez";
+        Usuario usuario = usuarioService.obtenerPorId(usuarioId);
+        String nombreAlumno = usuario.getNombre() + " " + usuario.getApellido();
         String cursosMalos = "Matemáticas y Estructuras de Datos";
 
         // El mismo prompt estricto que ya tenías
