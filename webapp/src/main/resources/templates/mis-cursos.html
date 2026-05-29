@@ -49,20 +49,106 @@
       <div>
         <div class="module-kicker">Módulo de aprendizaje</div>
         <h1>Mis cursos</h1>
-        <p>Revisa los cursos disponibles y continúa tu avance por tema.</p>
+        <p>Revisa tu avance, prioriza el siguiente tema y decide qué practicar hoy.</p>
       </div>
     </div>
 
-    <div class="module-grid" th:if="${!#lists.isEmpty(cursos)}">
-      <div class="module-card" th:each="curso : ${cursos}" th:style="'--accent:' + (${curso.colorHex} ?: '#534ab7')">
-        <div class="module-icon" th:text="${curso.icono} ?: 'Curso'">Curso</div>
+    <section class="learning-command" th:if="${!#lists.isEmpty(cursos)}" th:with="destacado=${cursos[0]}">
+      <div class="today-focus" th:style="'--accent:' + (${destacado.colorHex} ?: '#14506a')">
+        <div class="focus-content">
+          <span class="focus-eyebrow">Plan de hoy</span>
+          <h2 th:text="'Continúa con ' + ${destacado.nombre}">Continúa con Matemática</h2>
+          <p th:text="${destacado.recomendacion}">Completa una práctica corta para sostener tu avance.</p>
+          <div class="focus-actions">
+            <a th:href="@{/practica-inteligente(usuarioId=1)}" href="/practica-inteligente">Practicar ahora</a>
+            <span th:text="${destacado.siguienteTema}">Siguiente tema</span>
+          </div>
+        </div>
+        <div class="focus-score">
+          <span>Avance</span>
+          <strong th:text="${destacado.progreso} + '%'">65%</strong>
+          <div class="focus-ring">
+            <div class="focus-ring-fill" th:style="'height:' + (${destacado.progreso} ?: 0) + '%'"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="learning-insights">
         <div>
-          <h2 th:text="${curso.nombre}">Matemática</h2>
+          <span>Prioridad</span>
+          <strong>Refuerzo guiado</strong>
+          <p>Estudia primero el tema sugerido y cierra con ejercicios.</p>
+        </div>
+        <div>
+          <span>Meta rápida</span>
+          <strong>15 min</strong>
+          <p>Una sesión corta mantiene la racha activa.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="course-summary" th:if="${!#lists.isEmpty(cursos)}">
+      <div class="summary-card">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Cursos activos</span>
+        <strong th:text="${#lists.size(cursos)}">2</strong>
+      </div>
+      <div class="summary-card">
+        <i class="fa-solid fa-book-open-reader"></i>
+        <span>Temas disponibles</span>
+        <strong th:text="${totalTemas} ?: 0">0</strong>
+      </div>
+      <div class="summary-card">
+        <i class="fa-solid fa-bolt"></i>
+        <span>Ejercicios listos</span>
+        <strong th:text="${totalEjercicios} ?: 0">0</strong>
+      </div>
+    </div>
+
+    <div class="module-toolbar" th:if="${!#lists.isEmpty(cursos)}">
+      <button class="filter-chip active" type="button" data-filter="all">Todos</button>
+      <button class="filter-chip" type="button" data-filter="En progreso">En progreso</button>
+      <button class="filter-chip" type="button" data-filter="En buen ritmo">Buen ritmo</button>
+      <button class="filter-chip" type="button" data-filter="Por iniciar">Por iniciar</button>
+    </div>
+
+    <div class="module-grid" th:if="${!#lists.isEmpty(cursos)}">
+      <div class="module-card" th:each="curso : ${cursos}" th:style="'--accent:' + (${curso.colorHex} ?: '#534ab7')" th:attr="data-status=${curso.estado}">
+        <div class="module-icon" th:text="${curso.icono} ?: 'Curso'">Curso</div>
+        <div class="module-card-body">
+          <div class="course-card-head">
+            <h2 th:text="${curso.nombre}">Matemática</h2>
+            <span class="status-pill" th:text="${curso.estado}">En progreso</span>
+          </div>
           <p th:text="${curso.descripcion} ?: 'Curso disponible para seguir aprendiendo.'">Curso disponible.</p>
           <div class="module-meta">
             <span th:text="${curso.nivel}">SECUNDARIA</span>
             <span th:text="${curso.grado} + ' grado'">3 grado</span>
             <span th:text="${curso.totalTemas} + ' temas'">0 temas</span>
+            <span th:text="${curso.totalEjercicios} + ' ejercicios'">0 ejercicios</span>
+          </div>
+          <div class="course-progress">
+            <div class="progress-info">
+              <span>Avance</span>
+              <strong th:text="${curso.progreso} + '%'">65%</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" th:style="'width:' + (${curso.progreso} ?: 0) + '%'"></div>
+            </div>
+          </div>
+          <div class="course-plan">
+            <div>
+              <span>Siguiente tema</span>
+              <strong th:text="${curso.siguienteTema}">Fracciones</strong>
+            </div>
+            <p th:text="${curso.recomendacion}">Completa una práctica corta.</p>
+          </div>
+          <div class="course-actions">
+            <div>
+              <span>Ritmo sugerido</span>
+              <strong th:text="${curso.progreso >= 60 ? 'Consolidar' : 'Reforzar'}">Reforzar</strong>
+            </div>
+            <a th:href="@{/practica-inteligente(usuarioId=1)}" href="/practica-inteligente">Abrir práctica</a>
           </div>
         </div>
       </div>
@@ -74,5 +160,17 @@
     </div>
   </div>
 </div>
+<script>
+  document.querySelectorAll(".filter-chip").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".filter-chip").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      const filter = button.dataset.filter;
+      document.querySelectorAll(".module-card").forEach((card) => {
+        card.hidden = filter !== "all" && card.dataset.status !== filter;
+      });
+    });
+  });
+</script>
 </body>
 </html>

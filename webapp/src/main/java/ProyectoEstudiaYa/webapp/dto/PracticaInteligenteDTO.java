@@ -13,6 +13,11 @@ public class PracticaInteligenteDTO {
     private Long temaId;
     private String temaNombre;
     private String cursoNombre;
+    private String respuestaCorrecta;
+    private String explicacion;
+    private String habilidad;
+    private String recomendacion;
+    private Integer xp;
 
     public PracticaInteligenteDTO() {
     }
@@ -20,6 +25,14 @@ public class PracticaInteligenteDTO {
     public PracticaInteligenteDTO(Long id, String pregunta, String opcionA, String opcionB,
             String opcionC, String opcionD, String dificultad, Boolean generadoPorIA,
             Long temaId, String temaNombre, String cursoNombre) {
+        this(id, pregunta, opcionA, opcionB, opcionC, opcionD, dificultad, generadoPorIA,
+                temaId, temaNombre, cursoNombre, "", "", "Refuerzo", "Resuelve y revisa la explicacion.", 10);
+    }
+
+    public PracticaInteligenteDTO(Long id, String pregunta, String opcionA, String opcionB,
+            String opcionC, String opcionD, String dificultad, Boolean generadoPorIA,
+            Long temaId, String temaNombre, String cursoNombre, String respuestaCorrecta,
+            String explicacion, String habilidad, String recomendacion, Integer xp) {
         this.id = id;
         this.pregunta = pregunta;
         this.opcionA = opcionA;
@@ -31,6 +44,11 @@ public class PracticaInteligenteDTO {
         this.temaId = temaId;
         this.temaNombre = temaNombre;
         this.cursoNombre = cursoNombre;
+        this.respuestaCorrecta = respuestaCorrecta;
+        this.explicacion = explicacion;
+        this.habilidad = habilidad;
+        this.recomendacion = recomendacion;
+        this.xp = xp;
     }
 
     public Long getId() {
@@ -75,5 +93,25 @@ public class PracticaInteligenteDTO {
 
     public String getCursoNombre() {
         return cursoNombre;
+    }
+
+    public String getRespuestaCorrecta() {
+        return respuestaCorrecta;
+    }
+
+    public String getExplicacion() {
+        return explicacion;
+    }
+
+    public String getHabilidad() {
+        return habilidad;
+    }
+
+    public String getRecomendacion() {
+        return recomendacion;
+    }
+
+    public Integer getXp() {
+        return xp;
     }
 }
