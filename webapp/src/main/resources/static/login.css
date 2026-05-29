@@ -1,0 +1,106 @@
+:root {
+    --bg: #eff6ff;
+    --card: #ffffff;
+    --border: #dbeafe;
+    --primary: #1d4ed8;
+    --text: #0f172a;
+    --muted: #475569;
+    --danger-bg: #fee2e2;
+    --danger-text: #b91c1c;
+    --ok-bg: #dcfce7;
+    --ok-text: #166534;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle at top, #dbeafe, var(--bg));
+    font-family: "Segoe UI", sans-serif;
+    color: var(--text);
+    padding: 24px;
+}
+
+.card {
+    width: 100%;
+    max-width: 430px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+}
+
+p {
+    margin: 0 0 20px;
+    color: var(--muted);
+}
+
+.field {
+    display: block;
+    margin-bottom: 14px;
+}
+
+.field span {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+button {
+    width: 100%;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    background: var(--primary);
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1e40af;
+}
+
+.hint {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.msg {
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+
+.msg.error {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+.msg.ok {
+    background: var(--ok-bg);
+    color: var(--ok-text);
+}
