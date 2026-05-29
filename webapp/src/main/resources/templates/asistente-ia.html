@@ -6,92 +6,8 @@
     <title>Asistente IA | EstudiaYa</title>
     <link rel="stylesheet" th:href="@{/inicioEjemplo.css}">
     <link rel="stylesheet" th:href="@{/vistas-detalle.css}">
+    <link rel="stylesheet" th:href="@{/asistente-ia.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        .chat-section {
-            margin-top: 24px;
-        }
-        .chat-section h3 {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #1a1a2e;
-        }
-        .sugerencias {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 14px;
-        }
-        .sugerencia-btn {
-            background: #EEEDFE;
-            color: #3C3489;
-            border: none;
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .sugerencia-btn:hover {
-            background: #d6d4fc;
-        }
-        .chat-form {
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input {
-            flex: 1;
-            padding: 10px 14px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-        .chat-input:focus {
-            border-color: #534AB7;
-        }
-        .chat-btn {
-            background: #534AB7;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 22px;
-            font-size: 14px;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .chat-btn:hover {
-            background: #3d3596;
-        }
-        .chat-respuesta {
-            margin-top: 16px;
-            background: #f4f4f8;
-            border-left: 4px solid #534AB7;
-            padding: 16px;
-            border-radius: 0 8px 8px 0;
-        }
-        .chat-respuesta .chat-pregunta-label {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 8px;
-        }
-        .chat-respuesta .chat-texto {
-            font-size: 14px;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            color: #1a1a2e;
-        }
-        .chat-vacio {
-            margin-top: 16px;
-            background: #f9f9f9;
-            border: 1px dashed #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            color: #999;
-            font-size: 14px;
-        }
-    </style>
 </head>
 <body>
 <div class="layout">
@@ -156,8 +72,7 @@
                     <ul class="detail-list">
                         <li th:each="tema : ${asistencia.temasRefuerzo}" th:text="${tema}">Tema</li>
                     </ul>
-                    <p th:if="${#lists.isEmpty(asistencia.temasRefuerzo)}"
-                       style="color:#888; font-size:14px;">
+                    <p th:if="${#lists.isEmpty(asistencia.temasRefuerzo)}" class="chat-muted">
                         No hay temas criticos por ahora. ¡Sigue así! 🎉
                     </p>
                 </div>
@@ -172,7 +87,7 @@
 
             <!-- SECCIÓN CHAT LIBRE -->
             <div class="detail-card chat-section">
-                <h3><i class="fa-solid fa-robot" style="margin-right:6px; color:#534AB7;"></i>Hazme una pregunta</h3>
+                <h3><i class="fa-solid fa-robot chat-title-icon"></i>Hazme una pregunta</h3>
 
                 <!-- Sugerencias rápidas -->
                 <div class="sugerencias">
@@ -194,7 +109,7 @@
                                th:value="${preguntaRealizada}"
                                required/>
                         <button type="submit" class="chat-btn">
-                            <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Preguntar
+                            <i class="fa-solid fa-paper-plane chat-send-icon"></i>Preguntar
                         </button>
                     </div>
                 </form>
@@ -209,7 +124,7 @@
 
                 <!-- Estado vacío -->
                 <div class="chat-vacio" th:if="${respuestaChat == null}">
-                    <i class="fa-solid fa-comment-dots" style="font-size:24px; margin-bottom:8px; display:block; color:#ccc;"></i>
+                    <i class="fa-solid fa-comment-dots chat-empty-icon"></i>
                     Escribe tu pregunta y te explico cualquier tema 🤖
                 </div>
             </div>

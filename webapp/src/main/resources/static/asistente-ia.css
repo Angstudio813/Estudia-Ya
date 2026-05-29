@@ -1,0 +1,117 @@
+.chat-section {
+  margin-top: 24px;
+}
+
+.chat-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1a1a2e;
+}
+
+.sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.sugerencia-btn {
+  background: #eeedfe;
+  color: #3c3489;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sugerencia-btn:hover {
+  background: #d6d4fc;
+}
+
+.chat-form {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.chat-input:focus {
+  border-color: #534ab7;
+}
+
+.chat-btn {
+  background: #534ab7;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chat-btn:hover {
+  background: #3d3596;
+}
+
+.chat-respuesta {
+  margin-top: 16px;
+  background: #f4f4f8;
+  border-left: 4px solid #534ab7;
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+.chat-respuesta .chat-pregunta-label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.chat-respuesta .chat-texto {
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  color: #1a1a2e;
+}
+
+.chat-vacio {
+  margin-top: 16px;
+  background: #f9f9f9;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+.chat-muted {
+  color: #888;
+  font-size: 14px;
+}
+
+.chat-title-icon,
+.chat-send-icon {
+  margin-right: 6px;
+}
+
+.chat-title-icon {
+  color: #534ab7;
+}
+
+.chat-empty-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  display: block;
+  color: #ccc;
+}

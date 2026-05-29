@@ -15,14 +15,15 @@ public interface TareaRepository extends JpaRepository<Tarea, Long> {
     List<Tarea> findByUsuarioIdAndEstado(Long usuarioId, Tarea.EstadoTarea estado);
     List<Tarea> findByUsuarioIdAndCursoId(Long usuarioId, Long cursoId);
 
-    @Query("SELECT t FROM Tarea t WHERE t.usuario.id = :usuarioId AND t.fechaVencimiento < :hoy AND t.estado <> ProyectoEstudiaYa.webapp.entities.Tarea.EstadoTarea.COMPLETADA")
-    List<Tarea> findTareasVencidas(@Param("usuarioId") Long usuarioId, @Param("hoy") LocalDate hoy);
+    @Query("SELECT t FROM Tarea t WHERE t.usuario.id = :usuarioId AND t.fechaVencimiento < :hoy AND t.estado <> :estadoCompletada")
+    List<Tarea> findTareasVencidas(@Param("usuarioId") Long usuarioId, @Param("hoy") LocalDate hoy, @Param("estadoCompletada") Tarea.EstadoTarea estadoCompletada);
 
-    @Query("SELECT t FROM Tarea t WHERE t.usuario.id = :usuarioId AND t.fechaVencimiento BETWEEN :hoy AND :limite AND t.estado <> ProyectoEstudiaYa.webapp.entities.Tarea.EstadoTarea.COMPLETADA ORDER BY t.fechaVencimiento ASC")
+    @Query("SELECT t FROM Tarea t WHERE t.usuario.id = :usuarioId AND t.fechaVencimiento BETWEEN :hoy AND :limite AND t.estado <> :estadoCompletada ORDER BY t.fechaVencimiento ASC")
     List<Tarea> findTareasProximasAVencer(
         @Param("usuarioId") Long usuarioId,
         @Param("hoy") LocalDate hoy,
-        @Param("limite") LocalDate limite
+        @Param("limite") LocalDate limite,
+        @Param("estadoCompletada") Tarea.EstadoTarea estadoCompletada
     );
 
     @Query("SELECT t.estado, COUNT(t) FROM Tarea t WHERE t.usuario.id = :usuarioId GROUP BY t.estado")

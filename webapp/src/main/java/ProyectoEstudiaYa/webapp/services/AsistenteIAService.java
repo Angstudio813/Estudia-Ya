@@ -172,7 +172,6 @@ private String invocarGeminiChat(String pregunta) throws Exception {
 
     HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-    // 👇 ESTAS DOS LÍNEAS NUEVAS
     System.out.println("=== GEMINI STATUS: " + response.statusCode());
     System.out.println("=== GEMINI BODY: " + response.body());
 
