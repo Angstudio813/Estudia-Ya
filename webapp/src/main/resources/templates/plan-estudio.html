@@ -71,7 +71,7 @@
 
         <input type="text" id="cursoInput" placeholder="Curso">
 
-        <input type="number" id="duracion" placeholder="Horas (ej: 2)">
+        <input type="number" id="duracion" placeholder="Horas (ej: 2)" min="1">
 
         <button onclick="agregarCurso()">Agregar</button>
     </div>
@@ -107,7 +107,7 @@ function agregarCurso() {
     const curso = document.getElementById("cursoInput").value;
     const duracion = parseInt(document.getElementById("duracion").value);
 
-    if (!curso.trim() || !duracion) return;
+    if (!curso.trim() || !duracion || duracion <= 0) return;
 
     if (!plan[dia]) plan[dia] = [];
 
