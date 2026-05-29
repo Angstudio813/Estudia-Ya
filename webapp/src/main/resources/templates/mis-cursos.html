@@ -114,7 +114,9 @@
 
     <div class="module-grid" th:if="${!#lists.isEmpty(cursos)}">
       <div class="module-card" th:each="curso : ${cursos}" th:style="'--accent:' + (${curso.colorHex} ?: '#534ab7')" th:attr="data-status=${curso.estado}">
-        <div class="module-icon" th:text="${curso.icono} ?: 'Curso'">Curso</div>
+        <div class="module-icon" aria-hidden="true">
+          <i th:class="${#strings.contains(#strings.toLowerCase(curso.nombre), 'mat') ? 'fa-solid fa-square-root-variable' : (#strings.contains(#strings.toLowerCase(curso.nombre), 'comunic') ? 'fa-solid fa-language' : (#strings.contains(#strings.toLowerCase(curso.nombre), 'ciencia') ? 'fa-solid fa-flask-vial' : 'fa-solid fa-book-open'))}"></i>
+        </div>
         <div class="module-card-body">
           <div class="course-card-head">
             <h2 th:text="${curso.nombre}">Matemática</h2>

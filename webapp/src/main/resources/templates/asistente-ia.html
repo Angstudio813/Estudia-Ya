@@ -57,7 +57,7 @@
 
             <div class="detail-hero">
                 <h2 id="saludoUsuario" th:text="${usuario != null ? 'Hola, ' + usuario.nombre : 'Hola, estudiante'}">Hola, estudiante</h2>
-                <p id="mensajePrincipalIA">Analizando tu perfil académico y preparando tus recomendaciones... 🤖</p>
+                <p id="mensajePrincipalIA"><i class="fa-solid fa-robot"></i> Analizando tu perfil académico y preparando tus recomendaciones...</p>
             </div>
 
             <div class="detail-grid">
@@ -111,7 +111,7 @@
 
                 <div class="chat-vacio" th:if="${respuestaChat == null}">
                     <i class="fa-solid fa-comment-dots chat-empty-icon"></i>
-                    Escribe tu pregunta y te explico cualquier tema 🤖
+                    <i class="fa-solid fa-comments"></i> Escribe tu pregunta y te explico cualquier tema
                 </div>
             </div>
 

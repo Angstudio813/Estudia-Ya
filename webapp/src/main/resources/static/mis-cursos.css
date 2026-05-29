@@ -301,12 +301,17 @@
   border-radius: 12px;
   color: #14506a;
   display: flex;
-  font-size: 22px;
-  font-weight: 700;
+  flex-shrink: 0;
   justify-content: center;
+  min-height: 56px;
+  font-weight: 700;
   min-width: 56px;
   padding: 12px 8px;
   text-align: center;
+}
+
+.module-icon i {
+  font-size: 24px;
 }
 
 .module-card h2 {
