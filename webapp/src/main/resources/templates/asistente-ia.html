@@ -10,9 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-<div class="layout">
+<div class="layout" id="asistenteContainer" th:data-usuario-id="${usuarioId}">
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">Estudia<span>Ya</span></div>
@@ -36,8 +35,7 @@
             <a class="nav-item" th:href="@{/}" href="/"><div class="nav-dot"></div><span class="nav-label">Inicio</span></a>
             <a class="nav-item" th:href="@{/mis-cursos}" href="/mis-cursos"><div class="nav-dot"></div><span class="nav-label">Mis cursos</span></a>
             <a class="nav-item" th:href="@{/practica-inteligente}" href="/practica-inteligente"><div class="nav-dot"></div><span class="nav-label">Practica inteligente</span></a>
-            <a class="nav-item active" th:href="@{/asistente-ia/1}" href="/asistente-ia/1"><div class="nav-dot"></div><span class="nav-label">Asistente IA</span></a>
-            <a class="nav-item" th:href="@{/progreso/1}" href="/progreso/1"><div class="nav-dot"></div><span class="nav-label">Mi progreso</span></a>
+<a class="nav-item active" th:href="@{/asistente-ia/{id}(id=${usuarioId})}"><div class="nav-dot"></div><span class="nav-label">Asistente IA</span></a>            <a class="nav-item" th:href="@{/progreso/1}" href="/progreso/1"><div class="nav-dot"></div><span class="nav-label">Mi progreso</span></a>
             <a class="nav-item" th:href="@{/plan-estudio}" href="/plan-estudio"><div class="nav-dot"></div><span class="nav-label">Plan de estudio</span></a>
             <a class="nav-item" th:href="@{/logros-retos}" href="/logros-retos"><div class="nav-dot"></div><span class="nav-label">Logros y retos</span></a>
         </nav>
@@ -47,11 +45,9 @@
         </div>
     </div>
 
-    <!-- MAIN -->
     <div class="main module-main">
         <div class="detail-wrap">
 
-            <!-- ENCABEZADO -->
             <div class="detail-top">
                 <h1 class="detail-title">Asistente IA</h1>
                 <a class="detail-back" th:href="@{/}">
@@ -59,47 +55,39 @@
                 </a>
             </div>
 
-            <!-- SALUDO + MENSAJE PRINCIPAL -->
             <div class="detail-hero">
-                <h2 th:text="'Hola, ' + ${asistencia.nombreUsuario}">Hola</h2>
-                <p th:text="${asistencia.mensajePrincipal}">Mensaje principal</p>
+                <h2 id="saludoUsuario">Hola, estudiante</h2>
+                <p id="mensajePrincipalIA">Analizando tu perfil académico y preparando tus recomendaciones... 🤖</p>
             </div>
 
-            <!-- TEMAS A REFORZAR + PLAN SUGERIDO -->
             <div class="detail-grid">
                 <div class="detail-card">
                     <h3>Temas a reforzar</h3>
-                    <ul class="detail-list">
-                        <li th:each="tema : ${asistencia.temasRefuerzo}" th:text="${tema}">Tema</li>
+                    <ul class="detail-list" id="listaTemas">
+                        <li><i class="fa-solid fa-spinner fa-spin"></i> Cargando tus temas críticos...</li>
                     </ul>
-                    <p th:if="${#lists.isEmpty(asistencia.temasRefuerzo)}" class="chat-muted">
-                        No hay temas criticos por ahora. ¡Sigue así! 🎉
-                    </p>
                 </div>
 
                 <div class="detail-card">
                     <h3>Plan sugerido por IA</h3>
-                    <ul class="detail-list">
-                        <li th:each="item : ${asistencia.recomendaciones}" th:text="${item}">Recomendacion</li>
+                    <ul class="detail-list" id="listaRecomendaciones">
+                        <li><i class="fa-solid fa-spinner fa-spin"></i> Diseñando tu plan estratégico...</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- SECCIÓN CHAT LIBRE -->
             <div class="detail-card chat-section">
                 <h3><i class="fa-solid fa-robot chat-title-icon"></i>Hazme una pregunta</h3>
 
-                <!-- Sugerencias rápidas -->
                 <div class="sugerencias">
-                    <button class="sugerencia-btn" onclick="setSugerencia('¿Cómo se resuelven las fracciones?')">¿Cómo se resuelven las fracciones?</button>
-                    <button class="sugerencia-btn" onclick="setSugerencia('Explícame la fotosíntesis')">Explícame la fotosíntesis</button>
-                    <button class="sugerencia-btn" onclick="setSugerencia('¿Qué fue la independencia del Perú?')">¿Qué fue la independencia del Perú?</button>
-                    <button class="sugerencia-btn" onclick="setSugerencia('¿Cómo identifico el sujeto en una oración?')">¿Cómo identifico el sujeto?</button>
+                    <button class="sugerencia-btn" type="button" onclick="setSugerencia('¿Cómo se resuelven las fracciones?')">¿Cómo se resuelven las fracciones?</button>
+                    <button class="sugerencia-btn" type="button" onclick="setSugerencia('Explícame la fotosíntesis')">Explícame la fotosíntesis</button>
+                    <button class="sugerencia-btn" type="button" onclick="setSugerencia('¿Qué fue la independencia del Perú?')">¿Qué fue la independencia del Perú?</button>
+                    <button class="sugerencia-btn" type="button" onclick="setSugerencia('¿Cómo identifico el sujeto en una oración?')">¿Cómo identifico el sujeto?</button>
                 </div>
 
-                <!-- Formulario -->
                 <form th:action="@{/asistente-ia/chat}" method="post">
-                    <input type="hidden" name="usuarioId" th:value="${asistencia.usuarioId}"/>
+                    <input type="hidden" name="usuarioId" th:value="${usuarioId}"/>
                     <div class="chat-form">
                         <input type="text"
                                id="inputPregunta"
@@ -114,7 +102,6 @@
                     </div>
                 </form>
 
-                <!-- Respuesta de la IA -->
                 <div class="chat-respuesta" th:if="${respuestaChat != null}">
                     <p class="chat-pregunta-label">
                         Tu pregunta: <strong th:text="${preguntaRealizada}"></strong>
@@ -122,7 +109,6 @@
                     <p class="chat-texto" th:text="${respuestaChat}"></p>
                 </div>
 
-                <!-- Estado vacío -->
                 <div class="chat-vacio" th:if="${respuestaChat == null}">
                     <i class="fa-solid fa-comment-dots chat-empty-icon"></i>
                     Escribe tu pregunta y te explico cualquier tema 🤖
@@ -133,12 +119,6 @@
     </div>
 </div>
 
-<script>
-    function setSugerencia(texto) {
-        document.getElementById('inputPregunta').value = texto;
-        document.getElementById('inputPregunta').focus();
-    }
-</script>
-
+<script th:src="@{/js/asistente-chat.js}"></script>
 </body>
 </html>

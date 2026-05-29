@@ -5,6 +5,7 @@ import ProyectoEstudiaYa.webapp.services.AsistenteIAService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/asistente-ia")
@@ -16,30 +17,31 @@ public class AsistenteIAController {
         this.asistenteIAService = asistenteIAService;
     }
 
-    // GET /asistente-ia/{usuarioId} — carga la vista con recomendaciones
+    // GET: Carga la vista de inmediato (Sin congelar por culpa de la IA)
     @GetMapping("/{usuarioId}")
     public String verAsistente(@PathVariable Long usuarioId, Model model) {
-        AsistenteIARespuestaDTO asistencia = asistenteIAService.generarAsistencia(usuarioId);
-        model.addAttribute("asistencia", asistencia);
+        // Pasamos solo el ID del usuario para que la vista sepa a quién consultar por JS
+        model.addAttribute("usuarioId", usuarioId);
         return "asistente-ia";
     }
 
-    // POST /asistente-ia/chat — el alumno hace una pregunta libre
+    // POST: El chat libre procesa su respuesta y redirecciona limpiamente
     @PostMapping("/chat")
     public String chat(@RequestParam Long usuarioId,
                        @RequestParam String pregunta,
-                       Model model) {
-        AsistenteIARespuestaDTO asistencia = asistenteIAService.generarAsistencia(usuarioId);
-        model.addAttribute("asistencia", asistencia);
-
+                       RedirectAttributes redirectAttributes) {
+        
+        // Solo llamamos a la función de chat libre (1 sola petición a la IA)
         String respuesta = asistenteIAService.chatLibre(usuarioId, pregunta);
-        model.addAttribute("respuestaChat", respuesta);
-        model.addAttribute("preguntaRealizada", pregunta);
+        
+        // Guardamos los datos para mostrarlos tras la redirección
+        redirectAttributes.addFlashAttribute("respuestaChat", respuesta);
+        redirectAttributes.addFlashAttribute("preguntaRealizada", pregunta);
 
-        return "asistente-ia";
+        return "redirect:/asistente-ia/" + usuarioId;
     }
 
-    // GET /asistente-ia/api/{usuarioId} — endpoint REST (para Angular después)
+    // Tu API REST que usará JavaScript para cargar los datos pesados en segundo plano
     @GetMapping("/api/{usuarioId}")
     @ResponseBody
     public AsistenteIARespuestaDTO obtenerAsistenciaApi(@PathVariable Long usuarioId) {
