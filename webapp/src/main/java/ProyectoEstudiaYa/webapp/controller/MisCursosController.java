@@ -27,20 +27,28 @@ public class MisCursosController {
     }
 
     @GetMapping("/mis-cursos")
-    public String verMisCursos(Model model) {
-        model.addAttribute("cursos", misCursosService.listarCursos());
+    public String verMisCursos(@RequestParam(required = false, defaultValue = "1") Long usuarioId, Model model) {
+        List<MisCursosDTO> cursos = misCursosService.listarCursos(usuarioId);
+        model.addAttribute("cursos", cursos);
+        model.addAttribute("totalTemas", cursos.stream().mapToInt(curso -> valorSeguro(curso.getTotalTemas())).sum());
+        model.addAttribute("totalEjercicios", cursos.stream().mapToInt(curso -> valorSeguro(curso.getTotalEjercicios())).sum());
         return "mis-cursos";
     }
 
     @GetMapping("/api/mis-cursos")
     @ResponseBody
     public List<MisCursosDTO> listarMisCursos(
+            @RequestParam(required = false) Long usuarioId,
             @RequestParam(required = false) Usuario.NivelEducativo nivel,
             @RequestParam(required = false) Integer grado) {
         if (nivel != null && grado != null) {
             return misCursosService.listarPorNivelYGrado(nivel, grado);
         }
 
-        return misCursosService.listarCursos();
+        return misCursosService.listarCursos(usuarioId);
+    }
+
+    private int valorSeguro(Integer valor) {
+        return valor == null ? 0 : valor;
     }
 }

@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/login",
+                                "/login.css",
                                 "/h2-console/**",
                                 "/favicon.ico"
                         ).permitAll()
@@ -51,6 +52,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
+
         return http.build();
     }
 }

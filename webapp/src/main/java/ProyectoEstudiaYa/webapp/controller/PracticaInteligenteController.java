@@ -22,7 +22,9 @@ public class PracticaInteligenteController {
     public String verPracticaInteligente(
             @RequestParam(required = false) Long usuarioId,
             Model model) {
-        model.addAttribute("practicas", practicaInteligenteService.listarEjerciciosDeRefuerzo(usuarioId));
+        List<PracticaInteligenteDTO> practicas = practicaInteligenteService.listarEjerciciosDeRefuerzo(usuarioId);
+        model.addAttribute("practicas", practicas);
+        model.addAttribute("xpTotal", practicas.stream().mapToInt(practica -> valorSeguro(practica.getXp())).sum());
         return "practica-inteligente";
     }
 
@@ -31,5 +33,9 @@ public class PracticaInteligenteController {
     public List<PracticaInteligenteDTO> listarPracticaInteligente(
             @RequestParam(required = false) Long usuarioId) {
         return practicaInteligenteService.listarEjerciciosDeRefuerzo(usuarioId);
+    }
+
+    private int valorSeguro(Integer valor) {
+        return valor == null ? 0 : valor;
     }
 }

@@ -1,5 +1,6 @@
-﻿.module-main {
-  background: #f6f7fb;
+.module-main {
+  background:
+    linear-gradient(180deg, #f8fbfd 0%, #f3f7fa 48%, #eef4f7 100%);
 }
 
 .module-header {
@@ -30,19 +31,107 @@
 }
 
 .module-header p,
+.practice-focus p,
 .empty-module p {
   color: #4e6b78;
   margin-top: 8px;
 }
 
-.api-link {
-  background: linear-gradient(130deg, #14506a, #1f8f6a);
-  border-radius: 10px;
-  color: white;
-  font-weight: 700;
-  padding: 10px 14px;
-  text-decoration: none;
-  white-space: nowrap;
+.practice-dashboard {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(260px, 1fr) repeat(2, minmax(120px, 180px));
+  margin-bottom: 14px;
+}
+
+.practice-focus,
+.practice-stat,
+.session-console {
+  background: #fff;
+  border: 1px solid #d7e3e9;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.practice-focus {
+  background:
+    linear-gradient(135deg, #ffffff 0%, #f5fbfd 100%);
+}
+
+.practice-focus span,
+.practice-stat span,
+.coach-note span,
+.session-console span,
+.question-footer span {
+  color: #587481;
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.practice-focus strong,
+.practice-stat strong,
+.session-console strong {
+  color: #0f3648;
+  display: block;
+  font-family: "Sora", sans-serif;
+  font-size: 24px;
+  margin-top: 4px;
+}
+
+.session-console {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(260px, 1fr) repeat(2, minmax(120px, 170px));
+  margin-bottom: 14px;
+}
+
+.session-track {
+  background: #e3edf2;
+  border-radius: 999px;
+  height: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.session-fill {
+  background: linear-gradient(90deg, #ed6a3b, #1f8f6a);
+  border-radius: inherit;
+  height: 100%;
+  transition: width 0.25s ease;
+  width: 0;
+}
+
+.session-score {
+  border-left: 1px solid #e0ebf0;
+  padding-left: 14px;
+}
+
+.module-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filter-chip {
+  background: #fff;
+  border: 1px solid #d7e3e9;
+  border-radius: 999px;
+  color: #214f62;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 12px;
+}
+
+.filter-chip.active,
+.filter-chip:hover {
+  background: #11313f;
+  border-color: #11313f;
+  color: #fff;
 }
 
 .practice-list {
@@ -58,20 +147,62 @@
   padding: 18px;
 }
 
+.practice-card {
+  border-left: 4px solid #1f8f6a;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.practice-card:hover {
+  box-shadow: 0 16px 34px rgba(17, 49, 63, 0.1);
+  transform: translateY(-2px);
+}
+
+.practice-card.answered-ok {
+  border-left-color: #1f8f6a;
+}
+
+.practice-card.answered-bad {
+  border-left-color: #ed6a3b;
+}
+
+.practice-card[hidden] {
+  display: none;
+}
+
+.practice-head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
 .practice-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 12px;
 }
 
-.practice-meta span {
+.practice-meta span,
+.xp-token {
   background: #edf3f6;
   border-radius: 999px;
   color: #1f586d;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 800;
   padding: 6px 10px;
+}
+
+.xp-token {
+  background: #fff6f1;
+  color: #c14f27;
+  flex-shrink: 0;
+}
+
+.practice-skill {
+  color: #4e6b78;
+  font-weight: 700;
+  margin-top: 8px;
 }
 
 .answers {
@@ -88,7 +219,8 @@
   color: #11313f;
   cursor: pointer;
   font: inherit;
-  font-weight: 600;
+  font-weight: 700;
+  min-height: 48px;
   padding: 12px;
   text-align: left;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -100,14 +232,92 @@
   transform: translateY(-1px);
 }
 
+.answers button:disabled {
+  cursor: default;
+  opacity: 0.95;
+}
+
+.answers button.is-correct {
+  background: #edf8f3;
+  border-color: #1f8f6a;
+  color: #126145;
+}
+
+.answers button.is-wrong {
+  background: #fff1ed;
+  border-color: #ed6a3b;
+  color: #9d3d1a;
+}
+
+.feedback-panel,
+.coach-note {
+  border-radius: 12px;
+  margin-top: 14px;
+  padding: 12px;
+}
+
+.feedback-panel {
+  background: #f4fbf8;
+  border: 1px solid #bde7d7;
+}
+
+.feedback-title {
+  color: #126145;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.feedback-panel p,
+.coach-note p {
+  color: #355c6b;
+  margin: 0;
+}
+
+.coach-note {
+  background: #f8fbfd;
+  border: 1px solid #d7e3e9;
+}
+
+.coach-note p {
+  margin-top: 5px;
+}
+
+.question-footer {
+  align-items: center;
+  border-top: 1px solid #e0ebf0;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+}
+
+.question-footer strong {
+  color: #0f3648;
+}
+
 @media (max-width: 900px) {
   .module-header {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .api-link {
-    width: 100%;
-    text-align: center;
+  .practice-dashboard,
+  .session-console {
+    grid-template-columns: 1fr;
+  }
+
+  .session-score {
+    border-left: 0;
+    border-top: 1px solid #e0ebf0;
+    padding-left: 0;
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 580px) {
+  .practice-head,
+  .question-footer {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

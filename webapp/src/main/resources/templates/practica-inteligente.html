@@ -49,25 +49,83 @@
       <div>
         <div class="module-kicker">Módulo de práctica</div>
         <h1>Práctica inteligente</h1>
-        <p>Ejercicios seleccionados para reforzar tus temas de mayor prioridad.</p>
+        <p>Ejercicios seleccionados por prioridad, con feedback inmediato y recomendación de estudio.</p>
       </div>
     </div>
 
+    <div class="practice-dashboard" th:if="${!#lists.isEmpty(practicas)}">
+      <div class="practice-focus">
+        <span>Sesión recomendada</span>
+        <strong th:text="${#lists.size(practicas)} + ' ejercicios'">2 ejercicios</strong>
+        <p>Responde, revisa la explicación y repite las preguntas falladas al final.</p>
+      </div>
+      <div class="practice-stat">
+        <span>XP posible</span>
+        <strong th:text="${xpTotal} ?: 0">30</strong>
+      </div>
+      <div class="practice-stat">
+        <span>Modo</span>
+        <strong>Refuerzo</strong>
+      </div>
+    </div>
+
+    <section class="session-console" th:if="${!#lists.isEmpty(practicas)}">
+      <div>
+        <span>Progreso de sesión</span>
+        <strong><b id="answeredCount">0</b>/<b th:text="${#lists.size(practicas)}">2</b> respondidas</strong>
+        <div class="session-track"><div id="sessionProgress" class="session-fill"></div></div>
+      </div>
+      <div class="session-score">
+        <span>Aciertos</span>
+        <strong id="correctCount">0</strong>
+      </div>
+      <div class="session-score">
+        <span>Estado</span>
+        <strong id="sessionStatus">En curso</strong>
+      </div>
+    </section>
+
+    <div class="module-toolbar" th:if="${!#lists.isEmpty(practicas)}">
+      <button class="filter-chip active" type="button" data-filter="all">Todos</button>
+      <button class="filter-chip" type="button" data-filter="FACIL">Fácil</button>
+      <button class="filter-chip" type="button" data-filter="MEDIO">Medio</button>
+      <button class="filter-chip" type="button" data-filter="DIFICIL">Difícil</button>
+    </div>
+
     <div class="practice-list" th:if="${!#lists.isEmpty(practicas)}">
-      <div class="practice-card" th:each="practica : ${practicas}">
-        <div class="practice-meta">
-          <span th:text="${practica.cursoNombre} ?: 'Curso'">Curso</span>
-          <span th:text="${practica.temaNombre} ?: 'Tema'">Tema</span>
-          <span th:text="${practica.dificultad} ?: 'Dificultad'">FACIL</span>
+      <div class="practice-card" th:each="practica, iter : ${practicas}" th:attr="data-difficulty=${practica.dificultad},data-correct=${practica.respuestaCorrecta}">
+        <div class="practice-head">
+          <div class="practice-meta">
+            <span th:text="'#' + ${iter.count}">#1</span>
+            <span th:text="${practica.cursoNombre} ?: 'Curso'">Curso</span>
+            <span th:text="${practica.temaNombre} ?: 'Tema'">Tema</span>
+            <span th:text="${practica.dificultad} ?: 'Dificultad'">FACIL</span>
+          </div>
+          <div class="xp-token" th:text="'+' + ${practica.xp} + ' XP'">+12 XP</div>
         </div>
 
         <h2 th:text="${practica.pregunta}">Pregunta de práctica</h2>
+        <p class="practice-skill" th:text="${practica.habilidad}">Base conceptual</p>
 
         <div class="answers">
-          <button type="button" th:text="'A. ' + ${practica.opcionA}">A. opción</button>
-          <button type="button" th:text="'B. ' + ${practica.opcionB}">B. opción</button>
-          <button type="button" th:text="'C. ' + ${practica.opcionC}">C. opción</button>
-          <button type="button" th:text="'D. ' + ${practica.opcionD}">D. opción</button>
+          <button type="button" data-option="A" th:text="'A. ' + ${practica.opcionA}">A. opción</button>
+          <button type="button" data-option="B" th:text="'B. ' + ${practica.opcionB}">B. opción</button>
+          <button type="button" data-option="C" th:text="'C. ' + ${practica.opcionC}">C. opción</button>
+          <button type="button" data-option="D" th:text="'D. ' + ${practica.opcionD}">D. opción</button>
+        </div>
+
+        <div class="feedback-panel" hidden>
+          <strong class="feedback-title">Resultado</strong>
+          <p th:text="${practica.explicacion} ?: 'Revisa el procedimiento y vuelve a intentarlo.'">Explicación.</p>
+        </div>
+
+        <div class="coach-note">
+          <span>Consejo IA</span>
+          <p th:text="${practica.recomendacion}">Lee con calma antes de responder.</p>
+        </div>
+        <div class="question-footer">
+          <span>Dominio sugerido</span>
+          <strong th:text="${practica.dificultad == 'FACIL' ? 'Base' : practica.dificultad == 'MEDIO' ? 'Intermedio' : 'Avanzado'}">Base</strong>
         </div>
       </div>
     </div>
@@ -78,5 +136,53 @@
     </div>
   </div>
 </div>
+<script>
+  document.querySelectorAll(".filter-chip").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".filter-chip").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      const filter = button.dataset.filter;
+      document.querySelectorAll(".practice-card").forEach((card) => {
+        card.hidden = filter !== "all" && card.dataset.difficulty !== filter;
+      });
+    });
+  });
+
+  document.querySelectorAll(".practice-card").forEach((card) => {
+    card.querySelectorAll(".answers button").forEach((answer) => {
+      answer.addEventListener("click", () => {
+        if (card.dataset.answered === "true") {
+          return;
+        }
+        card.dataset.answered = "true";
+        const correct = card.dataset.correct;
+        const isCorrect = answer.dataset.option === correct;
+        card.querySelectorAll(".answers button").forEach((button) => {
+          button.disabled = true;
+          button.classList.toggle("is-correct", button.dataset.option === correct);
+        });
+        answer.classList.toggle("is-wrong", !isCorrect);
+        card.classList.toggle("answered-ok", isCorrect);
+        card.classList.toggle("answered-bad", !isCorrect);
+        const feedback = card.querySelector(".feedback-panel");
+        feedback.hidden = false;
+        feedback.querySelector(".feedback-title").textContent =
+          isCorrect ? "Correcto" : "Respuesta correcta: " + correct;
+        updateSession();
+      });
+    });
+  });
+
+  function updateSession() {
+    const cards = [...document.querySelectorAll(".practice-card")];
+    const answered = cards.filter((card) => card.dataset.answered === "true").length;
+    const correct = cards.filter((card) => card.classList.contains("answered-ok")).length;
+    const total = cards.length || 1;
+    document.getElementById("answeredCount").textContent = answered;
+    document.getElementById("correctCount").textContent = correct;
+    document.getElementById("sessionProgress").style.width = `${(answered / total) * 100}%`;
+    document.getElementById("sessionStatus").textContent = answered === total ? "Completada" : "En curso";
+  }
+</script>
 </body>
 </html>

@@ -10,12 +10,24 @@ public class MisCursosDTO {
     private String colorHex;
     private String icono;
     private Integer totalTemas;
+    private Integer totalEjercicios;
+    private Integer progreso;
+    private String estado;
+    private String siguienteTema;
+    private String recomendacion;
 
     public MisCursosDTO() {
     }
 
     public MisCursosDTO(Long id, String nombre, String descripcion, String nivel, Integer grado,
             String colorHex, String icono, Integer totalTemas) {
+        this(id, nombre, descripcion, nivel, grado, colorHex, icono, totalTemas, 0, 0,
+                "Por iniciar", "Explorar temario", "Empieza con el primer tema y completa una practica corta.");
+    }
+
+    public MisCursosDTO(Long id, String nombre, String descripcion, String nivel, Integer grado,
+            String colorHex, String icono, Integer totalTemas, Integer totalEjercicios,
+            Integer progreso, String estado, String siguienteTema, String recomendacion) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -24,6 +36,11 @@ public class MisCursosDTO {
         this.colorHex = colorHex;
         this.icono = icono;
         this.totalTemas = totalTemas;
+        this.totalEjercicios = totalEjercicios;
+        this.progreso = progreso;
+        this.estado = estado;
+        this.siguienteTema = siguienteTema;
+        this.recomendacion = recomendacion;
     }
 
     public Long getId() {
@@ -56,5 +73,25 @@ public class MisCursosDTO {
 
     public Integer getTotalTemas() {
         return totalTemas;
+    }
+
+    public Integer getTotalEjercicios() {
+        return totalEjercicios;
+    }
+
+    public Integer getProgreso() {
+        return progreso;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public String getSiguienteTema() {
+        return siguienteTema;
+    }
+
+    public String getRecomendacion() {
+        return recomendacion;
     }
 }
