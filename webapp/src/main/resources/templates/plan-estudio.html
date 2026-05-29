@@ -51,13 +51,13 @@
 
     <h1><i class="fa-solid fa-calendar-days"></i> Plan de Estudio</h1>
 
-    <!-- CONFIG -->
+   
     <div class="card">
         <label>Hora de inicio:</label>
         <input type="time" id="horaInicio" value="08:00">
     </div>
 
-    <!-- AGREGAR -->
+    
     <div class="card">
         <select id="dia">
             <option>Lunes</option>
@@ -71,24 +71,24 @@
 
         <input type="text" id="cursoInput" placeholder="Curso">
 
-        <input type="number" id="duracion" placeholder="Horas (ej: 2)">
+        <input type="number" id="duracion" placeholder="Horas (ej: 2)" min="1">
 
         <button onclick="agregarCurso()">Agregar</button>
     </div>
 
-    <!-- LISTA -->
+   
     <div id="planManual"></div>
 
     <button onclick="generar()">Generar Plan</button>
 
-    <!-- RESULTADO -->
+    
     <div id="resultado" class="grid"></div>
 
 </div>
     </div>
 </div>
 
-<!-- MODAL -->
+
 <div id="modal" class="modal">
     <div class="modal-content">
         <h3><i class="fa-solid fa-circle-check"></i> Plan generado</h3>
@@ -100,14 +100,17 @@
 
 let plan = {};
 
-/* AGREGAR */
+
 function agregarCurso() {
 
     const dia = document.getElementById("dia").value;
     const curso = document.getElementById("cursoInput").value;
     const duracion = parseInt(document.getElementById("duracion").value);
 
-    if (!curso.trim() || !duracion) return;
+    if (!curso.trim() || isNaN(duracion) || duracion <= 0) {
+    alert("La duración debe ser mayor a 0");
+    return;
+}
 
     if (!plan[dia]) plan[dia] = [];
 
@@ -122,7 +125,7 @@ function agregarCurso() {
     renderPlan();
 }
 
-/* MOSTRAR LISTA */
+
 function renderPlan() {
     let html = "";
 
@@ -144,13 +147,13 @@ function renderPlan() {
     document.getElementById("planManual").innerHTML = html;
 }
 
-/* ELIMINAR */
+
 function eliminar(dia, i) {
     plan[dia].splice(i,1);
     renderPlan();
 }
 
-/* GENERAR */
+
 function generar() {
 
     if (Object.keys(plan).length === 0) {
@@ -161,33 +164,44 @@ function generar() {
     renderFinal(plan);
 }
 
-/* GENERAR HORARIO REAL */
+
 function renderFinal(horario) {
 
     const horaInicio = document.getElementById("horaInicio").value || "08:00";
-    let horaBase = parseInt(horaInicio.split(":")[0]);
+
+    let [horaBase, minutoBase] = horaInicio.split(":").map(Number);
 
     let html = "";
 
     for (let dia in horario) {
 
         let hora = horaBase;
+        let minuto = minutoBase;
 
         html += `<div class="day-card"><h3>${dia}</h3>`;
 
         horario[dia].forEach(curso => {
 
-            let inicio = hora;
-            let fin = hora + curso.duracion;
+           
+            let inicioHora = String(hora).padStart(2, '0');
+            let inicioMin = String(minuto).padStart(2, '0');
+
+           
+            let finHora = hora + curso.duracion;
+
+            let finHoraTexto = String(finHora).padStart(2, '0');
 
             html += `
             <div class="bloque">
                 <strong>${curso.nombre}</strong>
-                <p class="hora">${inicio}:00 - ${fin}:00 (${curso.duracion}h)</p>
+                <p class="hora">
+                    ${inicioHora}:${inicioMin} - ${finHoraTexto}:${inicioMin}
+                    (${curso.duracion}h)
+                </p>
             </div>
             `;
 
-            hora = fin;
+            hora = finHora;
         });
 
         html += `</div>`;
