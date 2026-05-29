@@ -5,39 +5,28 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class AsistenteIAService {
 
-    @Value("${app.ai.custom.gemini.api-key}")
+    // Cambiamos las anotaciones Value para que lean las nuevas variables de Groq
+    @Value("${app.ai.custom.groq.api-key}")
     private String apiKey;
 
-    @Value("${app.ai.custom.gemini.model}")
+    @Value("${app.ai.custom.groq.model}")
     private String model;
-
-    private final RestClient restClient = RestClient.create();
-
-    // Supongamos que tienes un UsuarioRepository o similar para sacar info del
-    // alumno de H2
-    // En este ejemplo simularé los datos del alumno, pero puedes inyectar tu
-    // repositorio aquí.
 
     /**
      * Genera un reporte personalizado analizando el perfil del alumno
      */
     public AsistenteIARespuestaDTO generarAsistencia(Long usuarioId) {
-        // 1. Simulación de datos del alumno (Sustitúyelo por tu consulta a la base de
-        // datos H2)
         String nombreAlumno = "Juan Pérez";
         String cursosMalos = "Matemáticas y Estructuras de Datos";
 
-        // 2. Armar un prompt estricto para que Gemini devuelva un JSON estructurado
+        // El mismo prompt estricto que ya tenías
         String prompt = """
                 Analiza al estudiante %s que va mal en las materias de: %s.
                 Genera recomendaciones de estudio y temas específicos de refuerzo.
@@ -51,12 +40,10 @@ public class AsistenteIAService {
                 .formatted(nombreAlumno, cursosMalos);
 
         try {
-            // Llamar a Gemini
-            String jsonRespuestaIA = llamarApiGemini(prompt);
+            // Ahora llamamos a Groq en lugar de Gemini
+            String jsonRespuestaIA = llamarApiGroq(prompt);
 
-            // Parsear la respuesta estructurada de la IA
             JsonObject jsonObject = JsonParser.parseString(jsonRespuestaIA).getAsJsonObject();
-
             String mensajePrincipal = jsonObject.get("mensajePrincipal").getAsString();
 
             List<String> temasRefuerzo = new ArrayList<>();
@@ -67,13 +54,10 @@ public class AsistenteIAService {
             JsonArray recsArray = jsonObject.getAsJsonArray("recomendaciones");
             recsArray.forEach(elem -> recomendaciones.add(elem.getAsString()));
 
-            // Retornar el DTO mapeado que espera tu controlador
-            return new AsistenteIARespuestaDTO(usuarioId, nombreAlumno, mensajePrincipal, temasRefuerzo,
-                    recomendaciones);
+            return new AsistenteIARespuestaDTO(usuarioId, nombreAlumno, mensajePrincipal, temasRefuerzo, recomendaciones);
 
         } catch (Exception e) {
-            // Plan de contingencia si la IA falla o el límite gratuito se satura
-            // momentáneamente
+            // Tu plan de contingencia por si Groq diera algún error aleatorio
             return new AsistenteIARespuestaDTO(
                     usuarioId,
                     nombreAlumno,
@@ -87,50 +71,53 @@ public class AsistenteIAService {
      * Procesa una pregunta libre del alumno en la interfaz de chat
      */
     public String chatLibre(Long usuarioId, String pregunta) {
-        // Podrías buscar al usuario en H2 para darle contexto a la IA ("Juan pregunta:
-        // ...")
-        String promptContextualizado = "Como tutor de la plataforma EstudiaYa, responde brevemente a la siguiente duda del alumno: "
-                + pregunta;
+        String promptContextualizado = "Como tutor de la plataforma EstudiaYa, responde brevemente a la siguiente duda del alumno: " + pregunta;
 
         try {
-            return llamarApiGemini(promptContextualizado);
+            return llamarApiGroq(promptContextualizado);
         } catch (Exception e) {
-            // ESTO IMPRIMIRÁ EL ERROR REAL EN TU CONSOLA DE SPRING BOOT (IDE)
             e.printStackTrace();
-            return "Error real: " + e.getMessage();
+            return "Error real en Groq: " + e.getMessage();
         }
     }
 
     /**
-     * Método auxiliar privado que gestiona la comunicación HTTP POST directa con
-     * Google AI Studio
+     * NUEVO MÉTODO: Gestiona la comunicación con Groq (Formato estándar OpenAI Chat)
      */
-    private String llamarApiGemini(String prompt) {
-        // Construimos la URL uniendo las variables limpiamente
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/" + this.model.trim()
-                + ":generateContent?key=" + this.apiKey.trim();
+private String llamarApiGroq(String prompt) {
+    // REEMPLAZA ESTA LÍNEA: Asegúrate de que esté exactamente así, entre comillas simples y limpias
+    String url = "https://api.groq.com/openai/v1/chat/completions";
 
-        // El JSON que le enviaremos a Google
-        String jsonBody = "{\"contents\": [{\"parts\":[{\"text\": \"" + prompt.replace("\"", "\\\"") + "\"}]}]}";
-
+    // El resto del código se queda igual...
+    String promptEscapado = prompt.replace("\"", "\\\"");
+    String jsonBody = "{"
+            + "\"model\": \"" + this.model.trim() + "\","
+            + "\"messages\": [{\"role\": \"user\", \"content\": \"" + promptEscapado + "\"}],"
+            + "\"temperature\": 0.7"
+            + "}";
+    
+    // ... (HttpHeaders, RestTemplate y el resto siguen igual)
         org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+        
+        // Groq requiere autenticación mediante el Header 'Authorization: Bearer Tu_Llave'
+        headers.set("Authorization", "Bearer " + this.apiKey.trim());
 
-        org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(jsonBody,
-                headers);
+        org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(jsonBody, headers);
 
-        // Hacemos la petición POST a Google
+        // Hacemos la petición POST
         String response = restTemplate.postForObject(url, entity, String.class);
 
-        // Recortamos la respuesta para extraer solo el texto que nos interesa
+        // Parseamos la respuesta de Groq para extraer exclusivamente el texto de la respuesta
         try {
-            int inicio = response.indexOf("\"text\": \"") + 9;
-            int fin = response.indexOf("\"", inicio);
-            return response.substring(inicio, fin).replace("\\n", "\n");
+            JsonObject jsonResponse = JsonParser.parseString(response).getAsJsonObject();
+            return jsonResponse.getAsJsonArray("choices")
+                    .get(0).getAsJsonObject()
+                    .get("message").getAsJsonObject()
+                    .get("content").getAsString();
         } catch (Exception e) {
-            return response; // Si hay problemas recortando, te muestra el JSON crudo para ver la respuesta
+            return response; // En caso de error estructural, devuelve el JSON completo para depurar
         }
     }
-
 }
