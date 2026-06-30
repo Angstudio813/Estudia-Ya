@@ -1,0 +1,47 @@
+<section class="login-page">
+  <main class="login-card">
+    <p class="brand">EstudiaYa</p>
+    <h1>Iniciar sesion</h1>
+    <p class="intro">Accede a tu cuenta para continuar con tu progreso.</p>
+
+    @if (mensajeError) {
+      <div class="message error">{{ mensajeError }}</div>
+    }
+
+    @if (mensajeOk) {
+      <div class="message ok">{{ mensajeOk }}</div>
+    }
+
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+      <label class="field">
+        <span>Email</span>
+        <input
+          type="email"
+          name="email"
+          autocomplete="email"
+          required
+          [(ngModel)]="email"
+          [disabled]="cargando"
+        >
+      </label>
+
+      <label class="field">
+        <span>Contrasena</span>
+        <input
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+          [(ngModel)]="password"
+          [disabled]="cargando"
+        >
+      </label>
+
+      <button type="submit" [disabled]="cargando || loginForm.invalid">
+        {{ cargando ? 'Ingresando...' : 'Entrar' }}
+      </button>
+    </form>
+
+    <p class="hint">Demo: <strong>carlos@estudiaya.pe</strong> / <strong>123456</strong></p>
+  </main>
+</section>
