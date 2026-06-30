@@ -1,0 +1,173 @@
+.plan-shell {
+    background: #f8fbfd;
+    border: 1px solid #d7e3e9;
+    border-radius: 18px;
+    margin: 0;
+    max-width: 1120px;
+    min-height: 100%;
+    padding: clamp(16px, 2vw, 24px);
+}
+
+.plan-shell h1 {
+    align-items: center;
+    color: #0f3648;
+    display: flex;
+    font-family: "Sora", "Segoe UI", sans-serif;
+    font-size: clamp(24px, 2.8vw, 34px);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.plan-shell h1 i {
+    color: #ed6a3b;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #d7e3e9;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    padding: 16px;
+}
+
+.card label,
+.card h3 {
+    color: #345f72;
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.card:has(select) {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(4, minmax(120px, 1fr));
+}
+
+select,
+input {
+    background: #f8fbfd;
+    border: 1px solid #caddE7;
+    border-radius: 10px;
+    color: #123544;
+    font: inherit;
+    padding: 10px 12px;
+    width: 100%;
+}
+
+button {
+    background: linear-gradient(130deg, #14506a, #1f8f6a);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 10px 12px;
+}
+
+#planManual {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-bottom: 12px;
+}
+
+.item {
+    align-items: center;
+    background: #edf3f6;
+    border-radius: 10px;
+    color: #214f62;
+    display: flex;
+    font-weight: 600;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 8px 10px;
+}
+
+.item span {
+    color: #c14f27;
+    cursor: pointer;
+}
+
+#resultado {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: 16px;
+}
+
+.day-card {
+    background: #fff;
+    border: 1px solid #d7e3e9;
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.day-card h3 {
+    color: #0f3648;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.bloque {
+    background: #f6fafc;
+    border: 1px solid #e1ecf2;
+    border-radius: 10px;
+    margin-top: 8px;
+    padding: 10px;
+}
+
+.hora {
+    color: #527180;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.modal {
+    align-items: center;
+    background: rgba(12, 29, 38, 0.45);
+    display: none;
+    inset: 0;
+    justify-content: center;
+    padding: 16px;
+    position: fixed;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 14px;
+    max-width: 420px;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.modal-content h3 {
+    color: #14506a;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+    .card:has(select) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 580px) {
+    .plan-shell {
+        min-height: 100%;
+        padding: 14px;
+    }
+
+    .card:has(select) {
+        grid-template-columns: 1fr;
+    }
+
+    #resultado,
+    #planManual {
+        grid-template-columns: 1fr;
+    }
+}

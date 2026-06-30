@@ -1,0 +1,63 @@
+<div class="logros-container">
+  <h1><i class="fa-solid fa-trophy"></i> Logros y Retos</h1>
+
+  <div *ngIf="error()" class="error-banner">
+    {{ error() }}
+  </div>
+
+  <div class="stats-grid">
+    <div class="card stat-card puntos">
+      <h2><i class="fa-solid fa-star"></i> Puntos</h2>
+      <p>{{ puntos() }}</p>
+    </div>
+
+    <div class="card stat-card nivel">
+      <h2><i class="fa-solid fa-chart-line"></i> Nivel</h2>
+      <p>{{ nivel() }}</p>
+    </div>
+
+    <div class="card stat-card rango">
+      <h2><i class="fa-solid fa-ranking-star"></i> Rango</h2>
+      <p>{{ rango() }}</p>
+    </div>
+
+    <div class="card stat-card racha">
+      <h2><i class="fa-solid fa-fire"></i> Racha</h2>
+      <p>{{ racha() }} logros</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="fa-solid fa-chart-simple"></i> Progreso al siguiente nivel</h2>
+    <div class="barra">
+      <div class="barra-fill" [style.width.%]="progresoPorcentaje()"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="fa-solid fa-bullseye"></i> Retos activos</h2>
+    <ul id="retos">
+      <li class="reto" *ngFor="let reto of retosActivos(); let i = index">
+        <span>{{ reto.texto }}</span>
+        <button (click)="completarReto(i)" [disabled]="completandoIndex() === i">
+          <i class="fa-solid fa-check"></i>
+          {{ completandoIndex() === i ? 'Procesando...' : '+' + reto.pts + ' pts' }}
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3><i class="fa-solid fa-award"></i> Insignias</h3>
+    <div id="insignias">
+      <span
+        class="badge"
+        [ngClass]="insignia.clase"
+        *ngFor="let insignia of insignias()"
+      >
+        <i class="fa-solid" [ngClass]="insignia.icono"></i> {{ insignia.texto }}
+      </span>
+      <span class="no-insignia" *ngIf="insignias().length === 0">Sin insignias aún</span>
+    </div>
+  </div>
+</div>

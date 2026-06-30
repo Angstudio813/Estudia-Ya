@@ -1,0 +1,62 @@
+<div class="container mt-5">
+  <h1>📚 Plan de Estudio</h1>
+  <p>Genera tu horario de estudio personalizado.</p>
+
+  <form (ngSubmit)="generarPlan()" class="mb-4">
+    <div class="mb-3">
+      <label class="form-label">Cursos (separados por coma)</label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Matemáticas, Física, Química"
+        [(ngModel)]="cursosTexto"
+        name="cursos"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Horas disponibles por día</label>
+      <input
+        type="number"
+        class="form-control"
+        min="1"
+        max="12"
+        [(ngModel)]="horasDisponiblesPorDia"
+        name="horas"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Días disponibles a la semana</label>
+      <input
+        type="number"
+        class="form-control"
+        min="1"
+        max="7"
+        [(ngModel)]="diasDisponibles"
+        name="dias"
+        required
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="cargando()">
+      {{ cargando() ? 'Generando...' : 'Generar plan' }}
+    </button>
+  </form>
+
+  <div *ngIf="error()" class="alert alert-danger">
+    {{ error() }}
+  </div>
+
+  <div *ngIf="horario()">
+    <h3>Tu horario generado</h3>
+    <div *ngFor="let dia of diasDelHorario" class="mb-3">
+      <h5>{{ dia }}</h5>
+      <ul>
+        <li *ngFor="let item of horario()![dia]">{{ item }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
