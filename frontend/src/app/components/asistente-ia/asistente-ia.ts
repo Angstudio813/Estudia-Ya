@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/auth.service';
 import { AsistenteIARespuesta, AsistenteIAService } from './asistente-ia.service';
 
 @Component({
@@ -11,6 +12,8 @@ import { AsistenteIARespuesta, AsistenteIAService } from './asistente-ia.service
   styleUrl: './asistente-ia.css',
 })
 export class AsistenteIA implements OnInit {
+  private readonly authService = inject(AuthService);
+
   usuarioId = 1;
 
   cargaInicial = signal<boolean>(false);
@@ -30,8 +33,8 @@ export class AsistenteIA implements OnInit {
   constructor(private asistenteIAService: AsistenteIAService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    const param = Number(this.route.snapshot.paramMap.get('usuarioId') ?? '1');
-    this.usuarioId = Number.isFinite(param) && param > 0 ? param : 1;
+    const param = Number(this.route.snapshot.paramMap.get('usuarioId'));
+    this.usuarioId = Number.isFinite(param) && param > 0 ? param : this.authService.getUserId();
     this.cargarAsistencia();
   }
 

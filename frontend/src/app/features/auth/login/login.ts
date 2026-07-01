@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 
@@ -13,6 +13,10 @@ interface LoginResponse {
   email: string;
   nivel: string;
   grado: number;
+  xpTotal?: number;
+  nivelJuego?: number;
+  rachaActual?: number;
+  rachaMasAlta?: number;
 }
 
 @Component({
@@ -26,7 +30,7 @@ export class Login {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly loginUrl = 'http://localhost:8080/api/auth/login';
-  private readonly dashboardUrl = '/';
+  private readonly dashboardUrl = '/inicio';
 
   email = 'carlos@estudiaya.pe';
   password = '123456';
@@ -58,8 +62,8 @@ export class Login {
         this.authService.saveProfile(respuesta);
         this.router.navigateByUrl(this.dashboardUrl);
       },
-      error: () => {
-        this.mensajeError = 'Email o contrasena incorrectos.';
+      error: (error: HttpErrorResponse) => {
+        this.mensajeError = this.obtenerMensajeError(error);
         this.cargando = false;
       }
     });
@@ -67,5 +71,18 @@ export class Login {
 
   private guardarToken(respuesta: LoginResponse): void {
     this.authService.saveSession(respuesta);
+  }
+
+  private obtenerMensajeError(error: HttpErrorResponse): string {
+    if (typeof error.error === 'string' && error.error.trim()) {
+      return error.error;
+    }
+
+    const detalle = error.error?.detail ?? error.error?.message;
+    if (typeof detalle === 'string' && detalle.trim()) {
+      return detalle;
+    }
+
+    return 'Email o contrasena incorrectos.';
   }
 }

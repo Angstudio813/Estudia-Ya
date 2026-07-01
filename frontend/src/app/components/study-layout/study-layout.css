@@ -173,9 +173,18 @@
 }
 
 .logout {
+  background: transparent;
+  border: 0;
   color: rgba(238, 247, 251, 0.72);
+  cursor: pointer;
   font-size: 14px;
   font-weight: 600;
+  padding: 0;
+  text-align: left;
+}
+
+.logout:hover {
+  color: #ffffff;
 }
 
 .main {

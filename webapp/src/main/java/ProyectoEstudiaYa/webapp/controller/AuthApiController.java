@@ -7,9 +7,13 @@ import ProyectoEstudiaYa.webapp.services.UsuarioService;
 import ProyectoEstudiaYa.webapp.security.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,19 +36,42 @@ public class AuthApiController {
     }
 
     @PostMapping("/login")
-    public AuthTokenResponse login(@RequestBody AuthLoginRequest request, HttpServletResponse response) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+    public ResponseEntity<?> login(@RequestBody AuthLoginRequest request, HttpServletResponse response) {
+        if (request == null || esVacio(request.getEmail()) || esVacio(request.getPassword())) {
+            return ResponseEntity.badRequest().body(new AuthErrorResponse("Ingresa tu email y contrasena."));
+        }
+
+        String email = request.getEmail().trim().toLowerCase();
+        Usuario usuario = usuarioService.findByEmail(email).orElse(null);
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthErrorResponse("usuario no existe"));
+        }
+
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, request.getPassword())
+            );
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthErrorResponse("contrase\u00f1a incorrecta"));
+        } catch (AuthenticationException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthErrorResponse("No se pudo iniciar sesion."));
+        }
 
         String token = jwtService.generateToken(authentication.getName());
-        Usuario usuario = usuarioService.obtenerPorEmail(authentication.getName());
         Cookie jwtCookie = new Cookie(JwtService.COOKIE_NAME, token);
         jwtCookie.setHttpOnly(true);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge((int) Duration.ofMillis(jwtService.getExpirationMs()).getSeconds());
         response.addCookie(jwtCookie);
 
-        return new AuthTokenResponse(token, usuario);
+        return ResponseEntity.ok(new AuthTokenResponse(token, usuario));
+    }
+
+    private boolean esVacio(String valor) {
+        return valor == null || valor.isBlank();
+    }
+
+    private record AuthErrorResponse(String message) {
     }
 }

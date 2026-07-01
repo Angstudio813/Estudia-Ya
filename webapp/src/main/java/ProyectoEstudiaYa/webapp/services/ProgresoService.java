@@ -32,7 +32,8 @@ public class ProgresoService {
         List<Progreso> progresos = progresoRepository.findByUsuarioId(usuarioId);
         List<ProgresoTemaDTO> detalleTemas = Collections.emptyList();
 
-        double promedioAcierto = 0.0;
+        Double promedio = progresoRepository.promedioAciertosPorUsuario(usuarioId);
+        double promedioAcierto = promedio == null ? 0.0 : promedio;
         long temasEnRefuerzo = progresoRepository.findByUsuarioIdAndNecesitaRefuerzo(usuarioId, true).size();
 
         long ejerciciosCorrectos = intentoEjercicioRepository.countByUsuarioIdAndEsCorrecta(usuarioId, true);

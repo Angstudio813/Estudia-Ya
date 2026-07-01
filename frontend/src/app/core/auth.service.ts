@@ -12,6 +12,10 @@ export interface UserProfile {
   email: string;
   nivel: string;
   grado: number;
+  xpTotal?: number;
+  nivelJuego?: number;
+  rachaActual?: number;
+  rachaMasAlta?: number;
 }
 
 @Injectable({

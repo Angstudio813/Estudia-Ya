@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/auth.service';
 import { ProgresoResumen, ProgresoService } from './progreso.service';
 
 @Component({
@@ -10,6 +11,8 @@ import { ProgresoResumen, ProgresoService } from './progreso.service';
   styleUrl: './progreso.css',
 })
 export class Progreso implements OnInit {
+  private readonly authService = inject(AuthService);
+
   usuarioId = 1;
 
   progreso = signal<ProgresoResumen | null>(null);
@@ -25,8 +28,8 @@ export class Progreso implements OnInit {
   constructor(private progresoService: ProgresoService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    const param = Number(this.route.snapshot.paramMap.get('usuarioId') ?? '1');
-    this.usuarioId = Number.isFinite(param) && param > 0 ? param : 1;
+    const param = Number(this.route.snapshot.paramMap.get('usuarioId'));
+    this.usuarioId = Number.isFinite(param) && param > 0 ? param : this.authService.getUserId();
     this.cargarProgreso();
   }
 

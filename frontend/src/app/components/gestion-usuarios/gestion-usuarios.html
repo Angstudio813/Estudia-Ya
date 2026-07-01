@@ -1,0 +1,147 @@
+<div class="usuarios-page">
+  <header class="page-head">
+    <div>
+      <span class="eyebrow">Administracion</span>
+      <h1>Gestion de usuarios</h1>
+      <p>Administra las cuentas que acceden a EstudiaYa.</p>
+    </div>
+  </header>
+
+  <div class="status error" *ngIf="error()">{{ error() }}</div>
+  <div class="status ok" *ngIf="mensaje()">{{ mensaje() }}</div>
+
+  <section class="usuarios-layout">
+    <form class="user-panel" (ngSubmit)="guardarUsuario()">
+      <div class="panel-title">
+        <h2>{{ modoEdicion() ? 'Editar usuario' : 'Anadir usuario' }}</h2>
+        <span>{{ modoEdicion() ? 'ID ' + usuarioEditandoId() : 'Nuevo registro' }}</span>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          Nombre
+          <input type="text" name="nombre" [(ngModel)]="form.nombre" autocomplete="given-name" />
+        </label>
+
+        <label>
+          Apellido
+          <input type="text" name="apellido" [(ngModel)]="form.apellido" autocomplete="family-name" />
+        </label>
+
+        <label class="full">
+          Email
+          <input type="email" name="email" [(ngModel)]="form.email" autocomplete="email" />
+        </label>
+
+        <label>
+          Nivel
+          <select name="nivel" [(ngModel)]="form.nivel" (ngModelChange)="cambiarNivel()">
+            <option *ngFor="let nivel of niveles" [ngValue]="nivel">{{ nivelTexto(nivel) }}</option>
+          </select>
+        </label>
+
+        <label>
+          Grado
+          <select name="grado" [(ngModel)]="form.grado">
+            <option *ngFor="let grado of gradosDisponibles" [ngValue]="grado">{{ grado }}</option>
+          </select>
+        </label>
+
+        <label class="full">
+          Contrasena
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="form.password"
+            [placeholder]="modoEdicion() ? 'Mantener actual' : 'Nueva contrasena'"
+            autocomplete="new-password"
+          />
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="primary-btn" [disabled]="guardando()">
+          <i class="fa-solid fa-floppy-disk"></i>
+          {{ guardando() ? 'Guardando...' : (modoEdicion() ? 'Guardar cambios' : 'Crear usuario') }}
+        </button>
+        <button type="button" class="secondary-btn" *ngIf="modoEdicion()" (click)="nuevoUsuario()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+
+    <section class="list-panel">
+      <div class="list-top">
+        <div>
+          <h2>Usuarios registrados</h2>
+          <span>{{ usuarios().length }} cuentas</span>
+        </div>
+
+        <label class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="search"
+            name="busqueda"
+            [ngModel]="busqueda()"
+            (ngModelChange)="busqueda.set($event)"
+            placeholder="Buscar usuario"
+          />
+        </label>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Nivel</th>
+              <th>XP</th>
+              <th>Registro</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="cargando()">
+              <td colspan="5">Cargando usuarios...</td>
+            </tr>
+
+            <tr *ngIf="!cargando() && usuariosFiltrados().length === 0">
+              <td colspan="5">No hay usuarios para mostrar.</td>
+            </tr>
+
+            <tr *ngFor="let usuario of usuariosFiltrados(); trackBy: trackByUsuario">
+              <td>
+                <div class="user-cell">
+                  <div class="avatar">{{ iniciales(usuario) }}</div>
+                  <div>
+                    <strong>{{ usuario.nombre }} {{ usuario.apellido }}</strong>
+                    <span>{{ usuario.email }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>{{ nivelTexto(usuario.nivel) }} {{ usuario.grado }}</td>
+              <td>{{ usuario.xpTotal || 0 }}</td>
+              <td>{{ fechaTexto(usuario.fechaRegistro) }}</td>
+              <td>
+                <div class="row-actions">
+                  <button type="button" class="icon-btn edit" title="Editar" (click)="editarUsuario(usuario)">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-btn delete"
+                    title="Eliminar"
+                    [disabled]="eliminandoId() === usuario.id"
+                    (click)="eliminarUsuario(usuario)"
+                  >
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+</div>

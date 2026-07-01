@@ -11,6 +11,10 @@ public class AuthTokenResponse {
     private final String email;
     private final Usuario.NivelEducativo nivel;
     private final Integer grado;
+    private final Integer xpTotal;
+    private final Integer nivelJuego;
+    private final Integer rachaActual;
+    private final Integer rachaMasAlta;
 
     public AuthTokenResponse(String token, Usuario usuario) {
         this.token = token;
@@ -21,6 +25,10 @@ public class AuthTokenResponse {
         this.email = usuario.getEmail();
         this.nivel = usuario.getNivel();
         this.grado = usuario.getGrado();
+        this.xpTotal = usuario.getXpTotal();
+        this.nivelJuego = usuario.getNivel_juego();
+        this.rachaActual = usuario.getRachaActual();
+        this.rachaMasAlta = usuario.getRachaMasAlta();
     }
 
     public String getToken() {
@@ -53,5 +61,21 @@ public class AuthTokenResponse {
 
     public Integer getGrado() {
         return grado;
+    }
+
+    public Integer getXpTotal() {
+        return xpTotal;
+    }
+
+    public Integer getNivelJuego() {
+        return nivelJuego;
+    }
+
+    public Integer getRachaActual() {
+        return rachaActual;
+    }
+
+    public Integer getRachaMasAlta() {
+        return rachaMasAlta;
     }
 }

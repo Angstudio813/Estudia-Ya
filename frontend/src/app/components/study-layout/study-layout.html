@@ -13,19 +13,23 @@
     </div>
 
     <div class="xp-bar-wrap">
-      <div class="xp-label">{{ nivelXp }}</div>
-      <div class="xp-bar"><div class="xp-fill"></div></div>
-      <div class="xp-text">{{ xpTexto }}</div>
+      <div class="xp-label">{{ nivelXp() }}</div>
+      <div class="xp-bar"><div class="xp-fill" [style.width.%]="xpPorcentaje()"></div></div>
+      <div class="xp-text">{{ xpTexto() }}</div>
     </div>
 
     <nav class="nav">
-      <a class="nav-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <a class="nav-item" routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <div class="nav-dot"></div>
         <span class="nav-label">Inicio</span>
       </a>
       <a class="nav-item" routerLink="/mis-cursos" routerLinkActive="active">
         <div class="nav-dot"></div>
         <span class="nav-label">Mis cursos</span>
+      </a>
+      <a class="nav-item" routerLink="/gestion-usuarios" routerLinkActive="active">
+        <div class="nav-dot"></div>
+        <span class="nav-label">Usuarios</span>
       </a>
       <a class="nav-item" routerLink="/practica-inteligente" routerLinkActive="active">
         <div class="nav-dot"></div>
@@ -50,7 +54,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="logout">Cerrar sesion</div>
+      <button type="button" class="logout" (click)="cerrarSesion()">Cerrar sesion</button>
     </div>
   </aside>
 

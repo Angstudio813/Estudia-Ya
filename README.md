@@ -6,7 +6,7 @@ Proyecto con backend en Spring Boot y frontend en Angular.
 
 - Backend: `http://localhost:8080`
 - Frontend: `http://localhost:4200`
-- Login Angular: `http://localhost:4200/login`
+- Login Angular: `http://localhost:4200/`
 
 ## Antes de correr
 
@@ -64,6 +64,10 @@ El frontend debe quedar corriendo en:
 
 Entra a:
 
+`http://localhost:4200/`
+
+La ruta raiz redirige al login:
+
 `http://localhost:4200/login`
 
 Usuario demo:
@@ -77,4 +81,19 @@ El login de Angular llama al backend en:
 
 Si los datos son correctos, Angular guarda el token y redirige al dashboard:
 
-`http://localhost:8080/`
+`http://localhost:4200/inicio`
+
+## Gestion de usuarios
+
+Modulo Angular:
+
+`http://localhost:4200/gestion-usuarios`
+
+Desde este modulo puedes listar, anadir, editar y eliminar usuarios. Requiere iniciar sesion primero.
+
+API Spring Boot:
+
+- `GET http://localhost:8080/api/usuarios`
+- `POST http://localhost:8080/api/usuarios`
+- `PUT http://localhost:8080/api/usuarios/{id}`
+- `DELETE http://localhost:8080/api/usuarios/{id}`

@@ -7,6 +7,7 @@ import { PracticaInteligente } from './components/practica-inteligente/practica-
 import { AsistenteIA } from './components/asistente-ia/asistente-ia';
 import { Progreso } from './components/progreso/progreso';
 import { MisCursos } from './components/mis-cursos/mis-cursos';
+import { GestionUsuarios } from './components/gestion-usuarios/gestion-usuarios';
 import { Login } from './features/auth/login/login';
 import { authGuard } from './core/auth.guard';
 import { StudyLayout } from './components/study-layout/study-layout';
@@ -18,6 +19,11 @@ export const routes: Routes = [
   },
   {
     path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+  {
+    path: 'inicio',
     component: StudyLayout,
     canActivate: [authGuard],
     children: [
@@ -53,6 +59,18 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'gestion-usuarios',
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: GestionUsuarios,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
     path: 'plan-estudio',
     component: StudyLayout,
     canActivate: [authGuard],
@@ -78,8 +96,15 @@ export const routes: Routes = [
   },
   {
     path: 'progreso',
-    redirectTo: 'progreso/1',
-    pathMatch: 'full'
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: Progreso,
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: 'plan-estuio',
@@ -124,12 +149,19 @@ export const routes: Routes = [
   },
   {
     path: 'asistente-ia',
-    redirectTo: 'asistente-ia/1',
-    pathMatch: 'full'
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: AsistenteIA,
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: '**',
-    redirectTo: '',
+    redirectTo: 'login',
     pathMatch: 'full'
   }
 ];
