@@ -4,10 +4,13 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
+import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
-import { join } from 'node:path';
+import type { ServerResponse } from 'node:http';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const browserDistFolder = join(import.meta.dirname, '../browser');
+const browserDistFolder = join(dirname(fileURLToPath(import.meta.url)), '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
@@ -38,11 +41,11 @@ app.use(
 /**
  * Handle all other requests by rendering the Angular application.
  */
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   angularApp
     .handle(req)
     .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
+      response ? writeResponseToNodeResponse(response, res as unknown as ServerResponse) : next(),
     )
     .catch(next);
 });
@@ -53,7 +56,7 @@ app.use((req, res, next) => {
  */
 if (isMainModule(import.meta.url) || process.env['pm_id']) {
   const port = process.env['PORT'] || 4000;
-  app.listen(port, (error) => {
+  app.listen(port, (error?: Error) => {
     if (error) {
       throw error;
     }

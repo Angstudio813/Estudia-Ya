@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../../core/api-base';
 
 export interface PlanEstudioRequest {
   cursos: string[];
@@ -16,11 +18,14 @@ export interface PlanEstudioResponse {
   providedIn: 'root'
 })
 export class PlanEstudioService {
-  private readonly apiUrl = 'http://localhost:8080/plan-estudio';
+  private readonly apiUrl = `${API_BASE_URL}/plan-estudio`;
 
   constructor(private http: HttpClient) {}
 
   generarPlan(request: PlanEstudioRequest): Observable<PlanEstudioResponse> {
-    return this.http.post<PlanEstudioResponse>(`${this.apiUrl}/generar`, request);
+    return this.http.post<PlanEstudioResponse>(`${this.apiUrl}/generar`, request, {
+      withCredentials: true,
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+    });
   }
 }

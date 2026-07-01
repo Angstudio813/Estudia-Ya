@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/asistente-ia")
@@ -65,6 +66,12 @@ public class AsistenteIAController {
     @ResponseBody
     public AsistenteIARespuestaDTO obtenerAsistenciaApi(@PathVariable Long usuarioId) {
         return asistenteIAService.generarAsistencia(usuarioId);
+    }
+
+    @PostMapping("/api/{usuarioId}/chat")
+    @ResponseBody
+    public Map<String, String> chatApi(@PathVariable Long usuarioId, @RequestParam String pregunta) {
+        return Map.of("respuesta", asistenteIAService.chatLibre(usuarioId, pregunta));
     }
 
     private Usuario obtenerUsuarioAutenticado(Authentication authentication) {

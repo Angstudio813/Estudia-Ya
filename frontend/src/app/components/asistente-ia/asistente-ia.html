@@ -1,0 +1,84 @@
+<div class="detail-wrap">
+  <div class="detail-top">
+    <h1 class="detail-title">Asistente IA</h1>
+    <a class="detail-back" routerLink="/">
+      <i class="fa-solid fa-house"></i> Volver al inicio
+    </a>
+  </div>
+
+  <div class="detail-hero">
+    <h2 id="saludoUsuario">{{ saludoUsuario() }}</h2>
+    <p id="mensajePrincipalIA"><i class="fa-solid fa-robot"></i> {{ saludo() }}</p>
+  </div>
+
+  <div class="detail-grid" *ngIf="!cargaInicial(); else loadingState">
+    <div class="detail-card">
+      <h3>Temas a reforzar</h3>
+      <ul class="detail-list" id="listaTemas">
+        <li *ngIf="temasRefuerzo().length === 0">No hay temas críticos por ahora. ¡Sigue así!</li>
+        <li *ngFor="let tema of temasRefuerzo()">{{ tema }}</li>
+      </ul>
+    </div>
+
+    <div class="detail-card">
+      <h3>Plan sugerido por IA</h3>
+      <ul class="detail-list" id="listaRecomendaciones">
+        <li *ngIf="recomendaciones().length === 0">No hay recomendaciones generadas todavía.</li>
+        <li *ngFor="let recomendacion of recomendaciones()">{{ recomendacion }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="detail-card chat-section">
+    <h3><i class="fa-solid fa-robot chat-title-icon"></i>Hazme una pregunta</h3>
+
+    <div class="sugerencias">
+      <button class="sugerencia-btn" type="button" (click)="setSugerencia('¿Cómo se resuelven las fracciones?')">¿Cómo se resuelven las fracciones?</button>
+      <button class="sugerencia-btn" type="button" (click)="setSugerencia('Explícame la fotosíntesis')">Explícame la fotosíntesis</button>
+      <button class="sugerencia-btn" type="button" (click)="setSugerencia('¿Qué fue la independencia del Perú?')">¿Qué fue la independencia del Perú?</button>
+      <button class="sugerencia-btn" type="button" (click)="setSugerencia('¿Cómo identifico el sujeto en una oración?')">¿Cómo identifico el sujeto?</button>
+    </div>
+
+    <form (ngSubmit)="enviarPregunta()">
+      <div class="chat-form">
+        <input
+          type="text"
+          id="inputPregunta"
+          name="pregunta"
+          class="chat-input"
+          placeholder="Escribe tu pregunta aquí..."
+          [(ngModel)]="pregunta"
+          required
+        />
+        <button type="submit" class="chat-btn" [disabled]="enviando()">
+          <i class="fa-solid fa-paper-plane chat-send-icon"></i>{{ enviando() ? 'Enviando...' : 'Preguntar' }}
+        </button>
+      </div>
+    </form>
+
+    <div class="chat-respuesta" *ngIf="respuestaChat()">
+      <p class="chat-pregunta-label">Tu pregunta: <strong>{{ preguntaRealizada() }}</strong></p>
+      <p class="chat-texto">{{ respuestaChat() }}</p>
+    </div>
+
+    <div class="chat-vacio" *ngIf="!respuestaChat()">
+      <i class="fa-solid fa-comment-dots chat-empty-icon"></i>
+      <i class="fa-solid fa-comments"></i> Escribe tu pregunta y te explico cualquier tema
+    </div>
+  </div>
+
+  <div class="error-banner" *ngIf="error()">{{ error() }}</div>
+</div>
+
+<ng-template #loadingState>
+  <div class="detail-grid">
+    <div class="detail-card">
+      <h3>Temas a reforzar</h3>
+      <ul class="detail-list"><li>Cargando tus temas críticos...</li></ul>
+    </div>
+    <div class="detail-card">
+      <h3>Plan sugerido por IA</h3>
+      <ul class="detail-list"><li>Diseñando tu plan estratégico...</li></ul>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,70 @@
+<div class="detail-wrap">
+  <div class="detail-top">
+    <h1 class="detail-title">Mi progreso</h1>
+    <a class="detail-back" routerLink="/">
+      <i class="fa-solid fa-house"></i> Volver al inicio
+    </a>
+  </div>
+
+  <div class="error-banner" *ngIf="error()">
+    {{ error() }}
+  </div>
+
+  <div class="detail-kpi-grid" *ngIf="!cargando(); else loadingState">
+    <div class="detail-kpi">
+      <div class="detail-kpi-val">{{ totalTemas() }}</div>
+      <div class="detail-kpi-label">Temas con seguimiento</div>
+    </div>
+    <div class="detail-kpi">
+      <div class="detail-kpi-val">{{ promedioAcierto().toFixed(1) }}%</div>
+      <div class="detail-kpi-label">Promedio de acierto</div>
+    </div>
+    <div class="detail-kpi">
+      <div class="detail-kpi-val">{{ ejerciciosCorrectos() }}</div>
+      <div class="detail-kpi-label">Ejercicios correctos</div>
+    </div>
+    <div class="detail-kpi">
+      <div class="detail-kpi-val">{{ logrosTotales() }}</div>
+      <div class="detail-kpi-label">Logros obtenidos</div>
+    </div>
+  </div>
+
+  <div class="detail-table-wrap" *ngIf="!cargando()">
+    <table class="detail-table">
+      <thead>
+        <tr>
+          <th>Tema</th>
+          <th>Intentados</th>
+          <th>Correctos</th>
+          <th>% Acierto</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let tema of detalleTemas(); trackBy: trackByTema">
+          <td>{{ tema.tema }}</td>
+          <td>{{ tema.ejerciciosIntentados }}</td>
+          <td>{{ tema.ejerciciosCorrectos }}</td>
+          <td>{{ formatearPorcentaje(tema.porcentajeAcierto) }}</td>
+          <td>
+            <span class="tag" [class.warn]="tema.necesitaRefuerzo" [class.ok]="!tema.necesitaRefuerzo">
+              {{ tema.necesitaRefuerzo ? 'Reforzar' : 'Estable' }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="detalleTemas().length === 0">
+          <td colspan="5">Aun no hay datos de progreso registrados para este usuario.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #loadingState>
+  <div class="detail-kpi-grid">
+    <div class="detail-kpi"><div class="detail-kpi-val">0</div><div class="detail-kpi-label">Temas con seguimiento</div></div>
+    <div class="detail-kpi"><div class="detail-kpi-val">0%</div><div class="detail-kpi-label">Promedio de acierto</div></div>
+    <div class="detail-kpi"><div class="detail-kpi-val">0</div><div class="detail-kpi-label">Ejercicios correctos</div></div>
+    <div class="detail-kpi"><div class="detail-kpi-val">0</div><div class="detail-kpi-label">Logros obtenidos</div></div>
+  </div>
+</ng-template>

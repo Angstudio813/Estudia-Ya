@@ -2,6 +2,8 @@ package ProyectoEstudiaYa.webapp.controller;
 
 import ProyectoEstudiaYa.webapp.dto.AuthLoginRequest;
 import ProyectoEstudiaYa.webapp.dto.AuthTokenResponse;
+import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.services.UsuarioService;
 import ProyectoEstudiaYa.webapp.security.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,10 +23,12 @@ public class AuthApiController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UsuarioService usuarioService;
 
-    public AuthApiController(AuthenticationManager authenticationManager, JwtService jwtService) {
+    public AuthApiController(AuthenticationManager authenticationManager, JwtService jwtService, UsuarioService usuarioService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.usuarioService = usuarioService;
     }
 
     @PostMapping("/login")
@@ -34,12 +38,13 @@ public class AuthApiController {
         );
 
         String token = jwtService.generateToken(authentication.getName());
+        Usuario usuario = usuarioService.obtenerPorEmail(authentication.getName());
         Cookie jwtCookie = new Cookie(JwtService.COOKIE_NAME, token);
         jwtCookie.setHttpOnly(true);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge((int) Duration.ofMillis(jwtService.getExpirationMs()).getSeconds());
         response.addCookie(jwtCookie);
 
-        return new AuthTokenResponse(token);
+        return new AuthTokenResponse(token, usuario);
     }
 }

@@ -1,10 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/auth.service';
 
 interface LoginResponse {
   token: string;
   type: string;
+  usuarioId: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  nivel: string;
+  grado: number;
 }
 
 @Component({
@@ -15,8 +23,10 @@ interface LoginResponse {
 })
 export class Login {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
   private readonly loginUrl = 'http://localhost:8080/api/auth/login';
-  private readonly dashboardUrl = 'http://localhost:8080/';
+  private readonly dashboardUrl = '/';
 
   email = 'carlos@estudiaya.pe';
   password = '123456';
@@ -45,7 +55,8 @@ export class Login {
     ).subscribe({
       next: (respuesta) => {
         this.guardarToken(respuesta);
-        window.location.href = this.dashboardUrl;
+        this.authService.saveProfile(respuesta);
+        this.router.navigateByUrl(this.dashboardUrl);
       },
       error: () => {
         this.mensajeError = 'Email o contrasena incorrectos.';
@@ -55,11 +66,6 @@ export class Login {
   }
 
   private guardarToken(respuesta: LoginResponse): void {
-    if (typeof localStorage === 'undefined') {
-      return;
-    }
-
-    localStorage.setItem('estudiaya_token', respuesta.token);
-    localStorage.setItem('estudiaya_token_type', respuesta.type);
+    this.authService.saveSession(respuesta);
   }
 }

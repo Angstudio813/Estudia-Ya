@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap');
+
+.home-shell {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.top-bar {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 16px;
+}
+
+.greeting {
+	font-family: "Sora", sans-serif;
+	font-size: 32px;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+}
+
+.greeting-sub {
+	margin-top: 8px;
+	color: #67808c;
+	font-weight: 500;
+}
+
+.streak-badge {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 11px 14px;
+	border-radius: 14px;
+	border: 1px solid #f6d3c3;
+	background: #fff6f1;
+}
+
+.streak-fire {
+	color: #ed6a3b;
+	font-size: 18px;
+}
+
+.streak-num {
+	font-size: 26px;
+	font-weight: 800;
+	color: #c14f27;
+	line-height: 1;
+}
+
+.streak-label {
+	color: #8a5b48;
+	font-size: 12px;
+}
+
+.stats-row {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 14px;
+}
+
+.stat-card {
+	background: #fff;
+	border: 1px solid #d7e3e9;
+	border-radius: 16px;
+	padding: 18px 20px;
+}
+
+.stat-val {
+	font-family: "Sora", sans-serif;
+	font-size: 28px;
+	font-weight: 800;
+	color: #0f3648;
+}
+
+.stat-lbl {
+	margin-top: 4px;
+	color: #5d7885;
+}
+
+.mision-box {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	align-items: center;
+	background: linear-gradient(135deg, #14506a, #1f8f6a);
+	color: #fff;
+	border-radius: 18px;
+	padding: 22px;
+}
+
+.mision-tag {
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.mision-title {
+	margin-top: 6px;
+	font-family: "Sora", sans-serif;
+	font-size: 28px;
+	font-weight: 800;
+}
+
+.mision-sub {
+	margin-top: 6px;
+	color: rgba(255, 255, 255, 0.88);
+}
+
+.mision-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 11px 16px;
+	border-radius: 12px;
+	border: none;
+	background: #fff;
+	color: #14506a;
+	text-decoration: none;
+	font-weight: 800;
+	white-space: nowrap;
+}
+
+.section-title {
+	font-family: "Sora", sans-serif;
+	font-size: 20px;
+	font-weight: 800;
+	color: #0f3648;
+}
+
+.courses-grid,
+.logros-row {
+	display: grid;
+	gap: 14px;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.course-card,
+.logro {
+	background: #fff;
+	border: 1px solid #d7e3e9;
+	border-radius: 16px;
+	padding: 18px;
+}
+
+.course-top {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}
+
+.course-icon,
+.logro-icon {
+	width: 42px;
+	height: 42px;
+	border-radius: 12px;
+	display: grid;
+	place-items: center;
+	background: #edf3f6;
+	color: #14506a;
+}
+
+.course-name,
+.logro-name {
+	font-weight: 800;
+	color: #0f3648;
+}
+
+.course-topic {
+	color: #5d7885;
+}
+
+.prog-bar {
+	height: 10px;
+	border-radius: 999px;
+	background: #e3edf2;
+	margin-top: 16px;
+	overflow: hidden;
+}
+
+.prog-fill {
+	width: 65%;
+	height: 100%;
+	border-radius: inherit;
+	background: linear-gradient(90deg, #ed6a3b, #1f8f6a);
+}
+
+.prog-pct {
+	margin-top: 8px;
+	color: #5d7885;
+	font-size: 13px;
+}
+
+@media (max-width: 760px) {
+	.top-bar,
+	.mision-box {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.stats-row {
+		grid-template-columns: 1fr;
+	}
+
+	.greeting {
+		font-size: 26px;
+	}
+}

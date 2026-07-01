@@ -1,0 +1,102 @@
+<div class="module-header">
+  <div>
+    <div class="module-kicker">Módulo de práctica</div>
+    <h1>Práctica inteligente</h1>
+    <p>Ejercicios seleccionados por prioridad, con feedback inmediato y recomendación de estudio.</p>
+  </div>
+</div>
+
+<div class="practice-dashboard" *ngIf="!cargando()">
+  <div class="practice-focus">
+    <span>Sesión recomendada</span>
+    <strong>{{ practicas().length }} ejercicios</strong>
+    <p>Responde, revisa la explicación y repite las preguntas falladas al final.</p>
+  </div>
+  <div class="practice-stat">
+    <span>XP posible</span>
+    <strong>{{ xpTotal() }}</strong>
+  </div>
+  <div class="practice-stat">
+    <span>Modo</span>
+    <strong>Refuerzo</strong>
+  </div>
+</div>
+
+<section class="session-console" *ngIf="!cargando()">
+  <div>
+    <span>Progreso de sesión</span>
+    <strong><b>{{ totalRespondidas() }}</b>/<b>{{ practicas().length }}</b> respondidas</strong>
+    <div class="session-track"><div class="session-fill" [style.width.%]="progresoSesion()"></div></div>
+  </div>
+  <div class="session-score">
+    <span>Aciertos</span>
+    <strong>{{ totalCorrectas() }}</strong>
+  </div>
+  <div class="session-score">
+    <span>Estado</span>
+    <strong>{{ estadoSesion() }}</strong>
+  </div>
+</section>
+
+<div class="module-toolbar" *ngIf="!cargando()">
+  <button class="filter-chip" [class.active]="filtroActivo() === 'all'" type="button" (click)="setFiltro('all')">Todos</button>
+  <button class="filter-chip" [class.active]="filtroActivo() === 'FACIL'" type="button" (click)="setFiltro('FACIL')">Fácil</button>
+  <button class="filter-chip" [class.active]="filtroActivo() === 'MEDIO'" type="button" (click)="setFiltro('MEDIO')">Medio</button>
+  <button class="filter-chip" [class.active]="filtroActivo() === 'DIFICIL'" type="button" (click)="setFiltro('DIFICIL')">Difícil</button>
+</div>
+
+<div class="practice-list" *ngIf="!cargando() && practicasVisibles().length > 0; else emptyState">
+  <div
+    class="practice-card"
+    *ngFor="let practica of practicasVisibles(); trackBy: trackById"
+    [class.answered-ok]="practica.correcta === true"
+    [class.answered-bad]="practica.correcta === false"
+  >
+    <div class="practice-head">
+      <div class="practice-meta">
+        <span>#{{ practica.id }}</span>
+        <span>{{ practica.cursoNombre || 'Curso' }}</span>
+        <span>{{ practica.temaNombre || 'Tema' }}</span>
+        <span>{{ practica.dificultad || 'Dificultad' }}</span>
+      </div>
+      <div class="xp-token">+{{ practica.xp }} XP</div>
+    </div>
+
+    <h2>{{ practica.pregunta }}</h2>
+    <p class="practice-skill">{{ practica.habilidad || 'Base conceptual' }}</p>
+
+    <div class="answers">
+      <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'A'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'A' && !practica.correcta" (click)="responder(practica.id, 'A')">A. {{ practica.opcionA }}</button>
+      <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'B'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'B' && !practica.correcta" (click)="responder(practica.id, 'B')">B. {{ practica.opcionB }}</button>
+      <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'C'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'C' && !practica.correcta" (click)="responder(practica.id, 'C')">C. {{ practica.opcionC }}</button>
+      <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'D'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'D' && !practica.correcta" (click)="responder(practica.id, 'D')">D. {{ practica.opcionD }}</button>
+    </div>
+
+    <div class="feedback-panel" [hidden]="!practica.feedbackVisible">
+      <strong class="feedback-title">{{ practica.feedbackTitulo }}</strong>
+      <p>{{ practica.feedbackTexto }}</p>
+    </div>
+
+    <div class="coach-note">
+      <span>Consejo IA</span>
+      <p>{{ practica.recomendacion || 'Lee con calma antes de responder.' }}</p>
+    </div>
+
+    <div class="question-footer">
+      <span>Dominio sugerido</span>
+      <strong>{{ practica.dificultad === 'FACIL' ? 'Base' : practica.dificultad === 'MEDIO' ? 'Intermedio' : 'Avanzado' }}</strong>
+    </div>
+  </div>
+</div>
+
+<ng-template #emptyState>
+  <div class="empty-module" *ngIf="!cargando()">
+    <h2>{{ sinResultados() ? 'No hay ejercicios para este filtro' : 'No hay ejercicios registrados' }}</h2>
+    <p>{{ sinResultados() ? 'Prueba con otro nivel de dificultad o vuelve a ver todos los ejercicios.' : 'Cuando agregues ejercicios en la base de datos aparecerán en este módulo.' }}</p>
+  </div>
+</ng-template>
+
+<div class="empty-module" *ngIf="cargando()">
+  <h2>Cargando ejercicios...</h2>
+  <p>Estamos preparando tu sesión de práctica.</p>
+</div>

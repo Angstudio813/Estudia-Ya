@@ -1,0 +1,121 @@
+<div class="mis-cursos-page">
+  <div class="hero-card">
+    <div>
+      <div class="eyebrow">Módulo de aprendizaje</div>
+      <h1>Mis cursos</h1>
+      <p>Revisa tu avance, prioriza el siguiente tema y decide qué practicar hoy.</p>
+    </div>
+
+    <div class="profile-pill">
+      <div class="avatar">{{ iniciales() }}</div>
+      <div>
+        <div class="profile-name">{{ nombreUsuario() }}</div>
+        <div class="profile-grade">{{ gradoTexto() }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="cargando()" class="state-card">Cargando tus cursos...</div>
+
+  <div *ngIf="!cargando() && error()" class="state-card error">{{ error() }}</div>
+
+  <div *ngIf="!cargando() && !error() && cursos().length === 0" class="state-card">No hay cursos registrados.</div>
+
+  <ng-container *ngIf="!cargando() && !error() && cursos().length > 0">
+    <section class="focus-grid" *ngIf="cursoDestacado() as destacado">
+      <div class="focus-card" [style.--accent]="destacado.colorHex || '#14506a'">
+        <div class="focus-content">
+          <div class="focus-tag">Plan de hoy</div>
+          <h2>Continúa con {{ destacado.nombre }}</h2>
+          <p>{{ destacado.recomendacion }}</p>
+          <div class="focus-actions">
+            <a routerLink="/practica-inteligente">Practicar ahora</a>
+            <span>{{ destacado.siguienteTema }}</span>
+          </div>
+        </div>
+
+        <div class="focus-score">
+          <span>Avance</span>
+          <strong>{{ destacado.progreso }}%</strong>
+          <div class="focus-ring">
+            <div class="focus-ring-fill" [style.height.%]="destacado.progreso || 0"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Cursos activos</span>
+        <strong>{{ cursos().length }}</strong>
+      </div>
+      <div class="summary-card">
+        <i class="fa-solid fa-book-open-reader"></i>
+        <span>Temas disponibles</span>
+        <strong>{{ totalTemas() }}</strong>
+      </div>
+      <div class="summary-card">
+        <i class="fa-solid fa-bolt"></i>
+        <span>Ejercicios listos</span>
+        <strong>{{ totalEjercicios() }}</strong>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button type="button" [class.active]="filtroEsActivo('all')" (click)="aplicarFiltro('all')">Todos</button>
+      <button type="button" [class.active]="filtroEsActivo('En progreso')" (click)="aplicarFiltro('En progreso')">En progreso</button>
+      <button type="button" [class.active]="filtroEsActivo('En buen ritmo')" (click)="aplicarFiltro('En buen ritmo')">Buen ritmo</button>
+      <button type="button" [class.active]="filtroEsActivo('Por iniciar')" (click)="aplicarFiltro('Por iniciar')">Por iniciar</button>
+    </div>
+
+    <div class="courses-grid">
+      <article *ngFor="let curso of cursosFiltrados(); trackBy: trackByCurso" class="course-card" [style.--accent]="curso.colorHex || '#534ab7'">
+        <div class="course-icon">
+          <i [class]="iconoCurso(curso.nombre)"></i>
+        </div>
+
+        <div class="course-body">
+          <div class="course-head">
+            <h2>{{ curso.nombre }}</h2>
+            <span class="status-pill">{{ curso.estado }}</span>
+          </div>
+          <p>{{ curso.descripcion || 'Curso disponible para seguir aprendiendo.' }}</p>
+
+          <div class="course-meta">
+            <span>{{ curso.nivel }}</span>
+            <span>{{ curso.grado }} grado</span>
+            <span>{{ curso.totalTemas }} temas</span>
+            <span>{{ curso.totalEjercicios }} ejercicios</span>
+          </div>
+
+          <div class="progress-block">
+            <div class="progress-top">
+              <span>Avance</span>
+              <strong>{{ curso.progreso }}%</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="curso.progreso || 0"></div>
+            </div>
+          </div>
+
+          <div class="course-plan">
+            <div>
+              <span>Siguiente tema</span>
+              <strong>{{ curso.siguienteTema }}</strong>
+            </div>
+            <p>{{ curso.recomendacion }}</p>
+          </div>
+
+          <div class="course-actions">
+            <div>
+              <span>Ritmo sugerido</span>
+              <strong>{{ curso.progreso >= 60 ? 'Consolidar' : 'Reforzar' }}</strong>
+            </div>
+            <a routerLink="/practica-inteligente">Abrir práctica</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </ng-container>
+</div>

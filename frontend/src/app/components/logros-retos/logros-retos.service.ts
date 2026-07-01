@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../../core/api-base';
 
 export interface Logro {
   id: number;
@@ -20,16 +22,24 @@ export interface UsuarioProgreso {
   providedIn: 'root'
 })
 export class LogrosRetosService {
-  private readonly apiUrl = 'http://localhost:8080/gamificacion';
+  private readonly apiUrl = `${API_BASE_URL}/gamificacion`;
 
   constructor(private http: HttpClient) {}
 
   obtenerProgreso(usuarioId: number): Observable<UsuarioProgreso> {
-    return this.http.get<UsuarioProgreso>(`${this.apiUrl}/${usuarioId}`);
+    return this.http.get<UsuarioProgreso>(`${this.apiUrl}/${usuarioId}`, {
+      withCredentials: true,
+    });
   }
 
   completarReto(usuarioId: number, reto: string): Observable<UsuarioProgreso> {
-    const params = new URLSearchParams({ usuarioId: usuarioId.toString(), reto });
-    return this.http.post<UsuarioProgreso>(`${this.apiUrl}/reto?${params.toString()}`, {});
+    const params = new HttpParams()
+      .set('usuarioId', usuarioId.toString())
+      .set('reto', reto);
+
+    return this.http.post<UsuarioProgreso>(`${this.apiUrl}/reto`, {}, {
+      withCredentials: true,
+      params,
+    });
   }
 }

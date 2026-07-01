@@ -1,0 +1,62 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">Estudia<span>Ya</span></div>
+    </div>
+
+    <div class="user-info">
+      <div class="avatar">{{ iniciales() }}</div>
+      <div>
+        <div class="user-name">{{ nombreUsuario() }}</div>
+        <div class="user-grade">{{ gradoTexto() }}</div>
+      </div>
+    </div>
+
+    <div class="xp-bar-wrap">
+      <div class="xp-label">{{ nivelXp }}</div>
+      <div class="xp-bar"><div class="xp-fill"></div></div>
+      <div class="xp-text">{{ xpTexto }}</div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <div class="nav-dot"></div>
+        <span class="nav-label">Inicio</span>
+      </a>
+      <a class="nav-item" routerLink="/mis-cursos" routerLinkActive="active">
+        <div class="nav-dot"></div>
+        <span class="nav-label">Mis cursos</span>
+      </a>
+      <a class="nav-item" routerLink="/practica-inteligente" routerLinkActive="active">
+        <div class="nav-dot"></div>
+        <span class="nav-label">Practica inteligente</span>
+      </a>
+      <a class="nav-item" routerLink="/asistente-ia" routerLinkActive="active">
+        <div class="nav-dot"></div>
+        <span class="nav-label">Asistente IA</span>
+      </a>
+      <a class="nav-item" routerLink="/progreso" routerLinkActive="active">
+        <div class="nav-dot"></div>
+        <span class="nav-label">Mi progreso</span>
+      </a>
+      <a class="nav-item" routerLink="/plan-estudio" routerLinkActive="active">
+        <div class="nav-dot"></div>
+        <span class="nav-label">Plan de estudio</span>
+      </a>
+      <a class="nav-item" routerLink="/logros-retos" routerLinkActive="active">
+        <div class="nav-dot"></div>
+        <span class="nav-label">Logros y retos</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="logout">Cerrar sesion</div>
+    </div>
+  </aside>
+
+  <main class="main module-main">
+    <div class="module-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

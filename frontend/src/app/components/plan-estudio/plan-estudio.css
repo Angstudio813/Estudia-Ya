@@ -3,9 +3,11 @@
     border: 1px solid #d7e3e9;
     border-radius: 18px;
     margin: 0;
-    max-width: 1120px;
+    max-width: none;
     min-height: 100%;
+    width: 100%;
     padding: clamp(16px, 2vw, 24px);
+    box-sizing: border-box;
 }
 
 .plan-shell h1 {

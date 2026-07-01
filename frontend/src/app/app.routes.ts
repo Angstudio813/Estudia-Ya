@@ -3,19 +3,129 @@ import { Routes } from '@angular/router';
 import { Home } from './components/home/home';
 import { PlanEstudio } from './components/plan-estudio/plan-estudio';
 import { LogrosRetos } from './components/logros-retos/logros-retos';
+import { PracticaInteligente } from './components/practica-inteligente/practica-inteligente';
+import { AsistenteIA } from './components/asistente-ia/asistente-ia';
+import { Progreso } from './components/progreso/progreso';
+import { MisCursos } from './components/mis-cursos/mis-cursos';
+import { Login } from './features/auth/login/login';
+import { authGuard } from './core/auth.guard';
+import { StudyLayout } from './components/study-layout/study-layout';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    component: Login
+  },
+  {
     path: '',
-    component: Home
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: Home,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'mis-cursos',
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: MisCursos,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'mis-cursos/:usuarioId',
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: MisCursos,
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: 'plan-estudio',
-    component: PlanEstudio
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: PlanEstudio,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'progreso/:usuarioId',
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: Progreso,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'progreso',
+    redirectTo: 'progreso/1',
+    pathMatch: 'full'
+  },
+  {
+    path: 'plan-estuio',
+    redirectTo: 'plan-estudio',
+    pathMatch: 'full'
   },
   {
     path: 'logros-retos',
-    component: LogrosRetos
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: LogrosRetos,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'practica-inteligente',
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: PracticaInteligente,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'asistente-ia/:usuarioId',
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: AsistenteIA,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'asistente-ia',
+    redirectTo: 'asistente-ia/1',
+    pathMatch: 'full'
   },
   {
     path: '**',

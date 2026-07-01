@@ -1,0 +1,384 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap');
+
+.mis-cursos-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hero-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #67808c;
+}
+
+.hero-card h1 {
+  margin: 6px 0 0;
+  font-family: 'Sora', sans-serif;
+  font-size: 34px;
+  line-height: 1.1;
+  color: #0f3648;
+}
+
+.hero-card p {
+  margin: 8px 0 0;
+  color: #5d7885;
+}
+
+.profile-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #d7e3e9;
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #14506a, #1f8f6a);
+  color: #fff;
+  font-weight: 800;
+}
+
+.profile-name {
+  font-weight: 800;
+  color: #0f3648;
+}
+
+.profile-grade {
+  color: #67808c;
+  font-size: 14px;
+}
+
+.state-card {
+  background: #fff;
+  border: 1px solid #d7e3e9;
+  border-radius: 18px;
+  padding: 20px;
+  color: #0f3648;
+}
+
+.state-card.error {
+  border-color: #f3b4b4;
+  background: #fff6f6;
+  color: #9d2f2f;
+}
+
+.focus-grid {
+  display: grid;
+}
+
+.focus-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--accent, #14506a), #1f8f6a);
+  color: #fff;
+}
+
+.focus-tag {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.focus-card h2 {
+  margin: 8px 0 0;
+  font-family: 'Sora', sans-serif;
+  font-size: 28px;
+}
+
+.focus-card p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.focus-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.focus-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: #fff;
+  color: #14506a;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.focus-actions span {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.focus-score {
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.focus-score strong {
+  font-family: 'Sora', sans-serif;
+  font-size: 30px;
+}
+
+.focus-ring {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: grid;
+  place-items: end center;
+  overflow: hidden;
+}
+
+.focus-ring-fill {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50% 50% 0 0;
+}
+
+.summary-grid,
+.filters,
+.courses-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.summary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.summary-card {
+  background: #fff;
+  border: 1px solid #d7e3e9;
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-card i {
+  font-size: 20px;
+  color: #14506a;
+}
+
+.summary-card span {
+  color: #67808c;
+}
+
+.summary-card strong {
+  font-family: 'Sora', sans-serif;
+  font-size: 28px;
+  color: #0f3648;
+}
+
+.filters {
+  grid-template-columns: repeat(auto-fit, minmax(150px, max-content));
+}
+
+.filters button {
+  border: 1px solid #d7e3e9;
+  background: #fff;
+  color: #14506a;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filters button.active {
+  background: #14506a;
+  color: #fff;
+  border-color: #14506a;
+}
+
+.courses-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.course-card {
+  background: #fff;
+  border: 1px solid #d7e3e9;
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+}
+
+.course-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #edf3f6;
+  color: #14506a;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.course-body {
+  flex: 1;
+}
+
+.course-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.course-head h2 {
+  margin: 0;
+  font-family: 'Sora', sans-serif;
+  font-size: 20px;
+  color: #0f3648;
+}
+
+.status-pill {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #edf3f6;
+  color: #14506a;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.course-body p {
+  margin: 8px 0 0;
+  color: #5d7885;
+}
+
+.course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.course-meta span {
+  background: #f3f7f9;
+  color: #5d7885;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.progress-block {
+  margin-top: 14px;
+}
+
+.progress-top,
+.course-actions,
+.course-plan {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.progress-top span,
+.course-plan span,
+.course-actions span {
+  color: #67808c;
+  font-size: 13px;
+}
+
+.progress-top strong {
+  color: #0f3648;
+}
+
+.progress-track {
+  margin-top: 8px;
+  height: 10px;
+  background: #e5edf1;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ed6a3b, #1f8f6a);
+  border-radius: inherit;
+}
+
+.course-plan {
+  margin-top: 14px;
+  align-items: flex-start;
+}
+
+.course-plan strong {
+  display: block;
+  margin-top: 4px;
+  color: #0f3648;
+}
+
+.course-plan p {
+  margin: 0;
+  max-width: 220px;
+}
+
+.course-actions {
+  margin-top: 16px;
+  align-items: flex-end;
+}
+
+.course-actions strong {
+  display: block;
+  color: #0f3648;
+}
+
+.course-actions a {
+  text-decoration: none;
+  background: #14506a;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .hero-card,
+  .focus-card,
+  .course-card,
+  .course-plan,
+  .course-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-head {
+    flex-direction: column;
+  }
+}
