@@ -1,8 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlanEstudioService, PlanEstudioResponse } from './plan-estudio.service';
-
+import { PlanEstudioService } from './plan-estudio.service';
+import { PlanEstudioResponse } from '../../../shared/interfaces/plan-estudio';
 @Component({
   selector: 'app-plan-estudio',
   imports: [CommonModule, FormsModule],

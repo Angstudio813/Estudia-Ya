@@ -1,7 +1,8 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LogrosRetosService, UsuarioProgreso } from './logros-retos.service';
+import { LogrosRetosService } from './logros-retos.service';
+import { UsuarioProgreso } from '../../../shared/interfaces/logro-reto';
 
 interface RetoActivo {
   texto: string;
