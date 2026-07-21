@@ -15,12 +15,17 @@ public class AsistenteIAController {
         this.asistenteIAService = asistenteIAService;
     }
 
-    @GetMapping("/{usuarioId}")
+// SI EN ANGULAR MANDAS: `${this.apiUrl}/api/${usuarioId}`
+    // ENTONCES AQUÍ DEBES AGREGAR "/api" EN EL GETMAPPING:
+    @GetMapping("/api/{usuarioId}") 
     public AsistenteIARespuestaDTO obtenerAsistenciaApi(@PathVariable Long usuarioId) {
         return asistenteIAService.generarAsistencia(usuarioId);
     }
 
-    @PostMapping("/{usuarioId}/chat")
+
+// SI EN ANGULAR MANDAS: `${this.apiUrl}/api/${usuarioId}/chat`
+    // ENTONCES AQUÍ DEBES AGREGAR "/api" EN EL POSTMAPPING:
+    @PostMapping("/api/{usuarioId}/chat") 
     public Map<String, String> chatApi(@PathVariable Long usuarioId, @RequestParam String pregunta) {
         return Map.of("respuesta", asistenteIAService.chatLibre(usuarioId, pregunta));
     }
