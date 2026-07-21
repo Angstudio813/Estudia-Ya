@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+// ¡Esta es la línea que te faltaba para quitar el error rojo!
+import { API_BASE_URL } from '../../core/api-base';
 
 export interface MisCurso {
   id: number;
@@ -23,7 +25,8 @@ export interface MisCurso {
 })
 export class MisCursosService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/api/mis-cursos';
+  // Ahora usamos la variable global correctamente
+  private readonly baseUrl = `${API_BASE_URL}/api/mis-cursos`;
 
   listarCursos(usuarioId: number): Observable<MisCurso[]> {
     return this.http.get<MisCurso[]>(`${this.baseUrl}?usuarioId=${usuarioId}`, { withCredentials: true });
