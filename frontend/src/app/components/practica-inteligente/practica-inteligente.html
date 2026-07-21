@@ -13,12 +13,12 @@
     <p>Responde, revisa la explicación y repite las preguntas falladas al final.</p>
   </div>
   <div class="practice-stat">
-    <span>XP posible</span>
+    <span>XP ganado</span>
     <strong>{{ xpTotal() }}</strong>
   </div>
   <div class="practice-stat">
     <span>Modo</span>
-    <strong>Refuerzo</strong>
+    <strong>{{ temaId() ? 'Tema específico' : 'Refuerzo' }}</strong>
   </div>
 </div>
 
@@ -39,10 +39,26 @@
 </section>
 
 <div class="module-toolbar" *ngIf="!cargando()">
-  <button class="filter-chip" [class.active]="filtroActivo() === 'all'" type="button" (click)="setFiltro('all')">Todos</button>
-  <button class="filter-chip" [class.active]="filtroActivo() === 'FACIL'" type="button" (click)="setFiltro('FACIL')">Fácil</button>
-  <button class="filter-chip" [class.active]="filtroActivo() === 'MEDIO'" type="button" (click)="setFiltro('MEDIO')">Medio</button>
-  <button class="filter-chip" [class.active]="filtroActivo() === 'DIFICIL'" type="button" (click)="setFiltro('DIFICIL')">Difícil</button>
+  <div class="filter-group">
+    <button class="filter-chip" [class.active]="filtroActivo() === 'all'" type="button" (click)="setFiltro('all')">Todos</button>
+    <button class="filter-chip" [class.active]="filtroActivo() === 'FACIL'" type="button" (click)="setFiltro('FACIL')">Fácil</button>
+    <button class="filter-chip" [class.active]="filtroActivo() === 'MEDIO'" type="button" (click)="setFiltro('MEDIO')">Medio</button>
+    <button class="filter-chip" [class.active]="filtroActivo() === 'DIFICIL'" type="button" (click)="setFiltro('DIFICIL')">Difícil</button>
+  </div>
+  <button
+    class="ai-generate-btn"
+    type="button"
+    (click)="generarEjerciciosIA()"
+    [disabled]="generandoIA() || temaId() == null"
+    [title]="temaId() == null ? 'Selecciona un tema primero' : 'Generar ejercicios con IA'"
+  >
+    <span *ngIf="!generandoIA()">🤖 Generar con IA</span>
+    <span *ngIf="generandoIA()">Generando...</span>
+  </button>
+</div>
+
+<div class="error-banner" *ngIf="error()">
+  <span>{{ error() }}</span>
 </div>
 
 <div class="practice-list" *ngIf="!cargando() && practicasVisibles().length > 0; else emptyState">
@@ -57,9 +73,9 @@
         <span>#{{ practica.id }}</span>
         <span>{{ practica.cursoNombre || 'Curso' }}</span>
         <span>{{ practica.temaNombre || 'Tema' }}</span>
-        <span>{{ practica.dificultad || 'Dificultad' }}</span>
+        <span class="difficulty-badge" [attr.data-diff]="practica.dificultad">{{ practica.dificultad }}</span>
       </div>
-      <div class="xp-token">+{{ practica.xp }} XP</div>
+      <div class="xp-token" [class.xp-earned]="practica.correcta === true">+{{ practica.xp }} XP</div>
     </div>
 
     <h2>{{ practica.pregunta }}</h2>
@@ -72,7 +88,7 @@
       <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'D'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'D' && !practica.correcta" (click)="responder(practica.id, 'D')">D. {{ practica.opcionD }}</button>
     </div>
 
-    <div class="feedback-panel" [hidden]="!practica.feedbackVisible">
+    <div class="feedback-panel" [hidden]="!practica.feedbackVisible" [class.feedback-correct]="practica.correcta === true" [class.feedback-wrong]="practica.correcta === false">
       <strong class="feedback-title">{{ practica.feedbackTitulo }}</strong>
       <p>{{ practica.feedbackTexto }}</p>
     </div>
@@ -92,7 +108,11 @@
 <ng-template #emptyState>
   <div class="empty-module" *ngIf="!cargando()">
     <h2>{{ sinResultados() ? 'No hay ejercicios para este filtro' : 'No hay ejercicios registrados' }}</h2>
-    <p>{{ sinResultados() ? 'Prueba con otro nivel de dificultad o vuelve a ver todos los ejercicios.' : 'Cuando agregues ejercicios en la base de datos aparecerán en este módulo.' }}</p>
+    <p>{{ sinResultados() ? 'Prueba con otro nivel de dificultad o vuelve a ver todos los ejercicios.' : 'Genera ejercicios con IA o espera a que se agreguen nuevos ejercicios.' }}</p>
+    <button *ngIf="temaId() != null" class="ai-generate-btn" type="button" (click)="generarEjerciciosIA()" [disabled]="generandoIA()">
+      <span *ngIf="!generandoIA()">🤖 Generar ejercicios con IA</span>
+      <span *ngIf="generandoIA()">Generando...</span>
+    </button>
   </div>
 </ng-template>
 

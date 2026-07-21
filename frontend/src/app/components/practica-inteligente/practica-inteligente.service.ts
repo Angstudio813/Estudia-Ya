@@ -22,6 +22,12 @@ export interface PracticaInteligenteDTO {
   xp: number;
 }
 
+export interface IntentoResponse {
+  ejercicio: PracticaInteligenteDTO;
+  esCorrecta: boolean;
+  respuestaCorrecta: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -38,6 +44,42 @@ export class PracticaInteligenteService {
     }
 
     return this.http.get<PracticaInteligenteDTO[]>(this.apiUrl, {
+      params,
+      withCredentials: true,
+    });
+  }
+
+  listarPorCurso(cursoId: number): Observable<PracticaInteligenteDTO[]> {
+    return this.http.get<PracticaInteligenteDTO[]>(`${this.apiUrl}/curso/${cursoId}`, {
+      withCredentials: true,
+    });
+  }
+
+  listarPorTema(temaId: number): Observable<PracticaInteligenteDTO[]> {
+    return this.http.get<PracticaInteligenteDTO[]>(`${this.apiUrl}/tema/${temaId}`, {
+      withCredentials: true,
+    });
+  }
+
+  responder(usuarioId: number, ejercicioId: number, respuesta: string): Observable<IntentoResponse> {
+    const params = new HttpParams()
+      .set('usuarioId', usuarioId.toString())
+      .set('ejercicioId', ejercicioId.toString())
+      .set('respuesta', respuesta);
+
+    return this.http.post<IntentoResponse>(`${this.apiUrl}/responder`, null, {
+      params,
+      withCredentials: true,
+    });
+  }
+
+  generarIA(usuarioId: number, temaId: number, cantidad: number = 5): Observable<PracticaInteligenteDTO[]> {
+    const params = new HttpParams()
+      .set('usuarioId', usuarioId.toString())
+      .set('temaId', temaId.toString())
+      .set('cantidad', cantidad.toString());
+
+    return this.http.post<PracticaInteligenteDTO[]>(`${this.apiUrl}/generar-ia`, null, {
       params,
       withCredentials: true,
     });

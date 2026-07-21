@@ -2,25 +2,60 @@ package ProyectoEstudiaYa.webapp.services;
 
 import ProyectoEstudiaYa.webapp.dto.PracticaInteligenteDTO;
 import ProyectoEstudiaYa.webapp.entities.Ejercicio;
+import ProyectoEstudiaYa.webapp.entities.IntentoEjercicio;
 import ProyectoEstudiaYa.webapp.entities.Progreso;
 import ProyectoEstudiaYa.webapp.entities.Tema;
+import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.repositories.EjercicioRepository;
+import ProyectoEstudiaYa.webapp.repositories.IntentoEjercicioRepository;
 import ProyectoEstudiaYa.webapp.repositories.PracticaInteligenteRepository;
 import ProyectoEstudiaYa.webapp.repositories.ProgresoRepository;
-import java.lang.reflect.Field;
-import java.util.List;
+import ProyectoEstudiaYa.webapp.repositories.TemaRepository;
+import ProyectoEstudiaYa.webapp.repositories.UsuarioRepository;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PracticaInteligenteService {
 
     private final PracticaInteligenteRepository practicaInteligenteRepository;
     private final ProgresoRepository progresoRepository;
+    private final IntentoEjercicioRepository intentoEjercicioRepository;
+    private final EjercicioRepository ejercicioRepository;
+    private final TemaRepository temaRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    @Value("${app.ai.custom.groq.api-key}")
+    private String apiKey;
+
+    @Value("${app.ai.custom.groq.model}")
+    private String model;
 
     public PracticaInteligenteService(
             PracticaInteligenteRepository practicaInteligenteRepository,
-            ProgresoRepository progresoRepository) {
+            ProgresoRepository progresoRepository,
+            IntentoEjercicioRepository intentoEjercicioRepository,
+            EjercicioRepository ejercicioRepository,
+            TemaRepository temaRepository,
+            UsuarioRepository usuarioRepository) {
         this.practicaInteligenteRepository = practicaInteligenteRepository;
         this.progresoRepository = progresoRepository;
+        this.intentoEjercicioRepository = intentoEjercicioRepository;
+        this.ejercicioRepository = ejercicioRepository;
+        this.temaRepository = temaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public List<PracticaInteligenteDTO> listarEjercicios() {
@@ -38,8 +73,7 @@ public class PracticaInteligenteService {
         List<Long> temasParaReforzar = progresoRepository
                 .findByUsuarioIdAndNecesitaRefuerzo(usuarioId, true)
                 .stream()
-                .map(progreso -> obtenerCampo(progreso, "tema", Tema.class))
-                .map(tema -> obtenerCampo(tema, "id", Long.class))
+                .map(progreso -> progreso.getTema().getId())
                 .toList();
 
         if (temasParaReforzar.isEmpty()) {
@@ -52,27 +86,154 @@ public class PracticaInteligenteService {
                 .toList();
     }
 
+    public List<PracticaInteligenteDTO> listarEjerciciosPorCurso(Long cursoId) {
+        return practicaInteligenteRepository.findByCursoId(cursoId)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
+
+    public List<PracticaInteligenteDTO> listarEjerciciosPorTema(Long temaId) {
+        return practicaInteligenteRepository.findByTemaId(temaId)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
+
+    @Transactional
+    public PracticaInteligenteDTO registrarIntento(Long usuarioId, Long ejercicioId, String respuestaElegida) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Ejercicio ejercicio = ejercicioRepository.findById(ejercicioId)
+                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+
+        boolean esCorrecta = ejercicio.getRespuestaCorrecta().equalsIgnoreCase(respuestaElegida);
+
+        IntentoEjercicio intento = IntentoEjercicio.builder()
+                .usuario(usuario)
+                .ejercicio(ejercicio)
+                .respuestaElegida(respuestaElegida.toUpperCase())
+                .esCorrecta(esCorrecta)
+                .fechaIntento(LocalDateTime.now())
+                .build();
+        intentoEjercicioRepository.save(intento);
+
+        actualizarProgreso(usuarioId, ejercicio.getTema().getId(), esCorrecta);
+
+        return convertirADTO(ejercicio);
+    }
+
+    @Transactional
+    public void actualizarProgreso(Long usuarioId, Long temaId, boolean esCorrecta) {
+        Progreso progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId)
+                .orElse(Progreso.builder()
+                        .usuario(usuarioRepository.getReferenceById(usuarioId))
+                        .tema(temaRepository.getReferenceById(temaId))
+                        .ejerciciosIntentados(0)
+                        .ejerciciosCorrectos(0)
+                        .porcentajeAcierto(0.0)
+                        .necesitaRefuerzo(false)
+                        .build());
+
+        progreso.setEjerciciosIntentados(progreso.getEjerciciosIntentados() + 1);
+        if (esCorrecta) {
+            progreso.setEjerciciosCorrectos(progreso.getEjerciciosCorrectos() + 1);
+        }
+        progreso.setUltimaPractica(LocalDateTime.now());
+
+        int total = progreso.getEjerciciosIntentados();
+        int correctos = progreso.getEjerciciosCorrectos();
+        double porcentaje = total > 0 ? (double) correctos / total * 100 : 0;
+        progreso.setPorcentajeAcierto(porcentaje);
+        progreso.setNecesitaRefuerzo(porcentaje < 50);
+
+        progresoRepository.save(progreso);
+    }
+
+    @Transactional
+    public List<PracticaInteligenteDTO> generarEjerciciosIA(Long usuarioId, Long temaId, int cantidad) {
+        Tema tema = temaRepository.findById(temaId)
+                .orElseThrow(() -> new RuntimeException("Tema no encontrado"));
+
+        Progreso progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId).orElse(null);
+        double porcentajeAcierto = progreso != null ? progreso.getPorcentajeAcierto() : 50.0;
+        String nivelDificultad = porcentajeAcierto >= 70 ? "DIFICIL" : porcentajeAcierto >= 40 ? "MEDIO" : "FACIL";
+
+        String prompt = String.format("""
+                Genera %d ejercicios de opcion multiple para el tema "%s" del curso "%s".
+                Nivel de dificultad sugerido: %s (basado en el rendimiento del alumno: %.0f%% de acierto).
+                
+                Devuelve la respuesta ESTRICTAMENTE en formato JSON array, sin markdown, con esta estructura:
+                [
+                  {
+                    "pregunta": "Texto de la pregunta",
+                    "opcionA": "Opcion A",
+                    "opcionB": "Opcion B",
+                    "opcionC": "Opcion C",
+                    "opcionD": "Opcion D",
+                    "respuestaCorrecta": "A",
+                    "explicacion": "Explicacion breve de porque es correcta",
+                    "dificultad": "FACIL"
+                  }
+                ]
+                
+                Asegurate de que las preguntas sean claras, las opciones plausibles, y la dificultad variada.
+                """, cantidad, tema.getNombre(), tema.getCurso().getNombre(), nivelDificultad, porcentajeAcierto);
+
+        try {
+            String jsonRespuesta = llamarApiGroq(prompt);
+            String jsonLimpio = jsonRespuesta.replaceAll("```json\\s*", "").replaceAll("```\\s*", "").trim();
+            JsonArray jsonArray = JsonParser.parseString(jsonLimpio).getAsJsonArray();
+
+            List<PracticaInteligenteDTO> ejerciciosGenerados = new ArrayList<>();
+
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JsonObject obj = jsonArray.get(i).getAsJsonObject();
+
+                Ejercicio ejercicio = Ejercicio.builder()
+                        .pregunta(obj.get("pregunta").getAsString())
+                        .opcionA(obj.get("opcionA").getAsString())
+                        .opcionB(obj.get("opcionB").getAsString())
+                        .opcionC(obj.get("opcionC").getAsString())
+                        .opcionD(obj.get("opcionD").getAsString())
+                        .respuestaCorrecta(obj.get("respuestaCorrecta").getAsString().toUpperCase())
+                        .explicacion(obj.get("explicacion").getAsString())
+                        .dificultad(Ejercicio.Dificultad.valueOf(obj.get("dificultad").getAsString().toUpperCase()))
+                        .generadoPorIA(true)
+                        .tema(tema)
+                        .build();
+
+                ejercicio = ejercicioRepository.save(ejercicio);
+                ejerciciosGenerados.add(convertirADTO(ejercicio));
+            }
+
+            return ejerciciosGenerados;
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
     private PracticaInteligenteDTO convertirADTO(Ejercicio ejercicio) {
-        Tema tema = obtenerCampo(ejercicio, "tema", Tema.class);
-        Ejercicio.Dificultad dificultad = obtenerCampo(ejercicio, "dificultad", Ejercicio.Dificultad.class);
-        Object curso = tema == null ? null : obtenerCampo(tema, "curso", Object.class);
-        String temaNombre = tema == null ? "" : obtenerCampo(tema, "nombre", String.class);
-        String dificultadTexto = dificultad == null ? "" : dificultad.name();
+        Tema tema = ejercicio.getTema();
+        Ejercicio.Dificultad dificultad = ejercicio.getDificultad();
+        String temaNombre = tema != null ? tema.getNombre() : "";
+        String cursoNombre = tema != null && tema.getCurso() != null ? tema.getCurso().getNombre() : "";
+        String dificultadTexto = dificultad != null ? dificultad.name() : "";
 
         return new PracticaInteligenteDTO(
-                obtenerCampo(ejercicio, "id", Long.class),
-                obtenerCampo(ejercicio, "pregunta", String.class),
-                obtenerCampo(ejercicio, "opcionA", String.class),
-                obtenerCampo(ejercicio, "opcionB", String.class),
-                obtenerCampo(ejercicio, "opcionC", String.class),
-                obtenerCampo(ejercicio, "opcionD", String.class),
+                ejercicio.getId(),
+                ejercicio.getPregunta(),
+                ejercicio.getOpcionA(),
+                ejercicio.getOpcionB(),
+                ejercicio.getOpcionC(),
+                ejercicio.getOpcionD(),
                 dificultadTexto,
-                obtenerCampo(ejercicio, "generadoPorIA", Boolean.class),
-                tema == null ? null : obtenerCampo(tema, "id", Long.class),
+                ejercicio.getGeneradoPorIA(),
+                tema != null ? tema.getId() : null,
                 temaNombre,
-                curso == null ? "" : obtenerCampo(curso, "nombre", String.class),
-                obtenerCampo(ejercicio, "respuestaCorrecta", String.class),
-                obtenerCampo(ejercicio, "explicacion", String.class),
+                cursoNombre,
+                ejercicio.getRespuestaCorrecta(),
+                ejercicio.getExplicacion(),
                 obtenerHabilidad(temaNombre, dificultadTexto),
                 obtenerRecomendacion(dificultadTexto, temaNombre),
                 obtenerXp(dificultadTexto));
@@ -82,47 +243,54 @@ public class PracticaInteligenteService {
         if (temaNombre == null || temaNombre.isBlank()) {
             return "Razonamiento";
         }
-        if ("DIFICIL".equals(dificultad)) {
-            return "Dominio avanzado de " + temaNombre;
-        }
-        if ("MEDIO".equals(dificultad)) {
-            return "Aplicacion guiada de " + temaNombre;
-        }
-        return "Base conceptual de " + temaNombre;
+        return switch (dificultad) {
+            case "DIFICIL" -> "Dominio avanzado de " + temaNombre;
+            case "MEDIO" -> "Aplicacion guiada de " + temaNombre;
+            default -> "Base conceptual de " + temaNombre;
+        };
     }
 
     private String obtenerRecomendacion(String dificultad, String temaNombre) {
-        if ("DIFICIL".equals(dificultad)) {
-            return "Resuelve sin mirar pistas y luego contrasta tu razonamiento.";
-        }
-        if ("MEDIO".equals(dificultad)) {
-            return "Anota el paso clave antes de elegir una alternativa.";
-        }
-        return "Lee cada opcion y descarta primero las respuestas imposibles.";
+        return switch (dificultad) {
+            case "DIFICIL" -> "Resuelve sin mirar pistas y luego contrasta tu razonamiento.";
+            case "MEDIO" -> "Anota el paso clave antes de elegir una alternativa.";
+            default -> "Lee cada opcion y descarta primero las respuestas imposibles.";
+        };
     }
 
     private Integer obtenerXp(String dificultad) {
-        if ("DIFICIL".equals(dificultad)) {
-            return 25;
-        }
-        if ("MEDIO".equals(dificultad)) {
-            return 18;
-        }
-        return 12;
+        return switch (dificultad) {
+            case "DIFICIL" -> 25;
+            case "MEDIO" -> 18;
+            default -> 12;
+        };
     }
 
-    private <T> T obtenerCampo(Object origen, String nombreCampo, Class<T> tipo) {
-        if (origen == null) {
-            return null;
-        }
+    private String llamarApiGroq(String prompt) {
+        String url = "https://api.groq.com/openai/v1/chat/completions";
+        String promptEscapado = prompt.replace("\"", "\\\"");
+        String jsonBody = "{"
+                + "\"model\": \"" + this.model.trim() + "\","
+                + "\"messages\": [{\"role\": \"user\", \"content\": \"" + promptEscapado + "\"}],"
+                + "\"temperature\": 0.7"
+                + "}";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + this.apiKey.trim());
+
+        HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
+        String response = restTemplate.postForObject(url, entity, String.class);
 
         try {
-            Field field = origen.getClass().getDeclaredField(nombreCampo);
-            field.setAccessible(true);
-            return tipo.cast(field.get(origen));
-        } catch (ReflectiveOperationException | ClassCastException ex) {
-            return null;
+            JsonObject jsonResponse = JsonParser.parseString(response).getAsJsonObject();
+            return jsonResponse.getAsJsonArray("choices")
+                    .get(0).getAsJsonObject()
+                    .get("message").getAsJsonObject()
+                    .get("content").getAsString();
+        } catch (Exception e) {
+            return response;
         }
     }
 }
-    

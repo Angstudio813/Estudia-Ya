@@ -108,10 +108,18 @@
 }
 
 .module-toolbar {
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: space-between;
   margin-bottom: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .filter-chip {
@@ -131,6 +139,80 @@
   background: #11313f;
   border-color: #11313f;
   color: #fff;
+}
+
+.ai-generate-btn {
+  align-items: center;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  border-radius: 999px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  gap: 6px;
+  padding: 10px 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ai-generate-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+  transform: translateY(-1px);
+}
+
+.ai-generate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-banner {
+  background: #fff1ed;
+  border: 1px solid #f3b4b4;
+  border-radius: 12px;
+  color: #9d2f2f;
+  font-weight: 700;
+  margin-bottom: 14px;
+  padding: 12px 16px;
+}
+
+.difficulty-badge[data-diff="FACIL"] {
+  background: #edf8f3;
+  color: #126145;
+}
+
+.difficulty-badge[data-diff="MEDIO"] {
+  background: #fff6f1;
+  color: #c14f27;
+}
+
+.difficulty-badge[data-diff="DIFICIL"] {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.xp-earned {
+  background: #dcfce7 !important;
+  color: #16a34a !important;
+}
+
+.feedback-correct {
+  background: #dcfce7 !important;
+  border-color: #86efac !important;
+}
+
+.feedback-correct .feedback-title {
+  color: #16a34a;
+}
+
+.feedback-wrong {
+  background: #fef2f2 !important;
+  border-color: #fca5a5 !important;
+}
+
+.feedback-wrong .feedback-title {
+  color: #dc2626;
 }
 
 .practice-list {
