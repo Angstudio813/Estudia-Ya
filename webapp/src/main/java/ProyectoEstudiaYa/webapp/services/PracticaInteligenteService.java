@@ -209,6 +209,8 @@ public class PracticaInteligenteService {
 
             return ejerciciosGenerados;
         } catch (Exception e) {
+            System.err.println("[PracticaInteligenteService] Error generando ejercicios IA: " + e.getMessage());
+            e.printStackTrace();
             return List.of();
         }
     }

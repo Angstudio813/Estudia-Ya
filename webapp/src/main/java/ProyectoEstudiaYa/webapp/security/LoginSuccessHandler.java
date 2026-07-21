@@ -1,9 +1,9 @@
 package ProyectoEstudiaYa.webapp.security;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -25,11 +25,14 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException, ServletException {
 
         String token = jwtService.generateToken(authentication.getName());
-        Cookie jwtCookie = new Cookie(JwtService.COOKIE_NAME, token);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge((int) Duration.ofMillis(jwtService.getExpirationMs()).getSeconds());
-        response.addCookie(jwtCookie);
+        ResponseCookie jwtCookie = ResponseCookie.from(JwtService.COOKIE_NAME, token)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(Duration.ofMillis(jwtService.getExpirationMs()))
+                .build();
+        response.setHeader("Set-Cookie", jwtCookie.toString());
 
         String next = request.getParameter("next");
         if (next == null || next.isBlank()) {

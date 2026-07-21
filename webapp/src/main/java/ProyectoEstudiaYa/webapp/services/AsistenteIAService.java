@@ -84,8 +84,9 @@ public class AsistenteIAService {
         try {
             return llamarApiGroq(promptContextualizado);
         } catch (Exception e) {
+            System.err.println("[AsistenteIAService] Error en chatLibre: " + e.getMessage());
             e.printStackTrace();
-            return "Error real en Groq: " + e.getMessage();
+            return "Disculpa, tuve un problema al procesar tu pregunta. Por favor, intenta de nuevo.";
         }
     }
 

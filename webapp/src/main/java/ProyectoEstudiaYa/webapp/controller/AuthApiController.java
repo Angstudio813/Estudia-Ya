@@ -5,10 +5,10 @@ import ProyectoEstudiaYa.webapp.dto.AuthTokenResponse;
 import ProyectoEstudiaYa.webapp.entities.Usuario;
 import ProyectoEstudiaYa.webapp.services.UsuarioService;
 import ProyectoEstudiaYa.webapp.security.JwtService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,11 +59,14 @@ public class AuthApiController {
         }
 
         String token = jwtService.generateToken(authentication.getName());
-        Cookie jwtCookie = new Cookie(JwtService.COOKIE_NAME, token);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge((int) Duration.ofMillis(jwtService.getExpirationMs()).getSeconds());
-        response.addCookie(jwtCookie);
+        ResponseCookie jwtCookie = ResponseCookie.from(JwtService.COOKIE_NAME, token)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .maxAge(Duration.ofMillis(jwtService.getExpirationMs()))
+                .build();
+        response.setHeader("Set-Cookie", jwtCookie.toString());
 
         return ResponseEntity.ok(new AuthTokenResponse(token, usuario));
     }

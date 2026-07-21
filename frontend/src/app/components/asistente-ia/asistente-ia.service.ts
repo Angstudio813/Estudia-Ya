@@ -19,12 +19,11 @@ export interface AsistenteChatRespuesta {
   providedIn: 'root',
 })
 export class AsistenteIAService {
-  private readonly apiUrl = `${API_BASE_URL}/asistente-ia`;
+  private readonly apiUrl = `${API_BASE_URL}/api/asistente-ia`;
 
   constructor(private http: HttpClient) {}
 
   obtenerAsistencia(usuarioId: number): Observable<AsistenteIARespuesta> {
-    // CAMBIO: Se eliminó el '/api' que estaba antes de ${usuarioId}
     return this.http.get<AsistenteIARespuesta>(`${this.apiUrl}/${usuarioId}`, {
       withCredentials: true,
     });
@@ -33,7 +32,6 @@ export class AsistenteIAService {
 enviarPregunta(usuarioId: number, pregunta: string): Observable<AsistenteChatRespuesta> {
     const params = new HttpParams().set('pregunta', pregunta);
 
-    // CAMBIO: Se eliminó el '/api' que estaba antes de ${usuarioId}/chat
     return this.http.post<AsistenteChatRespuesta>(`${this.apiUrl}/${usuarioId}/chat`, {}, {
       params,
       withCredentials: true,
