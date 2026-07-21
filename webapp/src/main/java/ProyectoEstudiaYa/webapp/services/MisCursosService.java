@@ -28,9 +28,26 @@ public class MisCursosService {
     }
 
     public List<MisCursosDTO> listarCursos(Long usuarioId) {
+        // Si por alguna razón no envían el ID, devolvemos todos (comportamiento por defecto)
+        if (usuarioId == null) {
+            return misCursosRepository.findAll()
+                    .stream()
+                    .map(curso -> convertirADTO(curso, null))
+                    .toList();
+        }
+
+        // Si hay ID, filtramos SOLAMENTE los cursos donde el alumno está matriculado
         return misCursosRepository.findAll()
                 .stream()
-                .map(curso -> convertirADTO(curso, buscarInscripcion(usuarioId, curso)))
+                .map(curso -> {
+                    UsuarioCurso inscripcion = buscarInscripcion(usuarioId, curso);
+                    // Si encontramos inscripción, armamos el DTO. Si no, devolvemos null.
+                    if (inscripcion != null) {
+                        return convertirADTO(curso, inscripcion);
+                    }
+                    return null;
+                })
+                .filter(dto -> dto != null) // <--- ¡ESTO ELIMINA LOS 84 CURSOS QUE SOBRAN!
                 .toList();
     }
 
