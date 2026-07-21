@@ -29,4 +29,4 @@ public class AsistenteIAController {
     public Map<String, String> chatApi(@PathVariable Long usuarioId, @RequestParam String pregunta) {
         return Map.of("respuesta", asistenteIAService.chatLibre(usuarioId, pregunta));
     }
-}
+    }
