@@ -1,0 +1,173 @@
+<!-- MODO DETALLE DEL TEMA -->
+<ng-container *ngIf="!cargando() && !modoPractica() && tema() as t">
+  <div class="tema-detalle-page">
+    <div class="tema-hero" [style.--accent]="t.cursoColor || '#14506a'">
+      <a class="back-link" [routerLink]="['/cursos', t.cursoId]">&larr; Volver a {{ t.cursoNombre }}</a>
+      <div class="tema-hero-head">
+        <div class="tema-number-large">{{ t.orden || 1 }}</div>
+        <div>
+          <h1>{{ t.nombre }}</h1>
+          <p class="curso-label">{{ t.cursoNombre }}</p>
+        </div>
+      </div>
+      <p *ngIf="t.descripcion" class="tema-desc">{{ t.descripcion }}</p>
+
+      <div class="tema-stats-row">
+        <div class="stat-box">
+          <span>Ejercicios</span>
+          <strong>{{ t.totalEjercicios }}</strong>
+        </div>
+        <div class="stat-box">
+          <span>Resueltos</span>
+          <strong>{{ t.ejerciciosResueltos }}</strong>
+        </div>
+        <div class="stat-box">
+          <span>Acierto</span>
+          <strong>{{ t.porcentajeAcierto | number:'1.0-0' }}%</strong>
+        </div>
+        <div class="stat-box">
+          <span>Estado</span>
+          <strong>{{ getEstadoTema(t) }}</strong>
+        </div>
+      </div>
+
+      <div class="tema-progress-bar">
+        <div class="tema-progress-track">
+          <div class="tema-progress-fill" [style.width.%]="t.porcentajeAcierto || 0"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="practice-section">
+      <div class="practice-header">
+        <div>
+          <h2>Practica inteligente</h2>
+          <p>Genera ejercicios adaptados a tu nivel con inteligencia artificial.</p>
+        </div>
+        <button class="btn-generar-ia" (click)="iniciarPractica()" [disabled]="generandoIA()">
+          <span *ngIf="!generandoIA()">Generar ejercicios con IA</span>
+          <span *ngIf="generandoIA()">Generando...</span>
+        </button>
+      </div>
+
+      <div class="existing-exercises" *ngIf="t.ejercicios.length > 0">
+        <h3>Ejercicios existentes en la base de datos</h3>
+        <p>Estos ejercicios ya estan disponibles. Tambien puedes generar nuevos con IA.</p>
+        <div class="exercise-list-existing">
+          <div class="exercise-item" *ngFor="let e of t.ejercicios; let i = index">
+            <span class="exercise-num">{{ i + 1 }}</span>
+            <span class="exercise-text">{{ e.pregunta }}</span>
+            <span class="exercise-diff" [attr.data-diff]="e.dificultad">{{ e.dificultad }}</span>
+            <span class="exercise-ia" *ngIf="e.generadoPorIA">IA</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-exercises" *ngIf="t.ejercicios.length === 0">
+        <p>Este tema aun no tiene ejercicios. Usa el boton de arriba para generarlos con IA.</p>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- MODO PRACTICA -->
+<ng-container *ngIf="modoPractica()">
+  <div class="practica-page">
+    <div class="practica-header">
+      <div>
+        <h1>Practica: {{ tema()?.nombre }}</h1>
+        <p>Ejercicios generados por IA para este tema.</p>
+      </div>
+      <div class="practica-actions">
+        <button class="btn-volver-tema" (click)="volverAlCurso()">&larr; Volver al tema</button>
+      </div>
+    </div>
+
+    <div class="practica-stats" *ngIf="practicas().length > 0">
+      <div class="stat-card">
+        <span>Total</span>
+        <strong>{{ practicas().length }}</strong>
+      </div>
+      <div class="stat-card">
+        <span>Respondidas</span>
+        <strong>{{ totalRespondidas() }}</strong>
+      </div>
+      <div class="stat-card">
+        <span>Correctas</span>
+        <strong>{{ totalCorrectas() }}</strong>
+      </div>
+      <div class="stat-card">
+        <span>XP ganado</span>
+        <strong>{{ xpGanado() }}</strong>
+      </div>
+    </div>
+
+    <div class="generando-overlay" *ngIf="generandoIA()">
+      <div class="generando-card">
+        <div class="spinner"></div>
+        <h2>Generando ejercicios con IA...</h2>
+        <p>Esto puede tomar unos segundos.</p>
+      </div>
+    </div>
+
+    <div class="error-banner" *ngIf="error()">{{ error() }}</div>
+
+    <div class="practice-list" *ngIf="!generandoIA() && practicas().length > 0">
+      <div
+        class="practice-card"
+        *ngFor="let practica of practicas(); trackBy: trackById"
+        [class.answered-ok]="practica.correcta === true"
+        [class.answered-bad]="practica.correcta === false"
+      >
+        <div class="practice-head">
+          <div class="practice-meta">
+            <span class="difficulty-badge" [attr.data-diff]="practica.dificultad">{{ practica.dificultad }}</span>
+            <span class="ai-badge">IA</span>
+          </div>
+          <div class="xp-token" [class.xp-earned]="practica.correcta === true">+{{ practica.xp }} XP</div>
+        </div>
+
+        <h2>{{ practica.pregunta }}</h2>
+        <p class="practice-skill">{{ practica.habilidad }}</p>
+
+        <div class="answers">
+          <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'A'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'A' && !practica.correcta" (click)="responder(practica.id, 'A')">A. {{ practica.opcionA }}</button>
+          <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'B'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'B' && !practica.correcta" (click)="responder(practica.id, 'B')">B. {{ practica.opcionB }}</button>
+          <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'C'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'C' && !practica.correcta" (click)="responder(practica.id, 'C')">C. {{ practica.opcionC }}</button>
+          <button type="button" [disabled]="practica.respondida" [class.is-correct]="practica.respondida && practica.respuestaCorrecta === 'D'" [class.is-wrong]="practica.respondida && practica.seleccionada === 'D' && !practica.correcta" (click)="responder(practica.id, 'D')">D. {{ practica.opcionD }}</button>
+        </div>
+
+        <div class="feedback-panel" [hidden]="!practica.feedbackVisible" [class.feedback-correct]="practica.correcta === true" [class.feedback-wrong]="practica.correcta === false">
+          <strong class="feedback-title">{{ practica.feedbackTitulo }}</strong>
+          <p>{{ practica.feedbackTexto }}</p>
+        </div>
+
+        <div class="coach-note">
+          <span>Consejo IA</span>
+          <p>{{ practica.recomendacion }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="session-complete" *ngIf="!generandoIA() && practicas().length > 0 && totalRespondidas() === practicas().length">
+      <h2>Sesion completada!</h2>
+      <p>Obtuviste {{ totalCorrectas() }} de {{ practicas().length }} correctas. +{{ xpGanado() }} XP</p>
+      <div class="session-actions">
+        <button class="btn-generar-ia" (click)="iniciarPractica()">Generar mas ejercicios</button>
+        <button class="btn-volver-tema" (click)="volverAlCurso()">&larr; Volver al tema</button>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- ESTADOS DE CARGA / ERROR -->
+<div class="empty-state" *ngIf="cargando()">
+  <h2>Cargando tema...</h2>
+  <p>Preparando informacion del tema.</p>
+</div>
+
+<div class="empty-state" *ngIf="!cargando() && error() && !modoPractica()">
+  <h2>Error</h2>
+  <p>{{ error() }}</p>
+  <a routerLink="/mis-cursos" class="btn-volver">Volver a mis cursos</a>
+</div>

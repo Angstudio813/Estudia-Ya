@@ -37,7 +37,7 @@ import { MisCurso, MisCursosService } from './mis-cursos.service';
               <h2>Continúa con {{ destacado.nombre }}</h2>
               <p>{{ destacado.recomendacion }}</p>
               <div class="focus-actions">
-                <a [routerLink]="['/practica-inteligente']" [queryParams]="{ cursoId: destacado.id }">Practicar ahora</a>
+                <a [routerLink]="['/cursos', destacado.id]">Abrir curso</a>
                 <span>{{ destacado.siguienteTema }}</span>
               </div>
             </div>
@@ -120,7 +120,7 @@ import { MisCurso, MisCursosService } from './mis-cursos.service';
                   <span>Ritmo sugerido</span>
                   <strong>{{ curso.progreso >= 60 ? 'Consolidar' : 'Reforzar' }}</strong>
                 </div>
-                <a [routerLink]="['/practica-inteligente']" [queryParams]="{ cursoId: curso.id }">Abrir práctica</a>
+                <a [routerLink]="['/cursos', curso.id]">Ver curso</a>
               </div>
             </div>
           </article>

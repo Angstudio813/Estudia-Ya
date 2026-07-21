@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
-import { PracticaInteligenteDTO, PracticaInteligenteService, IntentoResponse } from './practica-inteligente.service';
+import { PracticaInteligenteDTO, PracticaInteligenteService } from './practica-inteligente.service';
 
 type FiltroDificultad = 'all' | 'FACIL' | 'MEDIO' | 'DIFICIL';
 
@@ -17,7 +17,7 @@ interface PracticaVista extends PracticaInteligenteDTO {
 
 @Component({
   selector: 'app-practica-inteligente',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './practica-inteligente.html',
   styleUrl: './practica-inteligente.css',
 })
@@ -29,10 +29,10 @@ export class PracticaInteligente implements OnInit {
   practicas = signal<PracticaVista[]>([]);
   filtroActivo = signal<FiltroDificultad>('all');
   cargando = signal<boolean>(false);
+  generandoIA = signal<boolean>(false);
   error = signal<string>('');
   cursoId = signal<number | null>(null);
   temaId = signal<number | null>(null);
-  generandoIA = signal<boolean>(false);
 
   usuarioId = computed(() => this.authService.getUserId());
 
@@ -73,12 +73,13 @@ export class PracticaInteligente implements OnInit {
       this.temaId.set(temaIdParam);
     }
 
-    this.cargarPracticas();
+    this.generarPracticaIA();
   }
 
-  cargarPracticas(): void {
+  generarPracticaIA(): void {
     this.error.set('');
-    this.cargando.set(true);
+    this.generandoIA.set(true);
+    this.practicas.set([]);
 
     const tid = this.temaId();
     const cid = this.cursoId();
@@ -87,15 +88,22 @@ export class PracticaInteligente implements OnInit {
     let request$;
 
     if (tid != null) {
-      request$ = this.practicaInteligenteService.listarPorTema(tid);
+      request$ = this.practicaInteligenteService.generarIA(uid, tid, 5);
     } else if (cid != null) {
-      request$ = this.practicaInteligenteService.listarPorCurso(cid);
+      request$ = this.practicaInteligenteService.generarCursoIA(uid, cid, 3);
     } else {
-      request$ = this.practicaInteligenteService.listar(uid);
+      this.error.set('Selecciona un curso o tema desde Mis Cursos para generar ejercicios con IA.');
+      this.generandoIA.set(false);
+      return;
     }
 
     request$.subscribe({
       next: (data) => {
+        if (data.length === 0) {
+          this.error.set('No se pudieron generar ejercicios. Verifica que el tema tenga contenido.');
+          this.generandoIA.set(false);
+          return;
+        }
         this.practicas.set(
           data.map((practica) => ({
             ...practica,
@@ -107,12 +115,12 @@ export class PracticaInteligente implements OnInit {
             feedbackTexto: practica.explicacion || 'Revisa el procedimiento y vuelve a intentarlo.',
           })),
         );
-        this.cargando.set(false);
+        this.generandoIA.set(false);
       },
       error: (err) => {
         console.error(err);
-        this.error.set('No se pudieron cargar los ejercicios. Verifica que el backend esté corriendo.');
-        this.cargando.set(false);
+        this.error.set('Error al generar ejercicios con IA. Verifica que el backend esté corriendo.');
+        this.generandoIA.set(false);
       },
     });
   }
@@ -164,45 +172,6 @@ export class PracticaInteligente implements OnInit {
             };
           }),
         );
-      },
-    });
-  }
-
-  generarEjerciciosIA(): void {
-    const tid = this.temaId();
-    if (tid == null) {
-      this.error.set('Selecciona un tema primero para generar ejercicios con IA.');
-      return;
-    }
-
-    this.generandoIA.set(true);
-    this.error.set('');
-
-    this.practicaInteligenteService.generarIA(this.usuarioId(), tid, 5).subscribe({
-      next: (nuevosEjercicios) => {
-        if (nuevosEjercicios.length === 0) {
-          this.error.set('No se pudieron generar ejercicios. Intenta con otro tema.');
-          this.generandoIA.set(false);
-          return;
-        }
-
-        const nuevasPracticas: PracticaVista[] = nuevosEjercicios.map((practica) => ({
-          ...practica,
-          respondida: false,
-          seleccionada: null,
-          correcta: null,
-          feedbackVisible: false,
-          feedbackTitulo: 'Resultado',
-          feedbackTexto: practica.explicacion || 'Revisa el procedimiento y vuelve a intentarlo.',
-        }));
-
-        this.practicas.update((actuales) => [...nuevasPracticas, ...actuales]);
-        this.generandoIA.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.error.set('Error al generar ejercicios con IA. Verifica la configuración.');
-        this.generandoIA.set(false);
       },
     });
   }

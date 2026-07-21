@@ -84,4 +84,16 @@ export class PracticaInteligenteService {
       withCredentials: true,
     });
   }
+
+  generarCursoIA(usuarioId: number, cursoId: number, cantidadPorTema: number = 3): Observable<PracticaInteligenteDTO[]> {
+    const params = new HttpParams()
+      .set('usuarioId', usuarioId.toString())
+      .set('cursoId', cursoId.toString())
+      .set('cantidadPorTema', cantidadPorTema.toString());
+
+    return this.http.post<PracticaInteligenteDTO[]>(`${this.apiUrl}/generar-ia-curso`, null, {
+      params,
+      withCredentials: true,
+    });
+  }
 }

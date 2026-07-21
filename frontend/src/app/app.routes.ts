@@ -11,6 +11,8 @@ import { GestionUsuarios } from './components/gestion-usuarios/gestion-usuarios'
 import { Login } from './features/auth/login/login';
 import { authGuard } from './core/auth.guard';
 import { StudyLayout } from './components/study-layout/study-layout';
+import { CursoDetalleComponent } from './components/curso-detalle/curso-detalle';
+import { TemaDetalleComponent } from './components/tema-detalle/tema-detalle';
 
 export const routes: Routes = [
   {
@@ -54,6 +56,30 @@ export const routes: Routes = [
       {
         path: '',
         component: MisCursos,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'cursos/:cursoId',
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: CursoDetalleComponent,
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'temas/:temaId',
+    component: StudyLayout,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: TemaDetalleComponent,
         pathMatch: 'full'
       }
     ]

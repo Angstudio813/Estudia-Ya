@@ -1,0 +1,114 @@
+<ng-container *ngIf="!cargando() && curso() as c">
+<div class="curso-detalle-page">
+  <div class="curso-hero" [style.--accent]="c.colorHex || '#14506a'">
+    <div class="curso-hero-content">
+      <a class="back-link" routerLink="/mis-cursos">← Volver a mis cursos</a>
+      <div class="curso-icon-large">
+        <i [class]="iconoCurso(c.nombre)"></i>
+      </div>
+      <h1>{{ c.nombre }}</h1>
+      <p>{{ c.descripcion || 'Curso disponible para seguir aprendiendo.' }}</p>
+      <div class="curso-tags">
+        <span>{{ c.nivel }}</span>
+        <span>{{ c.grado }} grado</span>
+        <span>{{ c.totalTemas }} temas</span>
+        <span>{{ c.totalEjercicios }} ejercicios</span>
+      </div>
+    </div>
+    <div class="curso-hero-progress">
+      <div class="progress-ring-large">
+        <svg viewBox="0 0 120 120">
+          <circle class="ring-bg" cx="60" cy="60" r="50"></circle>
+          <circle class="ring-fill" cx="60" cy="60" r="50"
+            [style.stroke-dasharray]="'314'"
+            [style.stroke-dashoffset]="314 - (314 * (c.progreso || 0) / 100)">
+          </circle>
+        </svg>
+        <div class="progress-ring-text">
+          <strong>{{ c.progreso || 0 }}%</strong>
+          <span>Avance</span>
+        </div>
+      </div>
+      <div class="progress-status">{{ c.estado }}</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>Temas del curso</h2>
+    <p>Estudia cada tema en orden o elige el que más necesites reforzar.</p>
+  </div>
+
+  <div class="temas-list">
+    <article
+      *ngFor="let tema of c.temas; trackBy: trackByTema; let i = index"
+      class="tema-card"
+      [style.--accent]="c.colorHex || '#14506a'"
+    >
+      <div class="tema-number">{{ i + 1 }}</div>
+      <div class="tema-body">
+        <div class="tema-head">
+          <h3>{{ tema.nombre }}</h3>
+          <span class="tema-estado" [style.color]="estadoColor(tema.estado)">{{ tema.estado }}</span>
+        </div>
+        <p *ngIf="tema.descripcion">{{ tema.descripcion }}</p>
+
+        <div class="tema-stats">
+          <div class="tema-stat">
+            <span>Ejercicios</span>
+            <strong>{{ tema.totalEjercicios }}</strong>
+          </div>
+          <div class="tema-stat">
+            <span>Resueltos</span>
+            <strong>{{ tema.ejerciciosResueltos }}</strong>
+          </div>
+          <div class="tema-stat">
+            <span>Acierto</span>
+            <strong>{{ tema.porcentajeAcierto | number:'1.0-0' }}%</strong>
+          </div>
+        </div>
+
+        <div class="tema-progress">
+          <div class="tema-progress-track">
+            <div class="tema-progress-fill" [style.width.%]="tema.porcentajeAcierto || 0"></div>
+          </div>
+        </div>
+
+        <div class="tema-actions">
+          <a
+            *ngIf="tema.totalEjercicios > 0"
+            [routerLink]="['/temas', tema.id]"
+            class="btn-estudiar"
+          >
+            Estudiar tema
+          </a>
+          <a
+            *ngIf="tema.totalEjercicios === 0"
+            [routerLink]="['/temas', tema.id]"
+            class="btn-estudiar btn-generar"
+          >
+            Generar ejercicios con IA
+          </a>
+          <span *ngIf="tema.necesitaRefuerzo" class="refuerzo-badge">⚠ Necesita refuerzo</span>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="curso-footer-actions">
+    <a [routerLink]="['/practica-inteligente']" [queryParams]="{ cursoId: c.id }" class="btn-practicar-curso">
+      🤖 Practicar todo el curso con IA
+    </a>
+  </div>
+</div>
+</ng-container>
+
+<div class="empty-state" *ngIf="cargando()">
+  <h2>Cargando curso...</h2>
+  <p>Estamos preparando la información del curso.</p>
+</div>
+
+<div class="empty-state" *ngIf="!cargando() && error()">
+  <h2>Error</h2>
+  <p>{{ error() }}</p>
+  <a routerLink="/mis-cursos" class="btn-volver">Volver a mis cursos</a>
+</div>

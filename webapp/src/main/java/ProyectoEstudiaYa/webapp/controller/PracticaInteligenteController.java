@@ -53,4 +53,12 @@ public class PracticaInteligenteController {
             @RequestParam(defaultValue = "5") int cantidad) {
         return practicaInteligenteService.generarEjerciciosIA(usuarioId, temaId, cantidad);
     }
+
+    @PostMapping("/generar-ia-curso")
+    public List<PracticaInteligenteDTO> generarEjercursosCursoIA(
+            @RequestParam Long usuarioId,
+            @RequestParam Long cursoId,
+            @RequestParam(defaultValue = "3") int cantidadPorTema) {
+        return practicaInteligenteService.generarEjerciciosCursoIA(usuarioId, cursoId, cantidadPorTema);
+    }
 }

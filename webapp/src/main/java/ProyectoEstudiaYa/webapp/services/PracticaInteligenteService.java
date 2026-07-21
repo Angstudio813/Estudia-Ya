@@ -266,6 +266,21 @@ public class PracticaInteligenteService {
         };
     }
 
+    @Transactional
+    public List<PracticaInteligenteDTO> generarEjerciciosCursoIA(Long usuarioId, Long cursoId, int cantidadPorTema) {
+        List<Tema> temas = temaRepository.findByCursoIdOrderByOrden(cursoId);
+        if (temas.isEmpty()) {
+            return List.of();
+        }
+
+        List<PracticaInteligenteDTO> todos = new ArrayList<>();
+        for (Tema tema : temas) {
+            List<PracticaInteligenteDTO> generados = generarEjerciciosIA(usuarioId, tema.getId(), cantidadPorTema);
+            todos.addAll(generados);
+        }
+        return todos;
+    }
+
     private String llamarApiGroq(String prompt) {
         String url = "https://api.groq.com/openai/v1/chat/completions";
         String promptEscapado = prompt.replace("\"", "\\\"");
