@@ -75,12 +75,24 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
+    
+@Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://127.0.0.1:4200"));
+        
+        // Agregamos tus dominios de producción y desarrollo
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:4200", 
+                "http://127.0.0.1:4200",
+                "https://academiaestudiaya.com",
+                "https://www.academiaestudiaya.com"
+        ));
+        
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        
+        // Permitimos todos los headers para evitar que el preflight falle
+        configuration.setAllowedHeaders(List.of("*"));
+        
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
