@@ -1,12 +1,24 @@
-# Etapa de construcción (Build)
+# --- ETAPA DE CONSTRUCCIÓN (BUILD) ---
 FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
-COPY . .
-RUN cd webapp && mvn clean package -DskipTests
 
-# Etapa de ejecución (Run) corregida con la etiqueta oficial existente
-FROM eclipse-temurin:17-jre-slim
+# Copiar archivos de configuración de Maven y dependencias
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copiar el código fuente y empaquetar la aplicación
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# --- ETAPA DE EJECUCIÓN (RUN) ---
+FROM openjdk:17-slim
 WORKDIR /app
-COPY --from=build /app/webapp/target/*.jar app.jar
+
+# Copiar el archivo JAR generado desde la etapa de construcción
+COPY --from=build /app/target/*.jar app.jar
+
+# Exponer el puerto en el que corre la aplicación (ajusta si usas otro, por ejemplo 8080)
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# Comando para ejecutar la aplicación
+ENTRYPOINT ["java", "-jar", "app.jar"]
