@@ -3,6 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
+import { environment } from '../../../../environment.development'; 
+
+
 
 interface LoginResponse {
   token: string;
@@ -29,8 +32,10 @@ export class Login {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  private readonly loginUrl = 'http://localhost:8080/api/auth/login';
+  private readonly loginUrl = `${environment.apiUrl}/api/auth/login`;
   private readonly dashboardUrl = '/inicio';
+
+   a= 1;
 
   email = 'carlos@estudiaya.pe';
   password = '123456';
@@ -85,4 +90,6 @@ export class Login {
 
     return 'Email o contrasena incorrectos.';
   }
+
+  
 }
