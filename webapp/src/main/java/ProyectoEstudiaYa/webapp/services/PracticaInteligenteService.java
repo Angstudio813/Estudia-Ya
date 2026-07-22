@@ -286,12 +286,17 @@ public class PracticaInteligenteService {
 
     private String llamarApiGroq(String prompt) {
         String url = "https://api.groq.com/openai/v1/chat/completions";
-        String promptEscapado = prompt.replace("\"", "\\\"");
-        String jsonBody = "{"
-                + "\"model\": \"" + this.model.trim() + "\","
-                + "\"messages\": [{\"role\": \"user\", \"content\": \"" + promptEscapado + "\"}],"
-                + "\"temperature\": 0.7"
-                + "}";
+
+        JsonObject message = new JsonObject();
+        message.addProperty("role", "user");
+        message.addProperty("content", prompt);
+
+        JsonObject body = new JsonObject();
+        body.addProperty("model", this.model.trim());
+        body.add("messages", new com.google.gson.JsonArray() {{ add(message); }});
+        body.addProperty("temperature", 0.7);
+
+        String jsonBody = body.toString();
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

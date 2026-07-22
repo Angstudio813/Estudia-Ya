@@ -91,34 +91,31 @@ public class AsistenteIAService {
     }
 
     /**
-     * NUEVO MÉTODO: Gestiona la comunicación con Groq (Formato estándar OpenAI Chat)
+     * Gestiona la comunicación con Groq (Formato estándar OpenAI Chat)
      */
-private String llamarApiGroq(String prompt) {
-    // REEMPLAZA ESTA LÍNEA: Asegúrate de que esté exactamente así, entre comillas simples y limpias
-    String url = "https://api.groq.com/openai/v1/chat/completions";
+    private String llamarApiGroq(String prompt) {
+        String url = "https://api.groq.com/openai/v1/chat/completions";
 
-    // El resto del código se queda igual...
-    String promptEscapado = prompt.replace("\"", "\\\"");
-    String jsonBody = "{"
-            + "\"model\": \"" + this.model.trim() + "\","
-            + "\"messages\": [{\"role\": \"user\", \"content\": \"" + promptEscapado + "\"}],"
-            + "\"temperature\": 0.7"
-            + "}";
-    
-    // ... (HttpHeaders, RestTemplate y el resto siguen igual)
+        JsonObject message = new JsonObject();
+        message.addProperty("role", "user");
+        message.addProperty("content", prompt);
+
+        JsonObject body = new JsonObject();
+        body.addProperty("model", this.model.trim());
+        body.add("messages", new com.google.gson.JsonArray() {{ add(message); }});
+        body.addProperty("temperature", 0.7);
+
+        String jsonBody = body.toString();
+
         org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-        
-        // Groq requiere autenticación mediante el Header 'Authorization: Bearer Tu_Llave'
         headers.set("Authorization", "Bearer " + this.apiKey.trim());
 
         org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(jsonBody, headers);
 
-        // Hacemos la petición POST
         String response = restTemplate.postForObject(url, entity, String.class);
 
-        // Parseamos la respuesta de Groq para extraer exclusivamente el texto de la respuesta
         try {
             JsonObject jsonResponse = JsonParser.parseString(response).getAsJsonObject();
             return jsonResponse.getAsJsonArray("choices")
@@ -126,7 +123,7 @@ private String llamarApiGroq(String prompt) {
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
         } catch (Exception e) {
-            return response; // En caso de error estructural, devuelve el JSON completo para depurar
+            return response;
         }
     }
 }
