@@ -1,0 +1,52 @@
+2026-07-21T23:46:30.581335019Z 
+2026-07-21T23:46:30.58133751Z The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2026-07-21T23:46:30.58134005Z 	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:174) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.58134265Z 	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:64) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.58134515Z 	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:815) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.5813476Z 	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:438) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.58135025Z 	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:241) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.58135303Z 	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:189) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.58135566Z 	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138) ~[HikariCP-5.0.1.jar!/:na]
+2026-07-21T23:46:30.58135871Z 	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359) ~[HikariCP-5.0.1.jar!/:na]
+2026-07-21T23:46:30.58136161Z 	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201) ~[HikariCP-5.0.1.jar!/:na]
+2026-07-21T23:46:30.58136617Z 	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470) ~[HikariCP-5.0.1.jar!/:na]
+2026-07-21T23:46:30.58136909Z 	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-5.0.1.jar!/:na]
+2026-07-21T23:46:30.5813766Z 	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100) ~[HikariCP-5.0.1.jar!/:na]
+2026-07-21T23:46:30.581379381Z 	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-5.0.1.jar!/:na]
+2026-07-21T23:46:30.581382291Z 	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+2026-07-21T23:46:30.581384841Z 	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:428) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+2026-07-21T23:46:30.581387221Z 	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:46) ~[hibernate-core-6.4.4.Final.jar!/:6.4.4.Final]
+2026-07-21T23:46:30.581418672Z 	... 133 common frames omitted
+2026-07-21T23:46:30.581424992Z Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+2026-07-21T23:46:30.581427362Z 
+2026-07-21T23:46:30.581429872Z The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+2026-07-21T23:46:30.581432532Z 	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[na:na]
+2026-07-21T23:46:30.581435102Z 	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77) ~[na:na]
+2026-07-21T23:46:30.581438402Z 	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45) ~[na:na]
+2026-07-21T23:46:30.581441112Z 	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499) ~[na:na]
+2026-07-21T23:46:30.581443752Z 	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:480) ~[na:na]
+2026-07-21T23:46:30.581446442Z 	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:61) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581449082Z 	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:104) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581452133Z 	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:149) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581455373Z 	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:165) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581458143Z 	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:88) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581460993Z 	at com.mysql.cj.NativeSession.connect(NativeSession.java:120) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581463503Z 	at com.mysql.cj.jdbc.ConnectionImpl.connectOneTryOnly(ConnectionImpl.java:935) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581466233Z 	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:805) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581468713Z 	... 146 common frames omitted
+2026-07-21T23:46:30.581471753Z Caused by: java.net.UnknownHostException: estudiaya-angstudio12pg-2a82.l.aivencloud.com: Name or service not known
+2026-07-21T23:46:30.581474653Z 	at java.base/java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method) ~[na:na]
+2026-07-21T23:46:30.581477783Z 	at java.base/java.net.InetAddress$PlatformNameService.lookupAllHostAddr(InetAddress.java:933) ~[na:na]
+2026-07-21T23:46:30.581480423Z 	at java.base/java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1519) ~[na:na]
+2026-07-21T23:46:30.581488784Z 	at java.base/java.net.InetAddress$NameServiceAddresses.get(InetAddress.java:852) ~[na:na]
+2026-07-21T23:46:30.581492234Z 	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1509) ~[na:na]
+2026-07-21T23:46:30.581495584Z 	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1367) ~[na:na]
+2026-07-21T23:46:30.581498364Z 	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1301) ~[na:na]
+2026-07-21T23:46:30.581501334Z 	at com.mysql.cj.protocol.StandardSocketFactory.connect(StandardSocketFactory.java:130) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581504284Z 	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:62) ~[mysql-connector-j-8.3.0.jar!/:8.3.0]
+2026-07-21T23:46:30.581507274Z 	... 149 common frames omitted
+2026-07-21T23:46:30.581510294Z 
+2026-07-21T23:46:49.464407195Z ==> Exited with status 1
+2026-07-21T23:46:49.466411773Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2026-07-21T23:46:56.025233238Z ==> No open ports detected, continuing to scan...
+2026-07-21T23:46:56.113107574Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding

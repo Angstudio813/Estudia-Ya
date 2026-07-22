@@ -118,8 +118,9 @@ export class PracticaInteligente implements OnInit {
         this.generandoIA.set(false);
       },
       error: (err) => {
-        console.error(err);
-        this.error.set('Error al generar ejercicios con IA. Verifica que el backend esté corriendo.');
+        console.error('Error generando ejercicios IA:', err);
+        const errorMsg = err.error?.error || err.error?.message || err.message || 'Error al generar ejercicios con IA.';
+        this.error.set(errorMsg);
         this.generandoIA.set(false);
       },
     });

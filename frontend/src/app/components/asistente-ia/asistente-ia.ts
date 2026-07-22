@@ -48,8 +48,9 @@ export class AsistenteIA implements OnInit {
         this.cargaInicial.set(false);
       },
       error: (err) => {
-        console.error(err);
-        this.error.set('No pudimos conectar con el tutor de IA en este momento.');
+        console.error('Error cargando asistencia IA:', err);
+        const errorMsg = err.error?.error || err.error?.message || err.message || 'No pudimos conectar con el tutor de IA.';
+        this.error.set(errorMsg);
         this.cargaInicial.set(false);
       },
     });
@@ -77,8 +78,9 @@ export class AsistenteIA implements OnInit {
         this.enviando.set(false);
       },
       error: (err) => {
-        console.error(err);
-        this.error.set('No se pudo enviar la pregunta. Verifica que el backend esté corriendo.');
+        console.error('Error en chat IA:', err);
+        const errorMsg = err.error?.error || err.error?.message || err.message || 'No se pudo enviar la pregunta.';
+        this.error.set(errorMsg);
         this.enviando.set(false);
       },
     });

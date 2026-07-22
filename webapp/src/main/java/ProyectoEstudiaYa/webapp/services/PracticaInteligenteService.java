@@ -153,7 +153,7 @@ public class PracticaInteligenteService {
     @Transactional
     public List<PracticaInteligenteDTO> generarEjerciciosIA(Long usuarioId, Long temaId, int cantidad) {
         Tema tema = temaRepository.findById(temaId)
-                .orElseThrow(() -> new RuntimeException("Tema no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Tema no encontrado con ID: " + temaId));
 
         Progreso progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId).orElse(null);
         double porcentajeAcierto = progreso != null ? progreso.getPorcentajeAcierto() : 50.0;
@@ -180,39 +180,40 @@ public class PracticaInteligenteService {
                 Asegurate de que las preguntas sean claras, las opciones plausibles, y la dificultad variada.
                 """, cantidad, tema.getNombre(), tema.getCurso().getNombre(), nivelDificultad, porcentajeAcierto);
 
+        String jsonRespuesta = llamarApiGroq(prompt);
+        String jsonLimpio = jsonRespuesta.replaceAll("```json\\s*", "").replaceAll("```\\s*", "").trim();
+
+        JsonArray jsonArray;
         try {
-            String jsonRespuesta = llamarApiGroq(prompt);
-            String jsonLimpio = jsonRespuesta.replaceAll("```json\\s*", "").replaceAll("```\\s*", "").trim();
-            JsonArray jsonArray = JsonParser.parseString(jsonLimpio).getAsJsonArray();
-
-            List<PracticaInteligenteDTO> ejerciciosGenerados = new ArrayList<>();
-
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JsonObject obj = jsonArray.get(i).getAsJsonObject();
-
-                Ejercicio ejercicio = Ejercicio.builder()
-                        .pregunta(obj.get("pregunta").getAsString())
-                        .opcionA(obj.get("opcionA").getAsString())
-                        .opcionB(obj.get("opcionB").getAsString())
-                        .opcionC(obj.get("opcionC").getAsString())
-                        .opcionD(obj.get("opcionD").getAsString())
-                        .respuestaCorrecta(obj.get("respuestaCorrecta").getAsString().toUpperCase())
-                        .explicacion(obj.get("explicacion").getAsString())
-                        .dificultad(Ejercicio.Dificultad.valueOf(obj.get("dificultad").getAsString().toUpperCase()))
-                        .generadoPorIA(true)
-                        .tema(tema)
-                        .build();
-
-                ejercicio = ejercicioRepository.save(ejercicio);
-                ejerciciosGenerados.add(convertirADTO(ejercicio));
-            }
-
-            return ejerciciosGenerados;
+            jsonArray = JsonParser.parseString(jsonLimpio).getAsJsonArray();
         } catch (Exception e) {
-            System.err.println("[PracticaInteligenteService] Error generando ejercicios IA: " + e.getMessage());
-            e.printStackTrace();
-            return List.of();
+            System.err.println("[PracticaInteligenteService] JSON parse error. Response was: " + jsonLimpio);
+            throw new RuntimeException("La IA no devolvió un formato válido. Respuesta: " + jsonLimpio.substring(0, Math.min(200, jsonLimpio.length())));
         }
+
+        List<PracticaInteligenteDTO> ejerciciosGenerados = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject obj = jsonArray.get(i).getAsJsonObject();
+
+            Ejercicio ejercicio = Ejercicio.builder()
+                    .pregunta(obj.get("pregunta").getAsString())
+                    .opcionA(obj.get("opcionA").getAsString())
+                    .opcionB(obj.get("opcionB").getAsString())
+                    .opcionC(obj.get("opcionC").getAsString())
+                    .opcionD(obj.get("opcionD").getAsString())
+                    .respuestaCorrecta(obj.get("respuestaCorrecta").getAsString().toUpperCase())
+                    .explicacion(obj.get("explicacion").getAsString())
+                    .dificultad(Ejercicio.Dificultad.valueOf(obj.get("dificultad").getAsString().toUpperCase()))
+                    .generadoPorIA(true)
+                    .tema(tema)
+                    .build();
+
+            ejercicio = ejercicioRepository.save(ejercicio);
+            ejerciciosGenerados.add(convertirADTO(ejercicio));
+        }
+
+        return ejerciciosGenerados;
     }
 
     private PracticaInteligenteDTO convertirADTO(Ejercicio ejercicio) {
@@ -272,7 +273,7 @@ public class PracticaInteligenteService {
     public List<PracticaInteligenteDTO> generarEjerciciosCursoIA(Long usuarioId, Long cursoId, int cantidadPorTema) {
         List<Tema> temas = temaRepository.findByCursoIdOrderByOrden(cursoId);
         if (temas.isEmpty()) {
-            return List.of();
+            throw new RuntimeException("No se encontraron temas para el curso con ID: " + cursoId);
         }
 
         List<PracticaInteligenteDTO> todos = new ArrayList<>();
@@ -298,7 +299,21 @@ public class PracticaInteligenteService {
         headers.set("Authorization", "Bearer " + this.apiKey.trim());
 
         HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
-        String response = restTemplate.postForObject(url, entity, String.class);
+
+        String response;
+        try {
+            response = restTemplate.postForObject(url, entity, String.class);
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+            System.err.println("[PracticaInteligenteService] Groq HTTP error: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            throw new RuntimeException("Error al conectar con la IA (HTTP " + e.getStatusCode() + "): " + e.getResponseBodyAsString());
+        } catch (Exception e) {
+            System.err.println("[PracticaInteligenteService] Groq connection error: " + e.getMessage());
+            throw new RuntimeException("No se pudo conectar con el servicio de IA: " + e.getMessage());
+        }
+
+        if (response == null) {
+            throw new RuntimeException("La IA devolvió una respuesta vacía");
+        }
 
         try {
             JsonObject jsonResponse = JsonParser.parseString(response).getAsJsonObject();
@@ -307,7 +322,8 @@ public class PracticaInteligenteService {
                     .get("message").getAsJsonObject()
                     .get("content").getAsString();
         } catch (Exception e) {
-            return response;
+            System.err.println("[PracticaInteligenteService] Groq response parse error. Raw: " + response);
+            throw new RuntimeException("La IA devolvió un formato inesperado: " + response.substring(0, Math.min(200, response.length())));
         }
     }
 }
