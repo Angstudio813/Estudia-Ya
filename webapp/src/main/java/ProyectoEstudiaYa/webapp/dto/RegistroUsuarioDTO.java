@@ -1,6 +1,6 @@
 package ProyectoEstudiaYa.webapp.dto;
 
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 
 public class RegistroUsuarioDTO {
 
@@ -9,7 +9,7 @@ public class RegistroUsuarioDTO {
     private String apellido;
     private String email;
     private String password;
-    private Usuario.NivelEducativo nivel;
+    private UsuarioEntity.NivelEducativo nivel;
     private Integer grado;
 
     public Long getId() {
@@ -52,11 +52,11 @@ public class RegistroUsuarioDTO {
         this.password = password;
     }
 
-    public Usuario.NivelEducativo getNivel() {
+    public UsuarioEntity.NivelEducativo getNivel() {
         return nivel;
     }
 
-    public void setNivel(Usuario.NivelEducativo nivel) {
+    public void setNivel(UsuarioEntity.NivelEducativo nivel) {
         this.nivel = nivel;
     }
 

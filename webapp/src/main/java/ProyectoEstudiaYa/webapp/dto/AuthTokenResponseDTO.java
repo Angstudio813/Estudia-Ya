@@ -1,22 +1,22 @@
 package ProyectoEstudiaYa.webapp.dto;
 
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 
-public class AuthTokenResponse {
+public class AuthTokenResponseDTO {
     private final String token;
     private final String type;
     private final Long usuarioId;
     private final String nombre;
     private final String apellido;
     private final String email;
-    private final Usuario.NivelEducativo nivel;
+    private final UsuarioEntity.NivelEducativo nivel;
     private final Integer grado;
     private final Integer xpTotal;
     private final Integer nivelJuego;
     private final Integer rachaActual;
     private final Integer rachaMasAlta;
 
-    public AuthTokenResponse(String token, Usuario usuario) {
+    public AuthTokenResponseDTO(String token, UsuarioEntity usuario) {
         this.token = token;
         this.type = "Bearer";
         this.usuarioId = usuario.getId();
@@ -55,7 +55,7 @@ public class AuthTokenResponse {
         return email;
     }
 
-    public Usuario.NivelEducativo getNivel() {
+    public UsuarioEntity.NivelEducativo getNivel() {
         return nivel;
     }
 

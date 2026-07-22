@@ -1,8 +1,0 @@
-package ProyectoEstudiaYa.webapp.services;
-
-import ProyectoEstudiaYa.webapp.dto.PlanEstudioRequestDTO;
-import ProyectoEstudiaYa.webapp.dto.PlanEstudioResponseDTO;
-
-public interface PlanEstudioService {
-    PlanEstudioResponseDTO generarHorario(PlanEstudioRequestDTO request);
-}

@@ -1,6 +1,6 @@
 package ProyectoEstudiaYa.webapp.services;
 
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 import ProyectoEstudiaYa.webapp.dto.AsistenteIARespuestaDTO;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -30,7 +30,7 @@ public class AsistenteIAService {
      * Genera un reporte personalizado analizando el perfil del alumno
      */
     public AsistenteIARespuestaDTO generarAsistencia(Long usuarioId) {
-        Usuario usuario = usuarioService.obtenerPorId(usuarioId);
+        UsuarioEntity usuario = usuarioService.obtenerPorId(usuarioId);
         String nombreAlumno = usuario.getNombre() + " " + usuario.getApellido();
         String cursosMalos = "Matemáticas y Estructuras de Datos";
 
@@ -41,7 +41,7 @@ public class AsistenteIAService {
                 Devuelve la respuesta ESTRICTAMENTE en formato JSON plano, sin formato markdown (sin ```json), usando la siguiente estructura:
                 {
                   "mensajePrincipal": "Un saludo motivador personalizado",
-                  "temasRefuerzo": ["Tema 1", "Tema 2"],
+                  "temasRefuerzo": ["TemaEntity 1", "TemaEntity 2"],
                   "recomendaciones": ["Consejo 1", "Consejo 2"]
                 }
                 """

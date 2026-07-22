@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 
-public class Ejercicio {
+public class EjercicioEntity {
 
      
     @Id
@@ -40,10 +40,10 @@ public class Ejercicio {
  
     @ManyToOne
     @JoinColumn(name = "tema_id", nullable = false)
-    private Tema tema;
+    private TemaEntity tema;
  
     @OneToMany(mappedBy = "ejercicio", cascade = CascadeType.ALL)
-    private List<IntentoEjercicio> intentos;
+    private List<IntentoEjercicioEntity> intentos;
  
     public enum Dificultad {
         FACIL, MEDIO, DIFICIL

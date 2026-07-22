@@ -3,9 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
-import { environment } from '../../../../environment.development'; 
-
-
+import { environment } from '../../../../environment.development';
 
 interface LoginResponse {
   token: string;
@@ -35,10 +33,9 @@ export class Login {
   private readonly loginUrl = `${environment.apiUrl}/api/auth/login`;
   private readonly dashboardUrl = '/inicio';
 
-   a= 1;
-
-  email = 'carlos@estudiaya.pe';
-  password = '123456';
+  email = '';
+  password = '';
+  verPassword = false;
   cargando = false;
   mensajeError = '';
   mensajeOk = '';
@@ -90,6 +87,4 @@ export class Login {
 
     return 'Email o contrasena incorrectos.';
   }
-
-  
 }

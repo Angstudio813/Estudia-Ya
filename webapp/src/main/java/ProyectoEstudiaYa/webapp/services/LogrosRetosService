@@ -1,9 +1,0 @@
-package ProyectoEstudiaYa.webapp.services;
-
-import ProyectoEstudiaYa.webapp.dto.UsuarioProgresoDTO;
-
-public interface LogroGamificacionService {
-
-    UsuarioProgresoDTO obtenerProgreso(Long usuarioId);
-    UsuarioProgresoDTO completarReto(Long usuarioId, String reto);
-}   

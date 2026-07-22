@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 
-public class Tarea {
+public class TareaEntity {
 
   @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +33,11 @@ public class Tarea {
  
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    private UsuarioEntity usuario;
  
     @ManyToOne
     @JoinColumn(name = "curso_id")
-    private Curso curso;
+    private CursoEntity curso;
  
     public enum EstadoTarea {
         PENDIENTE, EN_PROGRESO, COMPLETADA

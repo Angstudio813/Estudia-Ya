@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PlanEstudioService, PlanEstudioResponse } from './plan-estudio.service';
+import { PlanEstudioService, PlanEstudioResponse, CursoInscrito } from './plan-estudio.service';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-plan-estudio',
@@ -9,16 +10,55 @@ import { PlanEstudioService, PlanEstudioResponse } from './plan-estudio.service'
   templateUrl: './plan-estudio.html',
   styleUrl: './plan-estudio.css',
 })
-export class PlanEstudio {
-  cursosTexto: string = '';
+export class PlanEstudio implements OnInit {
+  private readonly authService = inject(AuthService);
+
+  cursosDisponibles = signal<CursoInscrito[]>([]);
+  cursosSeleccionados = signal<Set<number>>(new Set());
   horasDisponiblesPorDia: number = 2;
   diasDisponibles: number = 5;
 
   horario = signal<{ [dia: string]: string[] } | null>(null);
   cargando = signal<boolean>(false);
+  cargandoCursos = signal<boolean>(false);
   error = signal<string>('');
 
   constructor(private planEstudioService: PlanEstudioService) {}
+
+  ngOnInit(): void {
+    this.cargarCursos();
+  }
+
+  cargarCursos(): void {
+    this.cargandoCursos.set(true);
+    const usuarioId = this.authService.getUserId();
+
+    this.planEstudioService.listarCursos(usuarioId).subscribe({
+      next: (cursos) => {
+        this.cursosDisponibles.set(cursos);
+        this.cargandoCursos.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.error.set('No se pudieron cargar tus cursos.');
+        this.cargandoCursos.set(false);
+      }
+    });
+  }
+
+  toggleCurso(cursoId: number): void {
+    const actual = new Set(this.cursosSeleccionados());
+    if (actual.has(cursoId)) {
+      actual.delete(cursoId);
+    } else {
+      actual.add(cursoId);
+    }
+    this.cursosSeleccionados.set(actual);
+  }
+
+  cursoSeleccionado(cursoId: number): boolean {
+    return this.cursosSeleccionados().has(cursoId);
+  }
 
   get diasDelHorario(): string[] {
     const h = this.horario();
@@ -29,13 +69,12 @@ export class PlanEstudio {
     this.error.set('');
     this.horario.set(null);
 
-    const cursos = this.cursosTexto
-      .split(',')
-      .map(c => c.trim())
-      .filter(c => c.length > 0);
+    const cursos = this.cursosDisponibles()
+      .filter(c => this.cursosSeleccionados().has(c.id))
+      .map(c => c.nombre);
 
     if (cursos.length === 0) {
-      this.error.set('Ingresa al menos un curso.');
+      this.error.set('Selecciona al menos un curso.');
       return;
     }
 

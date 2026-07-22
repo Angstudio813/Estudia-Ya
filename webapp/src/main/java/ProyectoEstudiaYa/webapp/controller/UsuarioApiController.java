@@ -2,7 +2,7 @@ package ProyectoEstudiaYa.webapp.controller;
 
 import ProyectoEstudiaYa.webapp.dto.UsuarioDTO;
 import ProyectoEstudiaYa.webapp.dto.UsuarioRequestDTO;
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 import ProyectoEstudiaYa.webapp.services.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,7 @@ public class UsuarioApiController {
     @GetMapping
     public List<UsuarioDTO> listar() {
         return usuarioService.findAll().stream()
-                .sorted(Comparator.comparing(Usuario::getId))
+                .sorted(Comparator.comparing(UsuarioEntity::getId))
                 .map(UsuarioDTO::fromEntity)
                 .toList();
     }
@@ -49,13 +49,13 @@ public class UsuarioApiController {
         validarRequest(request, true);
         validarEmailDisponible(request.getEmail(), null);
 
-        Usuario usuario = new Usuario();
+        UsuarioEntity usuario = new UsuarioEntity();
         aplicarDatos(usuario, request);
         usuario.setPassword(request.getPassword());
         usuario.setFechaRegistro(LocalDateTime.now());
         usuario.setUltimoAcceso(LocalDateTime.now());
 
-        Usuario guardado = usuarioService.saveUsuario(usuario);
+        UsuarioEntity guardado = usuarioService.saveUsuario(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioDTO.fromEntity(guardado));
     }
 
@@ -64,7 +64,7 @@ public class UsuarioApiController {
         validarRequest(request, false);
         validarEmailDisponible(request.getEmail(), id);
 
-        Usuario usuario = obtenerUsuario(id);
+        UsuarioEntity usuario = obtenerUsuario(id);
         aplicarDatos(usuario, request);
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             usuario.setPassword(request.getPassword());
@@ -80,15 +80,15 @@ public class UsuarioApiController {
         return ResponseEntity.noContent().build();
     }
 
-    private Usuario obtenerUsuario(Long id) {
+    private UsuarioEntity obtenerUsuario(Long id) {
         try {
             return usuarioService.obtenerPorId(id);
         } catch (NoSuchElementException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "UsuarioEntity no encontrado.");
         }
     }
 
-    private void aplicarDatos(Usuario usuario, UsuarioRequestDTO request) {
+    private void aplicarDatos(UsuarioEntity usuario, UsuarioRequestDTO request) {
         usuario.setNombre(limpiar(request.getNombre()));
         usuario.setApellido(limpiar(request.getApellido()));
         usuario.setEmail(limpiar(request.getEmail()).toLowerCase());
@@ -128,11 +128,11 @@ public class UsuarioApiController {
         });
     }
 
-    private boolean gradoValido(Usuario.NivelEducativo nivel, Integer grado) {
+    private boolean gradoValido(UsuarioEntity.NivelEducativo nivel, Integer grado) {
         if (grado == null) {
             return false;
         }
-        if (nivel == Usuario.NivelEducativo.PRIMARIA) {
+        if (nivel == UsuarioEntity.NivelEducativo.PRIMARIA) {
             return grado >= 1 && grado <= 6;
         }
         return grado >= 1 && grado <= 5;

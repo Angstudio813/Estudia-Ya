@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 
 
-public class Tema {
+public class TemaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,12 +26,12 @@ public class Tema {
  
     @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)
-    private Curso curso;
+    private CursoEntity curso;
  
     @OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)
-    private List<Ejercicio> ejercicios;
+    private List<EjercicioEntity> ejercicios;
  
     @OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)
-    private List<Progreso> progresos;
+    private List<ProgresoEntity> progresos;
 
 }

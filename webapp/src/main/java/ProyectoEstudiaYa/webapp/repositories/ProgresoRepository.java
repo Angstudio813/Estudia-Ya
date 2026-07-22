@@ -1,6 +1,7 @@
 package ProyectoEstudiaYa.webapp.repositories;
 
-import ProyectoEstudiaYa.webapp.entities.Progreso;
+import ProyectoEstudiaYa.webapp.dto.ProgresoStatsProjectionDTO;
+import ProyectoEstudiaYa.webapp.entities.ProgresoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,26 +10,38 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProgresoRepository extends JpaRepository<Progreso, Long> {
+public interface ProgresoRepository extends JpaRepository<ProgresoEntity, Long> {
 
-    List<Progreso> findByUsuarioId(Long usuarioId);
+    List<ProgresoEntity> findByUsuarioId(Long usuarioId);
 
-    Optional<Progreso> findByUsuarioIdAndTemaId(Long usuarioId, Long temaId);
+    Optional<ProgresoEntity> findByUsuarioIdAndTemaId(Long usuarioId, Long temaId);
 
-    List<Progreso> findByUsuarioIdAndNecesitaRefuerzo(Long usuarioId, Boolean necesitaRefuerzo);
+    List<ProgresoEntity> findByUsuarioIdAndNecesitaRefuerzo(Long usuarioId, Boolean necesitaRefuerzo);
 
-    @Query("SELECT AVG(p.porcentajeAcierto) FROM Progreso p WHERE p.usuario.id = :usuarioId")
+    @Query(value = """
+            SELECT
+                COUNT(p.id) AS totalTemas,
+                COALESCE(AVG(p.porcentaje_acierto), 0) AS promedioAcierto,
+                SUM(CASE WHEN p.necesita_refuerzo = true THEN 1 ELSE 0 END) AS temasEnRefuerzo,
+                COALESCE((SELECT COUNT(ie.id) FROM intentos_ejercicio ie WHERE ie.usuario_id = :usuarioId AND ie.es_correcta = true), 0) AS ejerciciosCorrectos,
+                COALESCE((SELECT COUNT(l.id) FROM logros l WHERE l.usuario_id = :usuarioId), 0) AS logrosTotales
+            FROM progresos p
+            WHERE p.usuario_id = :usuarioId
+            """, nativeQuery = true)
+    ProgresoStatsProjectionDTO findStatsByUsuarioId(@Param("usuarioId") Long usuarioId);
+
+    @Query("SELECT AVG(p.porcentajeAcierto) FROM ProgresoEntity p WHERE p.usuario.id = :usuarioId")
     Double promedioAciertosPorUsuario(@Param("usuarioId") Long usuarioId);
 
-    @Query("SELECT SUM(p.ejerciciosIntentados) FROM Progreso p WHERE p.usuario.id = :usuarioId")
+    @Query("SELECT SUM(p.ejerciciosIntentados) FROM ProgresoEntity p WHERE p.usuario.id = :usuarioId")
     Long totalEjerciciosIntentados(@Param("usuarioId") Long usuarioId);
 
-    @Query("SELECT p FROM Progreso p WHERE p.usuario.id = :usuarioId AND p.tema.curso.id = :cursoId")
-    List<Progreso> findByUsuarioIdAndCursoId(@Param("usuarioId") Long usuarioId, @Param("cursoId") Long cursoId);
+    @Query("SELECT p FROM ProgresoEntity p WHERE p.usuario.id = :usuarioId AND p.tema.curso.id = :cursoId")
+    List<ProgresoEntity> findByUsuarioIdAndCursoId(@Param("usuarioId") Long usuarioId, @Param("cursoId") Long cursoId);
 
-    @Query("SELECT p FROM Progreso p WHERE p.usuario.id = :usuarioId AND p.porcentajeAcierto >= 80 AND p.necesitaRefuerzo = false")
-    List<Progreso> findTemasCompletados(@Param("usuarioId") Long usuarioId);
+    @Query("SELECT p FROM ProgresoEntity p WHERE p.usuario.id = :usuarioId AND p.porcentajeAcierto >= 80 AND p.necesitaRefuerzo = false")
+    List<ProgresoEntity> findTemasCompletados(@Param("usuarioId") Long usuarioId);
 
-    @Query("SELECT COUNT(p) FROM Progreso p WHERE p.usuario.id = :usuarioId AND p.necesitaRefuerzo = true")
+    @Query("SELECT COUNT(p) FROM ProgresoEntity p WHERE p.usuario.id = :usuarioId AND p.necesitaRefuerzo = true")
     Long contarTemasConRefuerzo(@Param("usuarioId") Long usuarioId);
 }

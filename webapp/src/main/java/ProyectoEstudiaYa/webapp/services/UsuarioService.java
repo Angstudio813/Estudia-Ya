@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 import ProyectoEstudiaYa.webapp.repositories.UsuarioRepository;
 
 @Service
@@ -21,15 +21,15 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<Usuario> findAll() {
+    public List<UsuarioEntity> findAll() {
         return usuarioRepository.findAll();
     }
 
-    public Optional<Usuario> findByEmail(String email) {
+    public Optional<UsuarioEntity> findByEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }
 
-    public Usuario saveUsuario(Usuario usuario) {
+    public UsuarioEntity saveUsuario(UsuarioEntity usuario) {
         if (usuario.getPassword() != null && !usuario.getPassword().isBlank()) {
             String password = usuario.getPassword();
             if (!password.startsWith("$2a$") && !password.startsWith("$2b$") && !password.startsWith("$2y$")) {
@@ -39,7 +39,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario saveNewUsuario(Usuario usuario) {
+    public UsuarioEntity saveNewUsuario(UsuarioEntity usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
@@ -48,13 +48,13 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    public Usuario obtenerPorId(Long usuarioId) {
+    public UsuarioEntity obtenerPorId(Long usuarioId) {
         return usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado: " + usuarioId));
+                .orElseThrow(() -> new NoSuchElementException("UsuarioEntity no encontrado: " + usuarioId));
     }
 
-    public Usuario obtenerPorEmail(String email) {
+    public UsuarioEntity obtenerPorEmail(String email) {
         return usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado: " + email));
+                .orElseThrow(() -> new NoSuchElementException("UsuarioEntity no encontrado: " + email));
     }
 }

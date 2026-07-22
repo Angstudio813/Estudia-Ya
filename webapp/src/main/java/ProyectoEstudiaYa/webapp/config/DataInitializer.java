@@ -28,8 +28,8 @@ public class DataInitializer {
             // CURSOS
             jdbc.update("""
                 INSERT INTO cursos (nombre, nivel, grado, descripcion, color_hex, icono) VALUES
-                ('Matematica', 'SECUNDARIA', 3, 'Curso de matematica para tercero de secundaria', '#2563EB', '📐'),
-                ('Comunicacion', 'SECUNDARIA', 3, 'Curso de comunicacion y comprension lectora', '#0EA5E9', '📚')
+                ('Matematica', 'SECUNDARIA', 3, 'CursoEntity de matematica para tercero de secundaria', '#2563EB', '📐'),
+                ('Comunicacion', 'SECUNDARIA', 3, 'CursoEntity de comunicacion y comprension lectora', '#0EA5E9', '📚')
             """);
 
             // TEMAS

@@ -1,6 +1,6 @@
 package ProyectoEstudiaYa.webapp.dto;
 
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +10,7 @@ public class UsuarioDTO {
     private String nombre;
     private String apellido;
     private String email;
-    private Usuario.NivelEducativo nivel;
+    private UsuarioEntity.NivelEducativo nivel;
     private Integer grado;
     private Integer xpTotal;
     private Integer nivelJuego;
@@ -19,7 +19,7 @@ public class UsuarioDTO {
     private LocalDateTime fechaRegistro;
     private LocalDateTime ultimoAcceso;
 
-    public static UsuarioDTO fromEntity(Usuario usuario) {
+    public static UsuarioDTO fromEntity(UsuarioEntity usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
         dto.setNombre(usuario.getNombre());
@@ -68,11 +68,11 @@ public class UsuarioDTO {
         this.email = email;
     }
 
-    public Usuario.NivelEducativo getNivel() {
+    public UsuarioEntity.NivelEducativo getNivel() {
         return nivel;
     }
 
-    public void setNivel(Usuario.NivelEducativo nivel) {
+    public void setNivel(UsuarioEntity.NivelEducativo nivel) {
         this.nivel = nivel;
     }
 

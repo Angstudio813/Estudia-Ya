@@ -19,6 +19,7 @@
           type="email"
           name="email"
           autocomplete="email"
+          placeholder="tu@email.com"
           required
           [(ngModel)]="email"
           [disabled]="cargando"
@@ -27,21 +28,31 @@
 
       <label class="field">
         <span>Contrasena</span>
-        <input
-          type="password"
-          name="password"
-          autocomplete="current-password"
-          required
-          [(ngModel)]="password"
-          [disabled]="cargando"
-        >
+        <div class="password-wrapper">
+          <input
+            [type]="verPassword ? 'text' : 'password'"
+            name="password"
+            autocomplete="current-password"
+            placeholder="Tu contrasena"
+            required
+            [(ngModel)]="password"
+            [disabled]="cargando"
+          >
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="verPassword = !verPassword"
+            tabindex="-1"
+            [attr.aria-label]="verPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'"
+          >
+            <i class="fa-solid" [ngClass]="verPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
       </label>
 
       <button type="submit" [disabled]="cargando || loginForm.invalid">
         {{ cargando ? 'Ingresando...' : 'Entrar' }}
       </button>
     </form>
-
-    <p class="hint">Demo: <strong>carlos@estudiaya.pe</strong> / <strong>123456</strong></p>
   </main>
 </section>

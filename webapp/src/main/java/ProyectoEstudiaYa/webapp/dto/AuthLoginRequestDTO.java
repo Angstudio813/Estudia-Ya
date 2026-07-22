@@ -1,6 +1,6 @@
 package ProyectoEstudiaYa.webapp.dto;
 
-public class AuthLoginRequest {
+public class AuthLoginRequestDTO {
     private String email;
     private String password;
 

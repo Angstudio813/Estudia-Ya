@@ -1,8 +1,8 @@
 package ProyectoEstudiaYa.webapp.controller;
 
-import ProyectoEstudiaYa.webapp.dto.AuthLoginRequest;
-import ProyectoEstudiaYa.webapp.dto.AuthTokenResponse;
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.dto.AuthLoginRequestDTO;
+import ProyectoEstudiaYa.webapp.dto.AuthTokenResponseDTO;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 import ProyectoEstudiaYa.webapp.services.UsuarioService;
 import ProyectoEstudiaYa.webapp.security.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,13 +36,13 @@ public class AuthApiController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthLoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody AuthLoginRequestDTO request, HttpServletResponse response) {
         if (request == null || esVacio(request.getEmail()) || esVacio(request.getPassword())) {
             return ResponseEntity.badRequest().body(new AuthErrorResponse("Ingresa tu email y contrasena."));
         }
 
         String email = request.getEmail().trim().toLowerCase();
-        Usuario usuario = usuarioService.findByEmail(email).orElse(null);
+        UsuarioEntity usuario = usuarioService.findByEmail(email).orElse(null);
         if (usuario == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthErrorResponse("usuario no existe"));
         }
@@ -68,7 +68,7 @@ public class AuthApiController {
                 .build();
         response.setHeader("Set-Cookie", jwtCookie.toString());
 
-        return ResponseEntity.ok(new AuthTokenResponse(token, usuario));
+        return ResponseEntity.ok(new AuthTokenResponseDTO(token, usuario));
     }
 
     private boolean esVacio(String valor) {

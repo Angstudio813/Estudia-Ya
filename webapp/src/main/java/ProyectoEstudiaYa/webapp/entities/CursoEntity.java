@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 
-public class Curso {
+public class CursoEntity {
 
  @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class Curso {
  
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Usuario.NivelEducativo nivel; // PRIMARIA, SECUNDARIA
+    private UsuarioEntity.NivelEducativo nivel; // PRIMARIA, SECUNDARIA
  
     @Column(nullable = false)
     private Integer grado; // 1 al 6 o 1 al 5
@@ -32,13 +32,13 @@ public class Curso {
     private String icono;     // emoji o nombre del icono
  
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
-    private List<Tema> temas;
+    private List<TemaEntity> temas;
  
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
-    private List<UsuarioCurso> usuarios;
+    private List<UsuarioCursoEntity> usuarios;
  
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
-    private List<Tarea> tareas;
+    private List<TareaEntity> tareas;
 
 
 }

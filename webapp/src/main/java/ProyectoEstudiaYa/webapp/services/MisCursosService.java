@@ -1,26 +1,21 @@
 package ProyectoEstudiaYa.webapp.services;
 
+import ProyectoEstudiaYa.webapp.dto.CursoInscritoProjectionDTO;
 import ProyectoEstudiaYa.webapp.dto.MisCursosDTO;
-import ProyectoEstudiaYa.webapp.entities.Curso;
-import ProyectoEstudiaYa.webapp.entities.Tema;
-import ProyectoEstudiaYa.webapp.entities.Usuario;
-import ProyectoEstudiaYa.webapp.entities.UsuarioCurso;
+import ProyectoEstudiaYa.webapp.entities.CursoEntity;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 import ProyectoEstudiaYa.webapp.repositories.MisCursosRepository;
-import ProyectoEstudiaYa.webapp.repositories.UsuarioCursoRepository;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class MisCursosService {
 
     private final MisCursosRepository misCursosRepository;
-    private final UsuarioCursoRepository usuarioCursoRepository;
 
-    public MisCursosService(MisCursosRepository misCursosRepository, UsuarioCursoRepository usuarioCursoRepository) {
+    public MisCursosService(MisCursosRepository misCursosRepository) {
         this.misCursosRepository = misCursosRepository;
-        this.usuarioCursoRepository = usuarioCursoRepository;
     }
 
     public List<MisCursosDTO> listarCursos() {
@@ -28,91 +23,70 @@ public class MisCursosService {
     }
 
     public List<MisCursosDTO> listarCursos(Long usuarioId) {
-        // Si por alguna razón no envían el ID, devolvemos todos (comportamiento por defecto)
         if (usuarioId == null) {
             return misCursosRepository.findAll()
                     .stream()
-                    .map(curso -> convertirADTO(curso, null))
+                    .map(curso -> convertirCursoADTO(curso))
                     .toList();
         }
 
-        // Si hay ID, filtramos SOLAMENTE los cursos donde el alumno está matriculado
-        return misCursosRepository.findAll()
-                .stream()
-                .map(curso -> {
-                    UsuarioCurso inscripcion = buscarInscripcion(usuarioId, curso);
-                    // Si encontramos inscripción, armamos el DTO. Si no, devolvemos null.
-                    if (inscripcion != null) {
-                        return convertirADTO(curso, inscripcion);
-                    }
-                    return null;
-                })
-                .filter(dto -> dto != null) // <--- ¡ESTO ELIMINA LOS 84 CURSOS QUE SOBRAN!
+        List<CursoInscritoProjectionDTO> proyecciones = misCursosRepository
+                .findCursosInscritosOptimizado(usuarioId);
+
+        return proyecciones.stream()
+                .map(this::convertirProjectionADTO)
                 .toList();
     }
 
-    public List<MisCursosDTO> listarPorNivelYGrado(Usuario.NivelEducativo nivel, Integer grado) {
+    public List<MisCursosDTO> listarPorNivelYGrado(UsuarioEntity.NivelEducativo nivel, Integer grado) {
         return misCursosRepository.findByNivelAndGrado(nivel, grado)
                 .stream()
-                .map(curso -> convertirADTO(curso, null))
+                .map(curso -> convertirCursoADTO(curso))
                 .toList();
     }
 
-    private MisCursosDTO convertirADTO(Curso curso, UsuarioCurso inscripcion) {
-        List<?> temas = obtenerCampo(curso, "temas", List.class);
-        int totalTemas = temas == null ? 0 : temas.size();
-        int totalEjercicios = contarEjercicios(temas);
-        Integer progreso = inscripcion == null ? 0 : obtenerCampo(inscripcion, "porcentajeCompletado", Integer.class);
-        progreso = progreso == null ? 0 : progreso;
-        Usuario.NivelEducativo nivel = obtenerCampo(curso, "nivel", Usuario.NivelEducativo.class);
-        String siguienteTema = obtenerSiguienteTema(temas, progreso);
+    private MisCursosDTO convertirProjectionADTO(CursoInscritoProjectionDTO p) {
+        Integer progreso = p.getPorcentajeCompletado() != null ? p.getPorcentajeCompletado() : 0;
+        String siguienteTema = p.getSiguienteTemaNombre() != null ? p.getSiguienteTemaNombre() : "Temario por preparar";
 
         return new MisCursosDTO(
-                obtenerCampo(curso, "id", Long.class),
-                obtenerCampo(curso, "nombre", String.class),
-                obtenerCampo(curso, "descripcion", String.class),
-                nivel == null ? "" : nivel.name(),
-                obtenerCampo(curso, "grado", Integer.class),
-                obtenerCampo(curso, "colorHex", String.class),
-                obtenerCampo(curso, "icono", String.class),
-                totalTemas,
-                totalEjercicios,
+                p.getCursoId(),
+                p.getNombre(),
+                p.getDescripcion(),
+                p.getNivel() != null ? p.getNivel() : "",
+                p.getGrado(),
+                p.getColorHex(),
+                p.getIcono(),
+                p.getTotalTemas() != null ? p.getTotalTemas().intValue() : 0,
+                p.getTotalEjercicios() != null ? p.getTotalEjercicios().intValue() : 0,
                 progreso,
                 obtenerEstado(progreso),
                 siguienteTema,
                 obtenerRecomendacion(progreso, siguienteTema));
     }
 
-    private UsuarioCurso buscarInscripcion(Long usuarioId, Curso curso) {
-        Long cursoId = obtenerCampo(curso, "id", Long.class);
-        if (usuarioId == null || cursoId == null) {
-            return null;
-        }
+    private MisCursosDTO convertirCursoADTO(CursoEntity curso) {
+        int totalTemas = curso.getTemas() != null ? curso.getTemas().size() : 0;
+        int totalEjercicios = totalTemas > 0 && curso.getTemas() != null
+                ? curso.getTemas().stream()
+                        .mapToInt(t -> t.getEjercicios() != null ? t.getEjercicios().size() : 0)
+                        .sum()
+                : 0;
 
-        Optional<UsuarioCurso> inscripcion = usuarioCursoRepository.findByUsuarioIdAndCursoId(usuarioId, cursoId);
-        return inscripcion.orElse(null);
-    }
-
-    private int contarEjercicios(List<?> temas) {
-        if (temas == null) {
-            return 0;
-        }
-
-        return temas.stream()
-                .map(tema -> obtenerCampo(tema, "ejercicios", List.class))
-                .mapToInt(ejercicios -> ejercicios == null ? 0 : ejercicios.size())
-                .sum();
-    }
-
-    private String obtenerSiguienteTema(List<?> temas, Integer progreso) {
-        if (temas == null || temas.isEmpty()) {
-            return "Temario por preparar";
-        }
-
-        int indice = Math.min(Math.max((progreso * temas.size()) / 100, 0), temas.size() - 1);
-        Tema tema = (Tema) temas.get(indice);
-        String nombre = obtenerCampo(tema, "nombre", String.class);
-        return nombre == null ? "Siguiente tema" : nombre;
+        return new MisCursosDTO(
+                curso.getId(),
+                curso.getNombre(),
+                curso.getDescripcion(),
+                curso.getNivel() != null ? curso.getNivel().name() : "",
+                curso.getGrado(),
+                curso.getColorHex(),
+                curso.getIcono(),
+                totalTemas,
+                totalEjercicios,
+                0,
+                "Por iniciar",
+                totalTemas > 0 && curso.getTemas() != null ? curso.getTemas().get(0).getNombre() : "Temario por preparar",
+                "Empieza con el primer tema y completa una practica corta.");
     }
 
     private String obtenerEstado(Integer progreso) {
@@ -139,19 +113,5 @@ public class MisCursosService {
             return "Refuerza " + siguienteTema + " antes de avanzar al siguiente bloque.";
         }
         return "Empieza por " + siguienteTema + " y marca tu primera meta semanal.";
-    }
-
-    private <T> T obtenerCampo(Object origen, String nombreCampo, Class<T> tipo) {
-        if (origen == null) {
-            return null;
-        }
-
-        try {
-            Field field = origen.getClass().getDeclaredField(nombreCampo);
-            field.setAccessible(true);
-            return tipo.cast(field.get(origen));
-        } catch (ReflectiveOperationException | ClassCastException ex) {
-            return null;
-        }
     }
 }

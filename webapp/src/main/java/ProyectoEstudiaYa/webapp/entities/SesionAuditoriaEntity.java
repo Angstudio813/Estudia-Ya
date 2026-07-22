@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 
-public class SesionAuditoria {
+public class SesionAuditoriaEntity {
 
    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class SesionAuditoria {
  
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    private UsuarioEntity usuario;
  
     @Column(nullable = false)
     private String modulo; // "PRACTICA", "CURSOS", "DASHBOARD", etc.

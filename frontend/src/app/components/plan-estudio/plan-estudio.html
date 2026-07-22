@@ -1,18 +1,36 @@
 <div class="plan-shell">
-  <h1>📚 Plan de Estudio</h1>
-  <p>Genera tu horario de estudio personalizado.</p>
+  <h1><i class="fa-solid fa-calendar-check"></i> Plan de Estudio</h1>
+  <p>Genera tu horario de estudio personalizado con tus cursos inscritos.</p>
 
   <form (ngSubmit)="generarPlan()" class="mb-4">
     <div class="mb-3">
-      <label class="form-label">Cursos (separados por coma)</label>
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Matemáticas, Física, Química"
-        [(ngModel)]="cursosTexto"
-        name="cursos"
-        required
-      />
+      <label class="form-label">Selecciona tus cursos</label>
+
+      <div *ngIf="cargandoCursos()" class="cursos-loading">
+        Cargando tus cursos...
+      </div>
+
+      <div *ngIf="!cargandoCursos() && cursosDisponibles().length === 0" class="cursos-empty">
+        No tienes cursos inscritos. Inscríbete en cursos desde la sección "Mis Cursos".
+      </div>
+
+      <div class="cursos-grid" *ngIf="!cargandoCursos() && cursosDisponibles().length > 0">
+        <label
+          class="curso-chip"
+          *ngFor="let curso of cursosDisponibles()"
+          [class.selected]="cursoSeleccionado(curso.id)"
+        >
+          <input
+            type="checkbox"
+            [checked]="cursoSeleccionado(curso.id)"
+            (change)="toggleCurso(curso.id)"
+          />
+          <span class="curso-icon" [style.background]="curso.colorHex || '#6366f1'">
+            <i class="fa-solid" [ngClass]="curso.icono || 'fa-book'"></i>
+          </span>
+          <span class="curso-nombre">{{ curso.nombre }}</span>
+        </label>
+      </div>
     </div>
 
     <div class="mb-3">
@@ -41,7 +59,7 @@
       />
     </div>
 
-    <button type="submit" class="btn btn-primary" [disabled]="cargando()">
+    <button type="submit" class="btn btn-primary" [disabled]="cargando() || cargandoCursos()">
       {{ cargando() ? 'Generando...' : 'Generar plan' }}
     </button>
   </form>

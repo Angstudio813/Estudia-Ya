@@ -6,7 +6,7 @@ import java.util.List;
  
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+public class UsuarioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,21 +40,21 @@ public class Usuario {
     private LocalDateTime ultimoAcceso;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<UsuarioCurso> cursos;
+    private List<UsuarioCursoEntity> cursos;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Tarea> tareas;
+    private List<TareaEntity> tareas;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Progreso> progresos;
+    private List<ProgresoEntity> progresos;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Logro> logros;
+    private List<LogroEntity> logros;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<SesionAuditoria> sesiones;
+    private List<SesionAuditoriaEntity> sesiones;
  
-    public Usuario() {
+    public UsuarioEntity() {
     }
 
     public Long getId() {
@@ -161,43 +161,43 @@ public class Usuario {
         this.ultimoAcceso = ultimoAcceso;
     }
 
-    public List<UsuarioCurso> getCursos() {
+    public List<UsuarioCursoEntity> getCursos() {
         return cursos;
     }
 
-    public void setCursos(List<UsuarioCurso> cursos) {
+    public void setCursos(List<UsuarioCursoEntity> cursos) {
         this.cursos = cursos;
     }
 
-    public List<Tarea> getTareas() {
+    public List<TareaEntity> getTareas() {
         return tareas;
     }
 
-    public void setTareas(List<Tarea> tareas) {
+    public void setTareas(List<TareaEntity> tareas) {
         this.tareas = tareas;
     }
 
-    public List<Progreso> getProgresos() {
+    public List<ProgresoEntity> getProgresos() {
         return progresos;
     }
 
-    public void setProgresos(List<Progreso> progresos) {
+    public void setProgresos(List<ProgresoEntity> progresos) {
         this.progresos = progresos;
     }
 
-    public List<Logro> getLogros() {
+    public List<LogroEntity> getLogros() {
         return logros;
     }
 
-    public void setLogros(List<Logro> logros) {
+    public void setLogros(List<LogroEntity> logros) {
         this.logros = logros;
     }
 
-    public List<SesionAuditoria> getSesiones() {
+    public List<SesionAuditoriaEntity> getSesiones() {
         return sesiones;
     }
 
-    public void setSesiones(List<SesionAuditoria> sesiones) {
+    public void setSesiones(List<SesionAuditoriaEntity> sesiones) {
         this.sesiones = sesiones;
     }
  

@@ -27,7 +27,11 @@ export class AuthService {
   private readonly profileKey = 'estudiaya_user_profile';
 
   isLoggedIn(): boolean {
-    return this.getToken().length > 0;
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+    return !this.isTokenExpired(token);
   }
 
   saveSession(session: LoginSession): void {
@@ -37,17 +41,6 @@ export class AuthService {
 
     localStorage.setItem(this.tokenKey, session.token);
     localStorage.setItem(this.tokenTypeKey, session.type);
-  }
-
-  saveEmail(email: string): void {
-    this.saveProfile({
-      usuarioId: 1,
-      nombre: email,
-      apellido: '',
-      email,
-      nivel: '',
-      grado: 0,
-    });
   }
 
   saveProfile(profile: UserProfile): void {
@@ -120,5 +113,19 @@ export class AuthService {
 
   getUserId(): number {
     return this.getProfile()?.usuarioId ?? 1;
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp;
+      if (!exp) {
+        return false;
+      }
+      const expMs = exp * 1000;
+      return Date.now() >= expMs;
+    } catch {
+      return true;
+    }
   }
 }

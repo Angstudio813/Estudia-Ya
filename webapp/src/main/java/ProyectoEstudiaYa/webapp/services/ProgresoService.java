@@ -1,60 +1,44 @@
 package ProyectoEstudiaYa.webapp.services;
 
 import ProyectoEstudiaYa.webapp.dto.ProgresoResumenDTO;
+import ProyectoEstudiaYa.webapp.dto.ProgresoStatsProjectionDTO;
 import ProyectoEstudiaYa.webapp.dto.ProgresoTemaDTO;
-import ProyectoEstudiaYa.webapp.entities.Progreso;
-import ProyectoEstudiaYa.webapp.repositories.IntentoEjercicioRepository;
-import ProyectoEstudiaYa.webapp.repositories.LogroRepository;
+import ProyectoEstudiaYa.webapp.entities.ProgresoEntity;
 import ProyectoEstudiaYa.webapp.repositories.ProgresoRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
 public class ProgresoService {
 
     private final ProgresoRepository progresoRepository;
-    private final IntentoEjercicioRepository intentoEjercicioRepository;
-    private final LogroRepository logroRepository;
 
-    public ProgresoService(
-            ProgresoRepository progresoRepository,
-            IntentoEjercicioRepository intentoEjercicioRepository,
-            LogroRepository logroRepository
-    ) {
+    public ProgresoService(ProgresoRepository progresoRepository) {
         this.progresoRepository = progresoRepository;
-        this.intentoEjercicioRepository = intentoEjercicioRepository;
-        this.logroRepository = logroRepository;
     }
 
     public ProgresoResumenDTO obtenerProgresoUsuario(Long usuarioId) {
-        List<Progreso> progresos = progresoRepository.findByUsuarioId(usuarioId);
+        List<ProgresoEntity> progresos = progresoRepository.findByUsuarioId(usuarioId);
 
         List<ProgresoTemaDTO> detalleTemas = progresos.stream()
                 .map(p -> new ProgresoTemaDTO(
-                        p.getTema() != null ? p.getTema().getNombre() : "Tema desconocido",
+                        p.getTema() != null ? p.getTema().getNombre() : "TemaEntity desconocido",
                         p.getEjerciciosIntentados(),
                         p.getEjerciciosCorrectos(),
                         p.getPorcentajeAcierto(),
                         p.getNecesitaRefuerzo()))
                 .toList();
 
-        Double promedio = progresoRepository.promedioAciertosPorUsuario(usuarioId);
-        double promedioAcierto = promedio == null ? 0.0 : promedio;
-        long temasEnRefuerzo = progresoRepository.findByUsuarioIdAndNecesitaRefuerzo(usuarioId, true).size();
-
-        long ejerciciosCorrectos = intentoEjercicioRepository.countByUsuarioIdAndEsCorrecta(usuarioId, true);
-        long logrosTotales = logroRepository.countByUsuarioId(usuarioId);
+        ProgresoStatsProjectionDTO stats = progresoRepository.findStatsByUsuarioId(usuarioId);
 
         return new ProgresoResumenDTO(
                 usuarioId,
-                progresos.size(),
-                promedioAcierto,
-                temasEnRefuerzo,
-                ejerciciosCorrectos,
-                logrosTotales,
-                detalleTemas
-        );
+                stats.getTotalTemas() != null ? stats.getTotalTemas().intValue() : 0,
+                stats.getPromedioAcierto() != null ? stats.getPromedioAcierto() : 0.0,
+                stats.getTemasEnRefuerzo() != null ? stats.getTemasEnRefuerzo() : 0,
+                stats.getEjerciciosCorrectos() != null ? stats.getEjerciciosCorrectos() : 0,
+                stats.getLogrosTotales() != null ? stats.getLogrosTotales() : 0,
+                detalleTemas);
     }
 }

@@ -1,11 +1,11 @@
 package ProyectoEstudiaYa.webapp.services;
 
 import ProyectoEstudiaYa.webapp.dto.PracticaInteligenteDTO;
-import ProyectoEstudiaYa.webapp.entities.Ejercicio;
-import ProyectoEstudiaYa.webapp.entities.IntentoEjercicio;
-import ProyectoEstudiaYa.webapp.entities.Progreso;
-import ProyectoEstudiaYa.webapp.entities.Tema;
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.entities.EjercicioEntity;
+import ProyectoEstudiaYa.webapp.entities.IntentoEjercicioEntity;
+import ProyectoEstudiaYa.webapp.entities.ProgresoEntity;
+import ProyectoEstudiaYa.webapp.entities.TemaEntity;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 import ProyectoEstudiaYa.webapp.repositories.EjercicioRepository;
 import ProyectoEstudiaYa.webapp.repositories.IntentoEjercicioRepository;
 import ProyectoEstudiaYa.webapp.repositories.PracticaInteligenteRepository;
@@ -102,14 +102,14 @@ public class PracticaInteligenteService {
 
     @Transactional
     public PracticaInteligenteDTO registrarIntento(Long usuarioId, Long ejercicioId, String respuestaElegida) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Ejercicio ejercicio = ejercicioRepository.findById(ejercicioId)
-                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("UsuarioEntity no encontrado"));
+        EjercicioEntity ejercicio = ejercicioRepository.findById(ejercicioId)
+                .orElseThrow(() -> new RuntimeException("EjercicioEntity no encontrado"));
 
         boolean esCorrecta = ejercicio.getRespuestaCorrecta().equalsIgnoreCase(respuestaElegida);
 
-        IntentoEjercicio intento = IntentoEjercicio.builder()
+        IntentoEjercicioEntity intento = IntentoEjercicioEntity.builder()
                 .usuario(usuario)
                 .ejercicio(ejercicio)
                 .respuestaElegida(respuestaElegida.toUpperCase())
@@ -125,8 +125,8 @@ public class PracticaInteligenteService {
 
     @Transactional
     public void actualizarProgreso(Long usuarioId, Long temaId, boolean esCorrecta) {
-        Progreso progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId)
-                .orElse(Progreso.builder()
+        ProgresoEntity progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId)
+                .orElse(ProgresoEntity.builder()
                         .usuario(usuarioRepository.getReferenceById(usuarioId))
                         .tema(temaRepository.getReferenceById(temaId))
                         .ejerciciosIntentados(0)
@@ -152,10 +152,10 @@ public class PracticaInteligenteService {
 
     @Transactional
     public List<PracticaInteligenteDTO> generarEjerciciosIA(Long usuarioId, Long temaId, int cantidad) {
-        Tema tema = temaRepository.findById(temaId)
-                .orElseThrow(() -> new RuntimeException("Tema no encontrado con ID: " + temaId));
+        TemaEntity tema = temaRepository.findById(temaId)
+                .orElseThrow(() -> new RuntimeException("TemaEntity no encontrado con ID: " + temaId));
 
-        Progreso progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId).orElse(null);
+        ProgresoEntity progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId).orElse(null);
         double porcentajeAcierto = progreso != null ? progreso.getPorcentajeAcierto() : 50.0;
         String nivelDificultad = porcentajeAcierto >= 70 ? "DIFICIL" : porcentajeAcierto >= 40 ? "MEDIO" : "FACIL";
 
@@ -196,7 +196,7 @@ public class PracticaInteligenteService {
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject obj = jsonArray.get(i).getAsJsonObject();
 
-            Ejercicio ejercicio = Ejercicio.builder()
+            EjercicioEntity ejercicio = EjercicioEntity.builder()
                     .pregunta(obj.get("pregunta").getAsString())
                     .opcionA(obj.get("opcionA").getAsString())
                     .opcionB(obj.get("opcionB").getAsString())
@@ -204,7 +204,7 @@ public class PracticaInteligenteService {
                     .opcionD(obj.get("opcionD").getAsString())
                     .respuestaCorrecta(obj.get("respuestaCorrecta").getAsString().toUpperCase())
                     .explicacion(obj.get("explicacion").getAsString())
-                    .dificultad(Ejercicio.Dificultad.valueOf(obj.get("dificultad").getAsString().toUpperCase()))
+                    .dificultad(EjercicioEntity.Dificultad.valueOf(obj.get("dificultad").getAsString().toUpperCase()))
                     .generadoPorIA(true)
                     .tema(tema)
                     .build();
@@ -216,9 +216,9 @@ public class PracticaInteligenteService {
         return ejerciciosGenerados;
     }
 
-    private PracticaInteligenteDTO convertirADTO(Ejercicio ejercicio) {
-        Tema tema = ejercicio.getTema();
-        Ejercicio.Dificultad dificultad = ejercicio.getDificultad();
+    private PracticaInteligenteDTO convertirADTO(EjercicioEntity ejercicio) {
+        TemaEntity tema = ejercicio.getTema();
+        EjercicioEntity.Dificultad dificultad = ejercicio.getDificultad();
         String temaNombre = tema != null ? tema.getNombre() : "";
         String cursoNombre = tema != null && tema.getCurso() != null ? tema.getCurso().getNombre() : "";
         String dificultadTexto = dificultad != null ? dificultad.name() : "";
@@ -271,13 +271,13 @@ public class PracticaInteligenteService {
 
     @Transactional
     public List<PracticaInteligenteDTO> generarEjerciciosCursoIA(Long usuarioId, Long cursoId, int cantidadPorTema) {
-        List<Tema> temas = temaRepository.findByCursoIdOrderByOrden(cursoId);
+        List<TemaEntity> temas = temaRepository.findByCursoIdOrderByOrden(cursoId);
         if (temas.isEmpty()) {
             throw new RuntimeException("No se encontraron temas para el curso con ID: " + cursoId);
         }
 
         List<PracticaInteligenteDTO> todos = new ArrayList<>();
-        for (Tema tema : temas) {
+        for (TemaEntity tema : temas) {
             List<PracticaInteligenteDTO> generados = generarEjerciciosIA(usuarioId, tema.getId(), cantidadPorTema);
             todos.addAll(generados);
         }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 
 
-public class UsuarioCurso {
+public class UsuarioCursoEntity {
 
  @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +20,11 @@ public class UsuarioCurso {
  
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    private UsuarioEntity usuario;
  
     @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)
-    private Curso curso;
+    private CursoEntity curso;
  
     private Integer porcentajeCompletado = 0;
     private LocalDateTime fechaInscripcion;

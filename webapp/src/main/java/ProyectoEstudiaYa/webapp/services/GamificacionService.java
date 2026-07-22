@@ -1,8 +1,8 @@
 package ProyectoEstudiaYa.webapp.services;
 
 import ProyectoEstudiaYa.webapp.dto.GamificacionDTO;
-import ProyectoEstudiaYa.webapp.entities.Logro;
-import ProyectoEstudiaYa.webapp.entities.Usuario;
+import ProyectoEstudiaYa.webapp.entities.LogroEntity;
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 import ProyectoEstudiaYa.webapp.repositories.LogroRepository;
 import ProyectoEstudiaYa.webapp.repositories.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -27,8 +27,8 @@ public class GamificacionService {
     }
 
     public GamificacionDTO obtenerProgreso(Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + usuarioId));
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("UsuarioEntity no encontrado con ID: " + usuarioId));
 
         List<GamificacionDTO.LogroDTO> logrosDTO = logroRepository.findByUsuarioIdOrdenadosPorFecha(usuarioId)
                 .stream()
@@ -46,8 +46,8 @@ public class GamificacionService {
 
     @Transactional
     public GamificacionDTO completarReto(Long usuarioId, String retoTexto) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + usuarioId));
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("UsuarioEntity no encontrado con ID: " + usuarioId));
 
         usuario.setXpTotal(usuario.getXpTotal() + XP_POR_RETO);
         recalcularNivel(usuario);
@@ -56,11 +56,11 @@ public class GamificacionService {
         String nombreLogro = "Reto: " + retoTexto;
         boolean yaExiste = logroRepository.existsByUsuarioIdAndNombre(usuarioId, nombreLogro);
         if (!yaExiste) {
-            Logro logro = Logro.builder()
+            LogroEntity logro = LogroEntity.builder()
                     .nombre(nombreLogro)
                     .descripcion("Completaste el reto \"" + retoTexto + "\"")
                     .icono("fa-flag-checkered")
-                    .tipo(Logro.TipoLogro.ESPECIAL)
+                    .tipo(LogroEntity.TipoLogro.ESPECIAL)
                     .fechaDesbloqueado(LocalDateTime.now())
                     .usuario(usuario)
                     .build();
@@ -70,13 +70,13 @@ public class GamificacionService {
         return obtenerProgreso(usuarioId);
     }
 
-    private void recalcularNivel(Usuario usuario) {
+    private void recalcularNivel(UsuarioEntity usuario) {
         int xp = usuario.getXpTotal();
         int nivel = (xp / 100) + 1;
         usuario.setNivel_juego(nivel);
     }
 
-    private GamificacionDTO.LogroDTO convertirLogroADTO(Logro logro) {
+    private GamificacionDTO.LogroDTO convertirLogroADTO(LogroEntity logro) {
         String fecha = logro.getFechaDesbloqueado() != null
                 ? logro.getFechaDesbloqueado().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                 : null;

@@ -2,9 +2,9 @@ package ProyectoEstudiaYa.webapp.services;
 
 import ProyectoEstudiaYa.webapp.dto.TemaDetalleDTO;
 import ProyectoEstudiaYa.webapp.dto.TemaDetalleDTO.EjercicioResumenDTO;
-import ProyectoEstudiaYa.webapp.entities.Ejercicio;
-import ProyectoEstudiaYa.webapp.entities.Progreso;
-import ProyectoEstudiaYa.webapp.entities.Tema;
+import ProyectoEstudiaYa.webapp.entities.EjercicioEntity;
+import ProyectoEstudiaYa.webapp.entities.ProgresoEntity;
+import ProyectoEstudiaYa.webapp.entities.TemaEntity;
 import ProyectoEstudiaYa.webapp.repositories.EjercicioRepository;
 import ProyectoEstudiaYa.webapp.repositories.ProgresoRepository;
 import ProyectoEstudiaYa.webapp.repositories.TemaRepository;
@@ -29,19 +29,19 @@ public class TemaDetalleService {
     }
 
     public TemaDetalleDTO obtenerDetalle(Long temaId, Long usuarioId) {
-        Tema tema = temaRepository.findById(temaId)
-                .orElseThrow(() -> new RuntimeException("Tema no encontrado"));
+        TemaEntity tema = temaRepository.findById(temaId)
+                .orElseThrow(() -> new RuntimeException("TemaEntity no encontrado"));
 
-        List<Ejercicio> ejercicios = ejercicioRepository.findByTemaId(temaId);
+        List<EjercicioEntity> ejercicios = ejercicioRepository.findByTemaId(temaId);
 
         int ejerciciosResueltos = 0;
         double porcentajeAcierto = 0;
         boolean necesitaRefuerzo = false;
 
         if (usuarioId != null) {
-            Optional<Progreso> progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId);
+            Optional<ProgresoEntity> progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, temaId);
             if (progreso.isPresent()) {
-                Progreso p = progreso.get();
+                ProgresoEntity p = progreso.get();
                 ejerciciosResueltos = p.getEjerciciosIntentados() != null ? p.getEjerciciosIntentados() : 0;
                 porcentajeAcierto = p.getPorcentajeAcierto() != null ? p.getPorcentajeAcierto() : 0;
                 necesitaRefuerzo = p.getNecesitaRefuerzo() != null && p.getNecesitaRefuerzo();

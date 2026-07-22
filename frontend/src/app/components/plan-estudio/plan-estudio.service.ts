@@ -4,6 +4,14 @@ import { HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../core/api-base';
 
+export interface CursoInscrito {
+  id: number;
+  nombre: string;
+  nivel: string;
+  colorHex: string;
+  icono: string;
+}
+
 export interface PlanEstudioRequest {
   cursos: string[];
   horasDisponiblesPorDia: number;
@@ -19,8 +27,15 @@ export interface PlanEstudioResponse {
 })
 export class PlanEstudioService {
   private readonly apiUrl = `${API_BASE_URL}/api/plan-estudio`;
+  private readonly cursosUrl = `${API_BASE_URL}/api/mis-cursos`;
 
   constructor(private http: HttpClient) {}
+
+  listarCursos(usuarioId: number): Observable<CursoInscrito[]> {
+    return this.http.get<CursoInscrito[]>(`${this.cursosUrl}?usuarioId=${usuarioId}`, {
+      withCredentials: true,
+    });
+  }
 
   generarPlan(request: PlanEstudioRequest): Observable<PlanEstudioResponse> {
     return this.http.post<PlanEstudioResponse>(`${this.apiUrl}/generar`, request, {

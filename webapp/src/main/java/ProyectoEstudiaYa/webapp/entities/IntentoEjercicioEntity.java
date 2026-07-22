@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 
-public class IntentoEjercicio {
+public class IntentoEjercicioEntity {
 
       @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,11 +19,11 @@ public class IntentoEjercicio {
  
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    private UsuarioEntity usuario;
  
     @ManyToOne
     @JoinColumn(name = "ejercicio_id", nullable = false)
-    private Ejercicio ejercicio;
+    private EjercicioEntity ejercicio;
  
     private String respuestaElegida; // "A", "B", "C" o "D"
     private Boolean esCorrecta;

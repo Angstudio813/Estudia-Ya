@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 
-public class Progreso {
+public class ProgresoEntity {
 
 
     @Id
@@ -20,11 +20,11 @@ public class Progreso {
  
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    private UsuarioEntity usuario;
  
     @ManyToOne
     @JoinColumn(name = "tema_id", nullable = false)
-    private Tema tema;
+    private TemaEntity tema;
  
     private Integer ejerciciosIntentados = 0;
     private Integer ejerciciosCorrectos = 0;
