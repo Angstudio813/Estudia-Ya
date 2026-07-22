@@ -11,6 +11,5 @@ public interface CursoInscritoProjectionDTO {
     Integer getPorcentajeCompletado();
     Long getTotalTemas();
     Long getTotalEjercicios();
-    Long getSiguienteTemaOrden();
     String getSiguienteTemaNombre();
 }

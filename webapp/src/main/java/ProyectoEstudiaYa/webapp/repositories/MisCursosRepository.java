@@ -22,31 +22,15 @@ public interface MisCursosRepository extends JpaRepository<ProyectoEstudiaYa.web
                 uc.porcentaje_completado AS porcentajeCompletado,
                 COUNT(DISTINCT t.id) AS totalTemas,
                 COUNT(DISTINCT e.id) AS totalEjercicios,
-                MIN(CASE WHEN t.orden > COALESCE(
-                    (SELECT t2.orden FROM temas t2
-                     JOIN progresos p ON p.tema_id = t2.id
-                     WHERE p.usuario_id = :usuarioId AND t2.curso_id = c.id
-                     AND p.porcentaje_acierto >= 80
-                     ORDER BY t2.orden DESC LIMIT 1), 0)
-                THEN t.orden ELSE NULL END) AS siguienteTemaOrden,
-                (SELECT t3.nombre FROM temas t3
-                 WHERE t3.curso_id = c.id
-                 AND t3.orden > COALESCE(
-                    (SELECT t4.orden FROM temas t4
-                     JOIN progresos p2 ON p2.tema_id = t4.id
-                     WHERE p2.usuario_id = :usuarioId AND t4.curso_id = c.id
-                     AND p2.porcentaje_acierto >= 80
-                     ORDER BY t4.orden DESC LIMIT 1), 0)
-                 ORDER BY t3.orden ASC LIMIT 1) AS siguienteTemaNombre
+                MIN(t.nombre) AS siguienteTemaNombre
             FROM usuario_cursos uc
-            JOIN cursos c ON c.id = uc.curso_id
+            INNER JOIN cursos c ON c.id = uc.curso_id
             LEFT JOIN temas t ON t.curso_id = c.id
             LEFT JOIN ejercicios e ON e.tema_id = t.id
-            WHERE uc.usuario_id = :usuarioId
+            WHERE uc.usuario_id = ?
             GROUP BY c.id, c.nombre, c.descripcion, c.nivel, c.grado, c.color_hex, c.icono, uc.porcentaje_completado
-            ORDER BY uc.ultima_practica DESC NULLS LAST
             """, nativeQuery = true)
-    List<CursoInscritoProjectionDTO> findCursosInscritosOptimizado(@Param("usuarioId") Long usuarioId);
+    List<CursoInscritoProjectionDTO> findCursosInscritosOptimizado(Long usuarioId);
 
     @Query("SELECT c FROM CursoEntity c WHERE c.nivel = :nivel ORDER BY c.grado ASC")
     List<ProyectoEstudiaYa.webapp.entities.CursoEntity> findByNivel(@Param("nivel") ProyectoEstudiaYa.webapp.entities.UsuarioEntity.NivelEducativo nivel);
