@@ -15,7 +15,7 @@ public class ProgresoController {
     }
 
     @GetMapping("/{usuarioId}")
-    public ProgresoResumenDTO obtenerProgresoApi(@PathVariable Long usuarioId) {
+    public ProgresoResumenDTO obtenerProgreso(@PathVariable Long usuarioId) {
         return progresoService.obtenerProgresoUsuario(usuarioId);
     }
 }

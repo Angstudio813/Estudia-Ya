@@ -18,7 +18,7 @@ export interface PlanEstudioResponse {
   providedIn: 'root'
 })
 export class PlanEstudioService {
-  private readonly apiUrl = `${API_BASE_URL}/plan-estudio`;
+  private readonly apiUrl = `${API_BASE_URL}/api/plan-estudio`;
 
   constructor(private http: HttpClient) {}
 

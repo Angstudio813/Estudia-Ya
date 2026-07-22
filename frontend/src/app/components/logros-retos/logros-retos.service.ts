@@ -22,7 +22,7 @@ export interface UsuarioProgreso {
   providedIn: 'root'
 })
 export class LogrosRetosService {
-  private readonly apiUrl = `${API_BASE_URL}/gamificacion`;
+  private readonly apiUrl = `${API_BASE_URL}/api/gamificacion`;
 
   constructor(private http: HttpClient) {}
 

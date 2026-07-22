@@ -1,7 +1,8 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LogrosRetosService, UsuarioProgreso } from './logros-retos.service';
+import { AuthService } from '../../core/auth.service';
 
 interface RetoActivo {
   texto: string;
@@ -15,6 +16,7 @@ interface RetoActivo {
   styleUrl: './logros-retos.css',
 })
 export class LogrosRetos implements OnInit {
+  private readonly authService = inject(AuthService);
   usuarioId: number = 1;
 
   progreso = signal<UsuarioProgreso | null>(null);
@@ -75,6 +77,7 @@ export class LogrosRetos implements OnInit {
   constructor(private logrosRetosService: LogrosRetosService) {}
 
   ngOnInit(): void {
+    this.usuarioId = this.authService.getUserId();
     this.iniciarRetos();
     this.cargarProgreso();
   }

@@ -30,7 +30,15 @@ public class ProgresoService {
 
     public ProgresoResumenDTO obtenerProgresoUsuario(Long usuarioId) {
         List<Progreso> progresos = progresoRepository.findByUsuarioId(usuarioId);
-        List<ProgresoTemaDTO> detalleTemas = Collections.emptyList();
+
+        List<ProgresoTemaDTO> detalleTemas = progresos.stream()
+                .map(p -> new ProgresoTemaDTO(
+                        p.getTema() != null ? p.getTema().getNombre() : "Tema desconocido",
+                        p.getEjerciciosIntentados(),
+                        p.getEjerciciosCorrectos(),
+                        p.getPorcentajeAcierto(),
+                        p.getNecesitaRefuerzo()))
+                .toList();
 
         Double promedio = progresoRepository.promedioAciertosPorUsuario(usuarioId);
         double promedioAcierto = promedio == null ? 0.0 : promedio;
