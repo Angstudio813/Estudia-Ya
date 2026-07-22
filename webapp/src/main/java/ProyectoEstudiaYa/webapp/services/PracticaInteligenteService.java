@@ -291,9 +291,12 @@ public class PracticaInteligenteService {
         message.addProperty("role", "user");
         message.addProperty("content", prompt);
 
+        com.google.gson.JsonArray messages = new com.google.gson.JsonArray();
+        messages.add(message);
+
         JsonObject body = new JsonObject();
         body.addProperty("model", this.model.trim());
-        body.add("messages", new com.google.gson.JsonArray() {{ add(message); }});
+        body.add("messages", messages);
         body.addProperty("temperature", 0.7);
 
         String jsonBody = body.toString();
