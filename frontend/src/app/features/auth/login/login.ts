@@ -4,7 +4,7 @@ import { NgClass } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
-import { environment } from '../../../../environment.development';
+import { environment } from '../../../../environment';
 
 interface LoginResponse {
   token: string;

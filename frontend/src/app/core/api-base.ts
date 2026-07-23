@@ -1,3 +1,3 @@
-import { environment } from '../../environment.development';
+import { environment } from '../../environment';
 
 export const API_BASE_URL = environment.apiUrl;
