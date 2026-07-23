@@ -102,7 +102,7 @@ public class UsuarioEntity {
     }
 
     public Rol getRol() {
-        return rol;
+        return rol != null ? rol : Rol.ESTUDIANTE;
     }
 
     public void setRol(Rol rol) {
