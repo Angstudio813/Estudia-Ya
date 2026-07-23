@@ -12,6 +12,7 @@ interface LoginResponse {
   nombre: string;
   apellido: string;
   email: string;
+  rol: string;
   nivel: string;
   grado: number;
   xpTotal?: number;

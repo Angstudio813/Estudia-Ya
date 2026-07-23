@@ -10,6 +10,7 @@ export interface UserProfile {
   nombre: string;
   apellido: string;
   email: string;
+  rol: string;
   nivel: string;
   grado: number;
   xpTotal?: number;
@@ -113,6 +114,10 @@ export class AuthService {
 
   getUserId(): number {
     return this.getProfile()?.usuarioId ?? 1;
+  }
+
+  isAdmin(): boolean {
+    return this.getProfile()?.rol === 'ADMIN';
   }
 
   private isTokenExpired(token: string): boolean {

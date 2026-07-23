@@ -9,7 +9,7 @@ import { Progreso } from './components/progreso/progreso';
 import { MisCursos } from './components/mis-cursos/mis-cursos';
 import { GestionUsuarios } from './components/gestion-usuarios/gestion-usuarios';
 import { Login } from './features/auth/login/login';
-import { authGuard } from './core/auth.guard';
+import { authGuard, adminGuard } from './core/auth.guard';
 import { StudyLayout } from './components/study-layout/study-layout';
 import { CursoDetalleComponent } from './components/curso-detalle/curso-detalle';
 import { TemaDetalleComponent } from './components/tema-detalle/tema-detalle';
@@ -87,7 +87,7 @@ export const routes: Routes = [
   {
     path: 'gestion-usuarios',
     component: StudyLayout,
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     children: [
       {
         path: '',

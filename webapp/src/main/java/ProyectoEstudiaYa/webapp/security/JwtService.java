@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class JwtService {
@@ -31,7 +30,7 @@ public class JwtService {
         this.expirationMs = expirationMs;
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         Instant issuedAt = Instant.now();
         Instant expiresAt = issuedAt.plus(expirationMs, ChronoUnit.MILLIS);
 
@@ -39,7 +38,7 @@ public class JwtService {
                 .withSubject(username)
                 .withIssuedAt(Date.from(issuedAt))
                 .withExpiresAt(Date.from(expiresAt))
-                .withClaim("roles", List.of("ROLE_USER"))
+                .withClaim("rol", role)
                 .sign(algorithm);
     }
 

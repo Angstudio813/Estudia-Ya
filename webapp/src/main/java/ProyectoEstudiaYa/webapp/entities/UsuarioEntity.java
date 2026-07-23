@@ -25,6 +25,10 @@ public class UsuarioEntity {
     private String password;
  
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'ESTUDIANTE'")
+    private Rol rol = Rol.ESTUDIANTE;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NivelEducativo nivel; // PRIMARIA, SECUNDARIA
  
@@ -95,6 +99,14 @@ public class UsuarioEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 
     public NivelEducativo getNivel() {
@@ -203,5 +215,9 @@ public class UsuarioEntity {
  
     public enum NivelEducativo {
         PRIMARIA, SECUNDARIA
+    }
+
+    public enum Rol {
+        ADMIN, ESTUDIANTE
     }
 }

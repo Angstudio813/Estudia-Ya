@@ -27,7 +27,7 @@
         <div class="nav-dot"></div>
         <span class="nav-label">Mis cursos</span>
       </a>
-      <a class="nav-item" routerLink="/gestion-usuarios" routerLinkActive="active">
+      <a *ngIf="esAdmin()" class="nav-item" routerLink="/gestion-usuarios" routerLinkActive="active">
         <div class="nav-dot"></div>
         <span class="nav-label">Usuarios</span>
       </a>

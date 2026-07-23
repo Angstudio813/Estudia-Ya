@@ -9,6 +9,7 @@ public class AuthTokenResponseDTO {
     private final String nombre;
     private final String apellido;
     private final String email;
+    private final String rol;
     private final UsuarioEntity.NivelEducativo nivel;
     private final Integer grado;
     private final Integer xpTotal;
@@ -23,6 +24,7 @@ public class AuthTokenResponseDTO {
         this.nombre = usuario.getNombre();
         this.apellido = usuario.getApellido();
         this.email = usuario.getEmail();
+        this.rol = usuario.getRol().name();
         this.nivel = usuario.getNivel();
         this.grado = usuario.getGrado();
         this.xpTotal = usuario.getXpTotal();
@@ -53,6 +55,10 @@ public class AuthTokenResponseDTO {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getRol() {
+        return rol;
     }
 
     public UsuarioEntity.NivelEducativo getNivel() {

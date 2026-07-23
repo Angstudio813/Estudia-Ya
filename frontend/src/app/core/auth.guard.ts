@@ -13,3 +13,14 @@ export const authGuard: CanActivateFn = () => {
   authService.clearSession();
   return router.createUrlTree(['/login']);
 };
+
+export const adminGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isLoggedIn() && authService.isAdmin()) {
+    return true;
+  }
+
+  return router.createUrlTree(['/inicio']);
+};

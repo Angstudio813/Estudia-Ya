@@ -58,7 +58,8 @@ public class AuthApiController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthErrorResponse("No se pudo iniciar sesion."));
         }
 
-        String token = jwtService.generateToken(authentication.getName());
+        String rol = usuario.getRol().name();
+        String token = jwtService.generateToken(authentication.getName(), rol);
         ResponseCookie jwtCookie = ResponseCookie.from(JwtService.COOKIE_NAME, token)
                 .path("/")
                 .httpOnly(true)

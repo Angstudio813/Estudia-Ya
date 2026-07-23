@@ -1,5 +1,7 @@
 package ProyectoEstudiaYa.webapp.security;
 
+import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
+import ProyectoEstudiaYa.webapp.repositories.UsuarioRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,16 +17,22 @@ import java.time.Duration;
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
+    private final UsuarioRepository usuarioRepository;
 
-    public LoginSuccessHandler(JwtService jwtService) {
+    public LoginSuccessHandler(JwtService jwtService, UsuarioRepository usuarioRepository) {
         this.jwtService = jwtService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        String token = jwtService.generateToken(authentication.getName());
+        String role = usuarioRepository.findByEmail(authentication.getName())
+                .map(u -> u.getRol().name())
+                .orElse("ESTUDIANTE");
+
+        String token = jwtService.generateToken(authentication.getName(), role);
         ResponseCookie jwtCookie = ResponseCookie.from(JwtService.COOKIE_NAME, token)
                 .path("/")
                 .httpOnly(true)

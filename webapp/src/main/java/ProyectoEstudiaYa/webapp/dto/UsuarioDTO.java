@@ -10,6 +10,7 @@ public class UsuarioDTO {
     private String nombre;
     private String apellido;
     private String email;
+    private String rol;
     private UsuarioEntity.NivelEducativo nivel;
     private Integer grado;
     private Integer xpTotal;
@@ -25,6 +26,7 @@ public class UsuarioDTO {
         dto.setNombre(usuario.getNombre());
         dto.setApellido(usuario.getApellido());
         dto.setEmail(usuario.getEmail());
+        dto.setRol(usuario.getRol().name());
         dto.setNivel(usuario.getNivel());
         dto.setGrado(usuario.getGrado());
         dto.setXpTotal(usuario.getXpTotal());
@@ -66,6 +68,14 @@ public class UsuarioDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public UsuarioEntity.NivelEducativo getNivel() {
