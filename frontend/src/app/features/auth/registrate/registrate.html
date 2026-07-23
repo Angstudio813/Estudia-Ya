@@ -1,0 +1,116 @@
+<section class="login-page">
+  <main class="login-card">
+    <p class="brand">EstudiaYa</p>
+    <h1>Crear cuenta</h1>
+    <p class="intro">Registrate para comenzar tu aprendizaje.</p>
+
+    @if (mensajeError) {
+      <div class="message error">{{ mensajeError }}</div>
+    }
+
+    @if (mensajeOk) {
+      <div class="message ok">{{ mensajeOk }}</div>
+    }
+
+    <form (ngSubmit)="registrar()" #regForm="ngForm">
+      <label class="field">
+        <span>Nombre</span>
+        <input
+          type="text"
+          name="nombre"
+          placeholder="Tu nombre"
+          required
+          [(ngModel)]="nombre"
+          [disabled]="cargando"
+        >
+      </label>
+
+      <label class="field">
+        <span>Apellido</span>
+        <input
+          type="text"
+          name="apellido"
+          placeholder="Tu apellido"
+          required
+          [(ngModel)]="apellido"
+          [disabled]="cargando"
+        >
+      </label>
+
+      <label class="field">
+        <span>Email</span>
+        <input
+          type="email"
+          name="email"
+          autocomplete="email"
+          placeholder="tu@email.com"
+          required
+          [(ngModel)]="email"
+          [disabled]="cargando"
+        >
+      </label>
+
+      <label class="field">
+        <span>Contrasena</span>
+        <div class="password-wrapper">
+          <input
+            [type]="verPassword ? 'text' : 'password'"
+            name="password"
+            autocomplete="new-password"
+            placeholder="Minimo 6 caracteres"
+            required
+            minlength="6"
+            [(ngModel)]="password"
+            [disabled]="cargando"
+          >
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="verPassword = !verPassword"
+            tabindex="-1"
+          >
+            <i class="fa-solid" [ngClass]="verPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
+      </label>
+
+      <label class="field">
+        <span>Nivel educativo</span>
+        <select
+          name="nivel"
+          required
+          [(ngModel)]="nivel"
+          (ngModelChange)="onNivelChange()"
+          [disabled]="cargando"
+        >
+          <option value="" disabled>Selecciona...</option>
+          <option value="PRIMARIA">Primaria</option>
+          <option value="SECUNDARIA">Secundaria</option>
+        </select>
+      </label>
+
+      @if (nivel) {
+        <label class="field">
+          <span>Grado</span>
+          <select
+            name="grado"
+            required
+            [(ngModel)]="grado"
+            [disabled]="cargando"
+          >
+            <option [ngValue]="null" disabled>Selecciona tu grado...</option>
+            @for (g of gradosDisponibles; track g) {
+              <option [ngValue]="g">{{ g }}{{ nivel === 'PRIMARIA' ? 'ro' : 'ro' }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      <button type="submit" [disabled]="cargando || regForm.invalid">
+        {{ cargando ? 'Creando cuenta...' : 'Registrarme' }}
+      </button>
+    </form>
+
+    <p class="hint">Ya tienes cuenta? <a routerLink="/login">Inicia sesion</a></p>
+  </main>
+</section>

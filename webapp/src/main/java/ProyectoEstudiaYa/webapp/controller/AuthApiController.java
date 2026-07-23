@@ -72,8 +72,58 @@ public class AuthApiController {
         return ResponseEntity.ok(new AuthTokenResponseDTO(token, usuario));
     }
 
+    @PostMapping("/registro")
+    public ResponseEntity<?> registro(@RequestBody RegistroRequest request) {
+        if (request == null || esVacio(request.email()) || esVacio(request.password())
+                || esVacio(request.nombre()) || esVacio(request.apellido())) {
+            return ResponseEntity.badRequest().body(new AuthErrorResponse("Todos los campos son obligatorios."));
+        }
+
+        String email = request.email().trim().toLowerCase();
+
+        if (usuarioService.findByEmail(email).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new AuthErrorResponse("Ya existe una cuenta con ese email."));
+        }
+
+        if (request.nivel() == null) {
+            return ResponseEntity.badRequest().body(new AuthErrorResponse("Selecciona tu nivel educativo."));
+        }
+
+        if (request.grado() == null || request.grado() < 1) {
+            return ResponseEntity.badRequest().body(new AuthErrorResponse("Selecciona tu grado."));
+        }
+
+        boolean primaria = request.nivel() == UsuarioEntity.NivelEducativo.PRIMARIA;
+        if (primaria && request.grado() > 6) {
+            return ResponseEntity.badRequest().body(new AuthErrorResponse("En primaria el grado maximo es 6."));
+        }
+        if (!primaria && request.grado() > 5) {
+            return ResponseEntity.badRequest().body(new AuthErrorResponse("En secundaria el grado maximo es 5."));
+        }
+
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setNombre(request.nombre().trim());
+        usuario.setApellido(request.apellido().trim());
+        usuario.setEmail(email);
+        usuario.setPassword(request.password());
+        usuario.setNivel(request.nivel());
+        usuario.setGrado(request.grado());
+        usuario.setRol(UsuarioEntity.Rol.ESTUDIANTE);
+        usuario.setFechaRegistro(java.time.LocalDateTime.now());
+        usuario.setUltimoAcceso(java.time.LocalDateTime.now());
+
+        usuarioService.saveNewUsuario(usuario);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new AuthErrorResponse("Cuenta creada correctamente. Ahora inicia sesion."));
+    }
+
     private boolean esVacio(String valor) {
         return valor == null || valor.isBlank();
+    }
+
+    private record RegistroRequest(String nombre, String apellido, String email, String password,
+                                   UsuarioEntity.NivelEducativo nivel, Integer grado) {
     }
 
     private record AuthErrorResponse(String message) {

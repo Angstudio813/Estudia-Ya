@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { environment } from '../../../../environment';
 
@@ -24,7 +24,7 @@ interface LoginResponse {
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule, NgClass, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })

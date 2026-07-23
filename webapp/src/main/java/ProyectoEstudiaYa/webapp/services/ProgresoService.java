@@ -32,6 +32,10 @@ public class ProgresoService {
 
         ProgresoStatsProjectionDTO stats = progresoRepository.findStatsByUsuarioId(usuarioId);
 
+        if (stats == null) {
+            return new ProgresoResumenDTO(usuarioId, 0, 0.0, 0, 0, 0, detalleTemas);
+        }
+
         return new ProgresoResumenDTO(
                 usuarioId,
                 stats.getTotalTemas() != null ? stats.getTotalTemas().intValue() : 0,

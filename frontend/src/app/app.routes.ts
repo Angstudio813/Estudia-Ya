@@ -9,6 +9,7 @@ import { Progreso } from './components/progreso/progreso';
 import { MisCursos } from './components/mis-cursos/mis-cursos';
 import { GestionUsuarios } from './components/gestion-usuarios/gestion-usuarios';
 import { Login } from './features/auth/login/login';
+import { Registrate } from './features/auth/registrate/registrate';
 import { authGuard, adminGuard } from './core/auth.guard';
 import { StudyLayout } from './components/study-layout/study-layout';
 import { CursoDetalleComponent } from './components/curso-detalle/curso-detalle';
@@ -18,6 +19,10 @@ export const routes: Routes = [
   {
     path: 'login',
     component: Login
+  },
+  {
+    path: 'registrate',
+    component: Registrate
   },
   {
     path: '',
