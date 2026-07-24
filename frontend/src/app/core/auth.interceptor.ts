@@ -15,7 +15,6 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       setHeaders: {
         Authorization: authHeader,
       },
-      withCredentials: true,
     }),
   );
 };

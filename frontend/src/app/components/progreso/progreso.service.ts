@@ -30,8 +30,6 @@ export class ProgresoService {
   constructor(private http: HttpClient) {}
 
   obtenerProgreso(usuarioId: number): Observable<ProgresoResumen> {
-    return this.http.get<ProgresoResumen>(`${this.apiUrl}/${usuarioId}`, {
-      withCredentials: true,
-    });
+    return this.http.get<ProgresoResumen>(`${this.apiUrl}/${usuarioId}`);
   }
 }

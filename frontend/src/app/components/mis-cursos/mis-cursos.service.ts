@@ -29,6 +29,6 @@ export class MisCursosService {
   private readonly baseUrl = `${API_BASE_URL}/api/mis-cursos`;
 
   listarCursos(usuarioId: number): Observable<MisCurso[]> {
-    return this.http.get<MisCurso[]>(`${this.baseUrl}?usuarioId=${usuarioId}`, { withCredentials: true });
+    return this.http.get<MisCurso[]>(`${this.baseUrl}?usuarioId=${usuarioId}`);
   }
 }

@@ -45,7 +45,6 @@ export class CursoDetalleService {
     }
     return this.http.get<CursoDetalle>(`${this.apiUrl}/${cursoId}`, {
       params,
-      withCredentials: true,
     });
   }
 }

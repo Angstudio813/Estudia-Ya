@@ -58,10 +58,10 @@ export class Login {
       {
         email: this.email,
         password: this.password
-      },
-      { withCredentials: true }
+      }
     ).subscribe({
       next: (respuesta) => {
+        this.cargando = false;
         this.guardarToken(respuesta);
         this.authService.saveProfile(respuesta);
         this.router.navigateByUrl(this.dashboardUrl);

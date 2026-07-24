@@ -45,20 +45,15 @@ export class PracticaInteligenteService {
 
     return this.http.get<PracticaInteligenteDTO[]>(this.apiUrl, {
       params,
-      withCredentials: true,
     });
   }
 
   listarPorCurso(cursoId: number): Observable<PracticaInteligenteDTO[]> {
-    return this.http.get<PracticaInteligenteDTO[]>(`${this.apiUrl}/curso/${cursoId}`, {
-      withCredentials: true,
-    });
+    return this.http.get<PracticaInteligenteDTO[]>(`${this.apiUrl}/curso/${cursoId}`);
   }
 
   listarPorTema(temaId: number): Observable<PracticaInteligenteDTO[]> {
-    return this.http.get<PracticaInteligenteDTO[]>(`${this.apiUrl}/tema/${temaId}`, {
-      withCredentials: true,
-    });
+    return this.http.get<PracticaInteligenteDTO[]>(`${this.apiUrl}/tema/${temaId}`);
   }
 
   responder(usuarioId: number, ejercicioId: number, respuesta: string): Observable<IntentoResponse> {
@@ -69,7 +64,6 @@ export class PracticaInteligenteService {
 
     return this.http.post<IntentoResponse>(`${this.apiUrl}/responder`, null, {
       params,
-      withCredentials: true,
     });
   }
 
@@ -81,7 +75,6 @@ export class PracticaInteligenteService {
 
     return this.http.post<PracticaInteligenteDTO[]>(`${this.apiUrl}/generar-ia`, null, {
       params,
-      withCredentials: true,
     });
   }
 
@@ -93,7 +86,6 @@ export class PracticaInteligenteService {
 
     return this.http.post<PracticaInteligenteDTO[]>(`${this.apiUrl}/generar-ia-curso`, null, {
       params,
-      withCredentials: true,
     });
   }
 }

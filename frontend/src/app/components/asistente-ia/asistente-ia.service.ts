@@ -24,9 +24,7 @@ export class AsistenteIAService {
   constructor(private http: HttpClient) {}
 
   obtenerAsistencia(usuarioId: number): Observable<AsistenteIARespuesta> {
-    return this.http.get<AsistenteIARespuesta>(`${this.apiUrl}/${usuarioId}`, {
-      withCredentials: true,
-    });
+    return this.http.get<AsistenteIARespuesta>(`${this.apiUrl}/${usuarioId}`);
   }
 
 enviarPregunta(usuarioId: number, pregunta: string): Observable<AsistenteChatRespuesta> {
@@ -34,7 +32,6 @@ enviarPregunta(usuarioId: number, pregunta: string): Observable<AsistenteChatRes
 
     return this.http.post<AsistenteChatRespuesta>(`${this.apiUrl}/${usuarioId}/chat`, {}, {
       params,
-      withCredentials: true,
     });
   }
 }

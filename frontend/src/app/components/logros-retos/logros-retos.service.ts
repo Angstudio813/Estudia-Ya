@@ -27,9 +27,7 @@ export class LogrosRetosService {
   constructor(private http: HttpClient) {}
 
   obtenerProgreso(usuarioId: number): Observable<UsuarioProgreso> {
-    return this.http.get<UsuarioProgreso>(`${this.apiUrl}/${usuarioId}`, {
-      withCredentials: true,
-    });
+    return this.http.get<UsuarioProgreso>(`${this.apiUrl}/${usuarioId}`);
   }
 
   completarReto(usuarioId: number, reto: string): Observable<UsuarioProgreso> {
@@ -38,7 +36,6 @@ export class LogrosRetosService {
       .set('reto', reto);
 
     return this.http.post<UsuarioProgreso>(`${this.apiUrl}/reto`, {}, {
-      withCredentials: true,
       params,
     });
   }

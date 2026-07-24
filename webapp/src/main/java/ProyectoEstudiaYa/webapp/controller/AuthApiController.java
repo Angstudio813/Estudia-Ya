@@ -58,7 +58,7 @@ public class AuthApiController {
                     new UsernamePasswordAuthenticationToken(email, request.getPassword())
             );
         } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthErrorResponse("Credenciales incorrectas."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthErrorResponse("Contrasena incorrecta."));
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthErrorResponse("No se pudo iniciar sesion."));
         }

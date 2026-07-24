@@ -37,18 +37,18 @@ export class GestionUsuariosService {
   private readonly apiUrl = `${API_BASE_URL}/api/usuarios`;
 
   listar(): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(this.apiUrl, { withCredentials: true });
+    return this.http.get<Usuario[]>(this.apiUrl);
   }
 
   crear(payload: UsuarioPayload): Observable<Usuario> {
-    return this.http.post<Usuario>(this.apiUrl, payload, { withCredentials: true });
+    return this.http.post<Usuario>(this.apiUrl, payload);
   }
 
   actualizar(id: number, payload: UsuarioPayload): Observable<Usuario> {
-    return this.http.put<Usuario>(`${this.apiUrl}/${id}`, payload, { withCredentials: true });
+    return this.http.put<Usuario>(`${this.apiUrl}/${id}`, payload);
   }
 
   eliminar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

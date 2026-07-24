@@ -40,7 +40,6 @@ export class TemaDetalleService {
     }
     return this.http.get<TemaDetalle>(`${this.apiUrl}/${temaId}`, {
       params,
-      withCredentials: true,
     });
   }
 }

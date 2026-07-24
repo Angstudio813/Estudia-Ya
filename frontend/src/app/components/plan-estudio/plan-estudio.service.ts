@@ -32,14 +32,11 @@ export class PlanEstudioService {
   constructor(private http: HttpClient) {}
 
   listarCursos(usuarioId: number): Observable<CursoInscrito[]> {
-    return this.http.get<CursoInscrito[]>(`${this.cursosUrl}?usuarioId=${usuarioId}`, {
-      withCredentials: true,
-    });
+    return this.http.get<CursoInscrito[]>(`${this.cursosUrl}?usuarioId=${usuarioId}`);
   }
 
   generarPlan(request: PlanEstudioRequest): Observable<PlanEstudioResponse> {
     return this.http.post<PlanEstudioResponse>(`${this.apiUrl}/generar`, request, {
-      withCredentials: true,
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     });
   }
