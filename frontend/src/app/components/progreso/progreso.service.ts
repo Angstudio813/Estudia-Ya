@@ -25,7 +25,7 @@ export interface ProgresoResumen {
   providedIn: 'root',
 })
 export class ProgresoService {
-  private readonly apiUrl = `${API_BASE_URL}/progreso`;
+  private readonly apiUrl = `${API_BASE_URL}/api/progreso`;
 
   constructor(private http: HttpClient) {}
 
