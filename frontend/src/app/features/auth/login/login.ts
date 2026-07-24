@@ -1,10 +1,8 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { timeout, finalize } from 'rxjs';
 import { AuthService } from '../../../core/auth.service';
 import { environment } from '../../../../environment';
 
@@ -34,7 +32,6 @@ export class Login {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly loginUrl = `${environment.apiUrl}/api/auth/login`;
   private readonly dashboardUrl = '/inicio';
 
@@ -56,26 +53,29 @@ export class Login {
     this.mensajeError = '';
     this.mensajeOk = '';
 
+    const timer = setTimeout(() => {
+      this.cargando = false;
+      this.mensajeError = 'Credenciales invalidas.';
+      this.email = '';
+      this.password = '';
+    }, 7000);
+
     this.http.post<LoginResponse>(
       this.loginUrl,
-      {
-        email: this.email,
-        password: this.password
-      }
-    ).pipe(
-      timeout(7000),
-      finalize(() => { this.cargando = false; }),
-      takeUntilDestroyed(this.destroyRef)
+      { email: this.email, password: this.password }
     ).subscribe({
       next: (respuesta) => {
+        clearTimeout(timer);
         this.guardarToken(respuesta);
         this.authService.saveProfile(respuesta);
         this.router.navigateByUrl(this.dashboardUrl);
       },
-      error: (error: HttpErrorResponse | Error) => {
-        this.mensajeError = !(error instanceof HttpErrorResponse)
-          ? 'Credenciales invalidas.'
-          : this.obtenerMensajeError(error);
+      error: (error: HttpErrorResponse) => {
+        clearTimeout(timer);
+        this.mensajeError = this.obtenerMensajeError(error);
+        this.cargando = false;
+        this.email = '';
+        this.password = '';
       }
     });
   }
