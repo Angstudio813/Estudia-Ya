@@ -26,7 +26,7 @@ public class UsuarioDTO {
         dto.setNombre(usuario.getNombre());
         dto.setApellido(usuario.getApellido());
         dto.setEmail(usuario.getEmail());
-        dto.setRol(usuario.getRol().name());
+        dto.setRol(usuario.getRol() != null ? usuario.getRol().name() : "ESTUDIANTE");
         dto.setNivel(usuario.getNivel());
         dto.setGrado(usuario.getGrado());
         dto.setXpTotal(usuario.getXpTotal());

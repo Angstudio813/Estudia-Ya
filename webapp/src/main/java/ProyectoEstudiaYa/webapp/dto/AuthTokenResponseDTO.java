@@ -24,7 +24,7 @@ public class AuthTokenResponseDTO {
         this.nombre = usuario.getNombre();
         this.apellido = usuario.getApellido();
         this.email = usuario.getEmail();
-        this.rol = usuario.getRol().name();
+        this.rol = usuario.getRol() != null ? usuario.getRol().name() : "ESTUDIANTE";
         this.nivel = usuario.getNivel();
         this.grado = usuario.getGrado();
         this.xpTotal = usuario.getXpTotal();

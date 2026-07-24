@@ -1,5 +1,6 @@
 package ProyectoEstudiaYa.webapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +23,7 @@ public class UsuarioEntity {
     private String email;
  
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
  
     @Enumerated(EnumType.STRING)
@@ -44,18 +46,23 @@ public class UsuarioEntity {
     private LocalDateTime ultimoAcceso;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<UsuarioCursoEntity> cursos;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<TareaEntity> tareas;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<ProgresoEntity> progresos;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<LogroEntity> logros;
  
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<SesionAuditoriaEntity> sesiones;
  
     public UsuarioEntity() {
