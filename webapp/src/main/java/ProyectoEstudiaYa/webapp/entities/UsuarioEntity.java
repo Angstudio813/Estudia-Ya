@@ -32,10 +32,10 @@ public class UsuarioEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private NivelEducativo nivel; // PRIMARIA, SECUNDARIA
+    private NivelEducativo nivel; 
  
     @Column(nullable = false)
-    private Integer grado; // 1 al 6 primaria, 1 al 5 secundaria
+    private Integer grado; 
  
     private Integer xpTotal = 0;
     private Integer nivel_juego = 1;

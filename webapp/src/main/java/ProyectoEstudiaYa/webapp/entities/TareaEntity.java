@@ -25,7 +25,7 @@ public class TareaEntity {
  
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EstadoTarea estado; // PENDIENTE, EN_PROGRESO, COMPLETADA
+    private EstadoTarea estado; 
  
     private LocalDate fechaVencimiento;
     private LocalDateTime fechaCreacion;

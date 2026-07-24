@@ -17,7 +17,6 @@ public class DataInitializer {
                 return;
             }
 
-            // USUARIOS
             jdbc.update("""
                 INSERT INTO usuarios
                 (nombre, apellido, email, password, nivel, grado, xp_total, nivel_juego, racha_actual, racha_mas_alta, fecha_registro, ultimo_acceso)
@@ -25,14 +24,12 @@ public class DataInitializer {
                 ('Carlos', 'Lopez', 'carlos@estudiaya.pe', ?, 'SECUNDARIA', 3, 620, 8, 7, 12, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             """, passwordEncoder.encode("123456"));
 
-            // CURSOS
             jdbc.update("""
                 INSERT INTO cursos (nombre, nivel, grado, descripcion, color_hex, icono) VALUES
                 ('Matematica', 'SECUNDARIA', 3, 'CursoEntity de matematica para tercero de secundaria', '#2563EB', '📐'),
                 ('Comunicacion', 'SECUNDARIA', 3, 'CursoEntity de comunicacion y comprension lectora', '#0EA5E9', '📚')
             """);
 
-            // TEMAS
             jdbc.update("""
                 INSERT INTO temas (nombre, descripcion, orden, curso_id) VALUES
                 ('Fracciones', 'Operaciones con fracciones', 1, 1),
@@ -40,7 +37,6 @@ public class DataInitializer {
                 ('Comprension lectora', 'Analisis de textos', 1, 2)
             """);
 
-            // EJERCICIOS
             jdbc.update("""
                 INSERT INTO ejercicios
                 (pregunta, opciona, opcionb, opcionc, opciond, respuesta_correcta, explicacion, dificultad, generado_poria, tema_id)
@@ -49,7 +45,6 @@ public class DataInitializer {
                 ('Cual es la idea principal del texto?', 'Detalle secundario', 'Opinion del lector', 'Mensaje central', 'Dato aislado', 'C', 'La idea principal resume el mensaje central', 'MEDIO', TRUE, 3)
             """);
 
-            // USUARIO_CURSOS
             jdbc.update("""
                 INSERT INTO usuario_cursos
                 (usuario_id, curso_id, porcentaje_completado, fecha_inscripcion, ultima_practica)
@@ -58,7 +53,6 @@ public class DataInitializer {
                 (1, 2, 42, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             """);
 
-            // PROGRESOS
             jdbc.update("""
                 INSERT INTO progresos
                 (usuario_id, tema_id, ejercicios_intentados, ejercicios_correctos, porcentaje_acierto, ultima_practica, necesita_refuerzo)
@@ -68,7 +62,6 @@ public class DataInitializer {
                 (1, 3, 16, 11, 68.7, CURRENT_TIMESTAMP, FALSE)
             """);
 
-            // INTENTOS_EJERCICIO
             jdbc.update("""
                 INSERT INTO intentos_ejercicio
                 (usuario_id, ejercicio_id, respuesta_elegida, es_correcta, fecha_intento, tiempo_segundos)
@@ -77,7 +70,6 @@ public class DataInitializer {
                 (1, 2, 'A', FALSE, CURRENT_TIMESTAMP, 58)
             """);
 
-            // TAREAS
             jdbc.update("""
                 INSERT INTO tareas
                 (titulo, descripcion, estado, fecha_vencimiento, fecha_creacion, fecha_completado, usuario_id, curso_id)
@@ -86,7 +78,6 @@ public class DataInitializer {
                 ('Resumen de texto argumentativo', 'Leer y resumir texto de 2 paginas', 'PENDIENTE', CURRENT_DATE + 2, CURRENT_TIMESTAMP, NULL, 1, 2)
             """);
 
-            // LOGROS
             jdbc.update("""
                 INSERT INTO logros
                 (nombre, descripcion, icono, tipo, fecha_desbloqueado, usuario_id)
@@ -95,7 +86,6 @@ public class DataInitializer {
                 ('Punteria perfecta', '5 respuestas correctas consecutivas', '🎯', 'EJERCICIOS', CURRENT_TIMESTAMP, 1)
             """);
 
-            // SESIONES_AUDITORIA
             jdbc.update("""
                 INSERT INTO sesiones_auditoria
                 (usuario_id, modulo, tipo_evento, descripcion, ip_address, fecha_evento)

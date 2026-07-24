@@ -19,18 +19,18 @@ public class CursoEntity {
     private Long id;
  
     @Column(nullable = false)
-    private String nombre; // Matemática, Comunicación, etc.
+    private String nombre; 
  
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UsuarioEntity.NivelEducativo nivel; // PRIMARIA, SECUNDARIA
+    private UsuarioEntity.NivelEducativo nivel; 
  
     @Column(nullable = false)
     private Integer grado; // 1 al 6 o 1 al 5
  
     private String descripcion;
-    private String colorHex;  // color por curso ej: #378ADD
-    private String icono;     // emoji o nombre del icono
+    private String colorHex;  
+    private String icono;     
  
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
     @BatchSize(size = 25)

@@ -39,8 +39,8 @@ public class SesionAuditoriaEntity {
         VISITA_MODULO,
         INICIO_EJERCICIO,
         FIN_EJERCICIO,
-        SALIO_VIEWPORT,      // anti-trampa: salió de la pantalla
-        CAMBIO_PESTANA,      // anti-trampa: cambió de pestaña
+        SALIO_VIEWPORT,      
+        CAMBIO_PESTANA,      
         SUBIO_SILABO,
         DESBLOQUEO_LOGRO
     }

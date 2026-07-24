@@ -18,13 +18,13 @@ public class LogroEntity {
     private Long id;
  
     @Column(nullable = false)
-    private String nombre; // "Primera racha", "10 correctas seguidas"
+    private String nombre; 
  
     private String descripcion;
-    private String icono; // emoji o nombre del icono
+    private String icono;
  
     @Enumerated(EnumType.STRING)
-    private TipoLogro tipo; // RACHA, EJERCICIOS, CURSO, ESPECIAL
+    private TipoLogro tipo; 
  
     private LocalDateTime fechaDesbloqueado;
  

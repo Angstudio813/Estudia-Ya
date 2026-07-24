@@ -25,9 +25,8 @@ public class IntentoEjercicioEntity {
     @JoinColumn(name = "ejercicio_id", nullable = false)
     private EjercicioEntity ejercicio;
  
-    private String respuestaElegida; // "A", "B", "C" o "D"
+    private String respuestaElegida; 
     private Boolean esCorrecta;
     private LocalDateTime fechaIntento;
-    private Integer tiempoSegundos; // cuánto tardó en responder
-
+    private Integer tiempoSegundos; 
 }

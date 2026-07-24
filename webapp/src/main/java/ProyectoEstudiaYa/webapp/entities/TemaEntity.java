@@ -20,10 +20,10 @@ public class TemaEntity {
     private Long id;
  
     @Column(nullable = false)
-    private String nombre; // ej: Fracciones, Comprensión lectora
+    private String nombre; 
  
     private String descripcion;
-    private Integer orden; // orden dentro del curso
+    private Integer orden; 
  
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id", nullable = false)

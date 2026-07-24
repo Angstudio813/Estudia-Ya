@@ -28,11 +28,11 @@ public class ProgresoEntity {
  
     private Integer ejerciciosIntentados = 0;
     private Integer ejerciciosCorrectos = 0;
-    private Double porcentajeAcierto = 0.0; // la IA usa esto para saber si reforzar
- 
+    private Double porcentajeAcierto = 0.0; 
+    
     private LocalDateTime ultimaPractica;
  
-    // si porcentajeAcierto < 50 la IA genera más ejercicios de este tema
+
     private Boolean necesitaRefuerzo = false;
 
 }
