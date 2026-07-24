@@ -38,7 +38,7 @@ public class EjercicioEntity {
  
     private Boolean generadoPorIA = false;
  
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tema_id", nullable = false)
     private TemaEntity tema;
  

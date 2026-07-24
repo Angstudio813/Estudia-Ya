@@ -58,6 +58,7 @@ public class PracticaInteligenteService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<PracticaInteligenteDTO> listarEjercicios() {
         return practicaInteligenteRepository.findAll()
                 .stream()
@@ -65,13 +66,14 @@ public class PracticaInteligenteService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<PracticaInteligenteDTO> listarEjerciciosDeRefuerzo(Long usuarioId) {
         if (usuarioId == null) {
             return listarEjercicios();
         }
 
         List<Long> temasParaReforzar = progresoRepository
-                .findByUsuarioIdAndNecesitaRefuerzo(usuarioId, true)
+                .findByUsuarioIdAndNecesitaRefuerzoWithTema(usuarioId, true)
                 .stream()
                 .map(progreso -> progreso.getTema().getId())
                 .toList();
@@ -80,12 +82,13 @@ public class PracticaInteligenteService {
             return listarEjercicios();
         }
 
-        return temasParaReforzar.stream()
-                .flatMap(temaId -> practicaInteligenteRepository.findByTemaId(temaId).stream())
+        return practicaInteligenteRepository.findByTemaIdsInWithTemaAndCurso(temasParaReforzar)
+                .stream()
                 .map(this::convertirADTO)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<PracticaInteligenteDTO> listarEjerciciosPorCurso(Long cursoId) {
         return practicaInteligenteRepository.findByCursoId(cursoId)
                 .stream()
@@ -93,6 +96,7 @@ public class PracticaInteligenteService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<PracticaInteligenteDTO> listarEjerciciosPorTema(Long temaId) {
         return practicaInteligenteRepository.findByTemaId(temaId)
                 .stream()

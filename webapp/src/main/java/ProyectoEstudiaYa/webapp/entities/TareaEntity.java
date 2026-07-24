@@ -31,11 +31,11 @@ public class TareaEntity {
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaCompletado;
  
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioEntity usuario;
  
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")
     private CursoEntity curso;
  

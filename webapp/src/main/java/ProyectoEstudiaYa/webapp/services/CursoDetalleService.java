@@ -12,9 +12,12 @@ import ProyectoEstudiaYa.webapp.repositories.EjercicioRepository;
 import ProyectoEstudiaYa.webapp.repositories.ProgresoRepository;
 import ProyectoEstudiaYa.webapp.repositories.UsuarioCursoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CursoDetalleService {
@@ -34,8 +37,9 @@ public class CursoDetalleService {
         this.progresoRepository = progresoRepository;
     }
 
+    @Transactional(readOnly = true)
     public CursoDetalleDTO obtenerDetalle(Long cursoId, Long usuarioId) {
-        CursoEntity curso = cursoRepository.findById(cursoId)
+        CursoEntity curso = cursoRepository.findWithTemasAndEjerciciosById(cursoId)
                 .orElseThrow(() -> new RuntimeException("CursoEntity no encontrado"));
 
         List<TemaEntity> temas = curso.getTemas() != null ? curso.getTemas() : List.of();
@@ -55,8 +59,19 @@ public class CursoDetalleService {
             progreso = inscripcion.map(UsuarioCursoEntity::getPorcentajeCompletado).orElse(0);
         }
 
+        Map<Long, ProgresoEntity> progresosPorTema = Map.of();
+        if (usuarioId != null) {
+            List<Long> temaIds = temas.stream().map(TemaEntity::getId).toList();
+            if (!temaIds.isEmpty()) {
+                progresosPorTema = progresoRepository.findByUsuarioIdAndTemaIdsIn(usuarioId, temaIds)
+                        .stream()
+                        .collect(Collectors.toMap(p -> p.getTema().getId(), p -> p));
+            }
+        }
+
+        final Map<Long, ProgresoEntity> progresosFinales = progresosPorTema;
         List<TemaResumenDTO> temasDTO = temas.stream()
-                .map(tema -> construirTemaResumen(tema, usuarioId))
+                .map(tema -> construirTemaResumen(tema, progresosFinales.get(tema.getId())))
                 .toList();
 
         return new CursoDetalleDTO(
@@ -75,21 +90,17 @@ public class CursoDetalleService {
         );
     }
 
-    private TemaResumenDTO construirTemaResumen(TemaEntity tema, Long usuarioId) {
+    private TemaResumenDTO construirTemaResumen(TemaEntity tema, ProgresoEntity progreso) {
         int totalEjercicios = tema.getEjercicios() != null ? tema.getEjercicios().size() : 0;
         int ejerciciosResueltos = 0;
         double porcentajeAcierto = 0;
         boolean necesitaRefuerzo = false;
 
-        if (usuarioId != null) {
-            Optional<ProgresoEntity> progreso = progresoRepository.findByUsuarioIdAndTemaId(usuarioId, tema.getId());
-            if (progreso.isPresent()) {
-                ProgresoEntity p = progreso.get();
-                ejerciciosResueltos = p.getEjerciciosIntentados() != null ? p.getEjerciciosIntentados() : 0;
-                porcentajeAcierto = p.getPorcentajeAcierto() != null ? p.getPorcentajeAcierto() : 0;
-                needsRefuerzo(p);
-                necesitaRefuerzo = p.getNecesitaRefuerzo() != null ? p.getNecesitaRefuerzo() : false;
-            }
+        if (progreso != null) {
+            ejerciciosResueltos = progreso.getEjerciciosIntentados() != null ? progreso.getEjerciciosIntentados() : 0;
+            porcentajeAcierto = progreso.getPorcentajeAcierto() != null ? progreso.getPorcentajeAcierto() : 0;
+            needsRefuerzo(progreso);
+            necesitaRefuerzo = progreso.getNecesitaRefuerzo() != null ? progreso.getNecesitaRefuerzo() : false;
         }
 
         String estado;

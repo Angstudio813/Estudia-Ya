@@ -6,6 +6,7 @@ import ProyectoEstudiaYa.webapp.entities.CursoEntity;
 import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
 import ProyectoEstudiaYa.webapp.repositories.MisCursosRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,9 +23,10 @@ public class MisCursosService {
         return listarCursos(null);
     }
 
+    @Transactional(readOnly = true)
     public List<MisCursosDTO> listarCursos(Long usuarioId) {
         if (usuarioId == null) {
-            return misCursosRepository.findAll()
+            return misCursosRepository.findAllWithTemasAndEjercicios()
                     .stream()
                     .map(curso -> convertirCursoADTO(curso))
                     .toList();
@@ -38,8 +40,9 @@ public class MisCursosService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<MisCursosDTO> listarPorNivelYGrado(UsuarioEntity.NivelEducativo nivel, Integer grado) {
-        return misCursosRepository.findByNivelAndGrado(nivel, grado)
+        return misCursosRepository.findByNivelAndGradoWithTemasAndEjercicios(nivel, grado)
                 .stream()
                 .map(curso -> convertirCursoADTO(curso))
                 .toList();

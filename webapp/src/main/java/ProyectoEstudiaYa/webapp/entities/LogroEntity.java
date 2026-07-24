@@ -28,7 +28,7 @@ public class LogroEntity {
  
     private LocalDateTime fechaDesbloqueado;
  
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioEntity usuario;
  

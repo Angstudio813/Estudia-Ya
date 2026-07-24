@@ -9,6 +9,7 @@ import ProyectoEstudiaYa.webapp.repositories.EjercicioRepository;
 import ProyectoEstudiaYa.webapp.repositories.ProgresoRepository;
 import ProyectoEstudiaYa.webapp.repositories.TemaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,8 +29,9 @@ public class TemaDetalleService {
         this.progresoRepository = progresoRepository;
     }
 
+    @Transactional(readOnly = true)
     public TemaDetalleDTO obtenerDetalle(Long temaId, Long usuarioId) {
-        TemaEntity tema = temaRepository.findById(temaId)
+        TemaEntity tema = temaRepository.findWithCursoById(temaId)
                 .orElseThrow(() -> new RuntimeException("TemaEntity no encontrado"));
 
         List<EjercicioEntity> ejercicios = ejercicioRepository.findByTemaId(temaId);

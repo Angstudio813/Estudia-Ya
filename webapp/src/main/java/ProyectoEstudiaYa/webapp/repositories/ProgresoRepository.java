@@ -44,4 +44,13 @@ public interface ProgresoRepository extends JpaRepository<ProgresoEntity, Long> 
 
     @Query("SELECT COUNT(p) FROM ProgresoEntity p WHERE p.usuario.id = :usuarioId AND p.necesitaRefuerzo = true")
     Long contarTemasConRefuerzo(@Param("usuarioId") Long usuarioId);
+
+    @Query("SELECT p FROM ProgresoEntity p JOIN FETCH p.tema WHERE p.usuario.id = :usuarioId")
+    List<ProgresoEntity> findByUsuarioIdWithTema(@Param("usuarioId") Long usuarioId);
+
+    @Query("SELECT p FROM ProgresoEntity p JOIN FETCH p.tema WHERE p.usuario.id = :usuarioId AND p.tema.id IN :temaIds")
+    List<ProgresoEntity> findByUsuarioIdAndTemaIdsIn(@Param("usuarioId") Long usuarioId, @Param("temaIds") List<Long> temaIds);
+
+    @Query("SELECT p FROM ProgresoEntity p JOIN FETCH p.tema WHERE p.usuario.id = :usuarioId AND p.necesitaRefuerzo = :refuerzo")
+    List<ProgresoEntity> findByUsuarioIdAndNecesitaRefuerzoWithTema(@Param("usuarioId") Long usuarioId, @Param("refuerzo") Boolean refuerzo);
 }

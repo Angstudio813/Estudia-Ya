@@ -24,7 +24,7 @@ public class TemaEntity {
     private String descripcion;
     private Integer orden; // orden dentro del curso
  
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id", nullable = false)
     private CursoEntity curso;
  

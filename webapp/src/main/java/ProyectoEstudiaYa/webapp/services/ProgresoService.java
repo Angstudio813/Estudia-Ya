@@ -6,6 +6,7 @@ import ProyectoEstudiaYa.webapp.dto.ProgresoTemaDTO;
 import ProyectoEstudiaYa.webapp.entities.ProgresoEntity;
 import ProyectoEstudiaYa.webapp.repositories.ProgresoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,8 +19,9 @@ public class ProgresoService {
         this.progresoRepository = progresoRepository;
     }
 
+    @Transactional(readOnly = true)
     public ProgresoResumenDTO obtenerProgresoUsuario(Long usuarioId) {
-        List<ProgresoEntity> progresos = progresoRepository.findByUsuarioId(usuarioId);
+        List<ProgresoEntity> progresos = progresoRepository.findByUsuarioIdWithTema(usuarioId);
 
         List<ProgresoTemaDTO> detalleTemas = progresos.stream()
                 .map(p -> new ProgresoTemaDTO(
