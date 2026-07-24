@@ -4,12 +4,12 @@
     <h1>Iniciar sesion</h1>
     <p class="intro">Accede a tu cuenta para continuar con tu progreso.</p>
 
-    @if (mensajeError) {
-      <div class="message error">{{ mensajeError }}</div>
+    @if (mensajeError()) {
+      <div class="message error">{{ mensajeError() }}</div>
     }
 
-    @if (mensajeOk) {
-      <div class="message ok">{{ mensajeOk }}</div>
+    @if (mensajeOk()) {
+      <div class="message ok">{{ mensajeOk() }}</div>
     }
 
     <form (ngSubmit)="login()" #loginForm="ngForm">
@@ -21,8 +21,9 @@
           autocomplete="email"
           placeholder="tu@email.com"
           required
-          [(ngModel)]="email"
-          [disabled]="cargando"
+          [ngModel]="email()"
+          (ngModelChange)="email.set($event)"
+          [disabled]="cargando()"
         >
       </label>
 
@@ -35,8 +36,9 @@
             autocomplete="current-password"
             placeholder="Tu contrasena"
             required
-            [(ngModel)]="password"
-            [disabled]="cargando"
+            [ngModel]="password()"
+            (ngModelChange)="password.set($event)"
+            [disabled]="cargando()"
           >
           <button
             type="button"
@@ -50,8 +52,8 @@
         </div>
       </label>
 
-      <button type="submit" [disabled]="cargando || loginForm.invalid">
-        {{ cargando ? 'Ingresando...' : 'Entrar' }}
+      <button type="submit" [disabled]="cargando() || loginForm.invalid">
+        {{ cargando() ? 'Ingresando...' : 'Entrar' }}
       </button>
     </form>
 

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -35,34 +35,34 @@ export class Login {
   private readonly loginUrl = `${environment.apiUrl}/api/auth/login`;
   private readonly dashboardUrl = '/inicio';
 
-  email = '';
-  password = '';
+  email = signal('');
+  password = signal('');
   verPassword = false;
-  cargando = false;
-  mensajeError = '';
-  mensajeOk = '';
+  cargando = signal(false);
+  mensajeError = signal('');
+  mensajeOk = signal('');
 
   login(): void {
-    if (!this.email || !this.password) {
-      this.mensajeError = 'Ingresa tu email y contrasena.';
-      this.mensajeOk = '';
+    if (!this.email() || !this.password()) {
+      this.mensajeError.set('Ingresa tu email y contrasena.');
+      this.mensajeOk.set('');
       return;
     }
 
-    this.cargando = true;
-    this.mensajeError = '';
-    this.mensajeOk = '';
+    this.cargando.set(true);
+    this.mensajeError.set('');
+    this.mensajeOk.set('');
 
     const timer = setTimeout(() => {
-      this.cargando = false;
-      this.mensajeError = 'Credenciales invalidas.';
-      this.email = '';
-      this.password = '';
-    }, 7000);
+      this.cargando.set(false);
+      this.mensajeError.set('Credenciales invalidas.');
+      this.email.set('');
+      this.password.set('');
+    }, 6000);
 
     this.http.post<LoginResponse>(
       this.loginUrl,
-      { email: this.email, password: this.password }
+      { email: this.email(), password: this.password() }
     ).subscribe({
       next: (respuesta) => {
         clearTimeout(timer);
@@ -72,10 +72,10 @@ export class Login {
       },
       error: (error: HttpErrorResponse) => {
         clearTimeout(timer);
-        this.mensajeError = this.obtenerMensajeError(error);
-        this.cargando = false;
-        this.email = '';
-        this.password = '';
+        this.mensajeError.set(this.obtenerMensajeError(error));
+        this.cargando.set(false);
+        this.email.set('');
+        this.password.set('');
       }
     });
   }
