@@ -2,7 +2,11 @@ package ProyectoEstudiaYa.webapp.controller;
 
 import ProyectoEstudiaYa.webapp.dto.AuthLoginRequestDTO;
 import ProyectoEstudiaYa.webapp.dto.AuthTokenResponseDTO;
+import ProyectoEstudiaYa.webapp.entities.CursoEntity;
+import ProyectoEstudiaYa.webapp.entities.UsuarioCursoEntity;
 import ProyectoEstudiaYa.webapp.entities.UsuarioEntity;
+import ProyectoEstudiaYa.webapp.repositories.CursoRepository;
+import ProyectoEstudiaYa.webapp.repositories.UsuarioCursoRepository;
 import ProyectoEstudiaYa.webapp.services.UsuarioService;
 import ProyectoEstudiaYa.webapp.security.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,11 +34,17 @@ public class AuthApiController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UsuarioService usuarioService;
+    private final CursoRepository cursoRepository;
+    private final UsuarioCursoRepository usuarioCursoRepository;
 
-    public AuthApiController(AuthenticationManager authenticationManager, JwtService jwtService, UsuarioService usuarioService) {
+    public AuthApiController(AuthenticationManager authenticationManager, JwtService jwtService,
+                             UsuarioService usuarioService, CursoRepository cursoRepository,
+                             UsuarioCursoRepository usuarioCursoRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.usuarioService = usuarioService;
+        this.cursoRepository = cursoRepository;
+        this.usuarioCursoRepository = usuarioCursoRepository;
     }
 
     @PostMapping("/login")
@@ -113,6 +125,17 @@ public class AuthApiController {
         usuario.setUltimoAcceso(java.time.LocalDateTime.now());
 
         usuarioService.saveNewUsuario(usuario);
+
+        List<CursoEntity> cursosDelGrado = cursoRepository.findByNivelAndGrado(request.nivel(), request.grado());
+        LocalDateTime ahora = LocalDateTime.now();
+        for (CursoEntity curso : cursosDelGrado) {
+            UsuarioCursoEntity uc = new UsuarioCursoEntity();
+            uc.setUsuario(usuario);
+            uc.setCurso(curso);
+            uc.setPorcentajeCompletado(0);
+            uc.setFechaInscripcion(ahora);
+            usuarioCursoRepository.save(uc);
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new AuthErrorResponse("Cuenta creada correctamente. Ahora inicia sesion."));
