@@ -39,7 +39,7 @@ public class CursoDetalleService {
 
     @Transactional(readOnly = true)
     public CursoDetalleDTO obtenerDetalle(Long cursoId, Long usuarioId) {
-        CursoEntity curso = cursoRepository.findWithTemasAndEjerciciosById(cursoId)
+        CursoEntity curso = cursoRepository.findWithTemasById(cursoId)
                 .orElseThrow(() -> new RuntimeException("CursoEntity no encontrado"));
 
         List<TemaEntity> temas = curso.getTemas() != null ? curso.getTemas() : List.of();

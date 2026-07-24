@@ -49,11 +49,11 @@ public interface MisCursosRepository extends JpaRepository<ProyectoEstudiaYa.web
     @Query("SELECT COUNT(c) FROM CursoEntity c WHERE c.nivel = :nivel")
     Long countByNivel(@Param("nivel") ProyectoEstudiaYa.webapp.entities.UsuarioEntity.NivelEducativo nivel);
 
-    @Query("SELECT DISTINCT c FROM CursoEntity c LEFT JOIN FETCH c.temas t LEFT JOIN FETCH t.ejercicios")
-    List<ProyectoEstudiaYa.webapp.entities.CursoEntity> findAllWithTemasAndEjercicios();
+    @Query("SELECT DISTINCT c FROM CursoEntity c LEFT JOIN FETCH c.temas")
+    List<ProyectoEstudiaYa.webapp.entities.CursoEntity> findAllWithTemas();
 
-    @Query("SELECT DISTINCT c FROM CursoEntity c LEFT JOIN FETCH c.temas t LEFT JOIN FETCH t.ejercicios WHERE c.nivel = :nivel AND c.grado = :grado")
-    List<ProyectoEstudiaYa.webapp.entities.CursoEntity> findByNivelAndGradoWithTemasAndEjercicios(
+    @Query("SELECT DISTINCT c FROM CursoEntity c LEFT JOIN FETCH c.temas WHERE c.nivel = :nivel AND c.grado = :grado")
+    List<ProyectoEstudiaYa.webapp.entities.CursoEntity> findByNivelAndGradoWithTemas(
             @Param("nivel") ProyectoEstudiaYa.webapp.entities.UsuarioEntity.NivelEducativo nivel,
             @Param("grado") Integer grado);
 }

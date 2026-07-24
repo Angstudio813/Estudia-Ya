@@ -26,7 +26,7 @@ public class MisCursosService {
     @Transactional(readOnly = true)
     public List<MisCursosDTO> listarCursos(Long usuarioId) {
         if (usuarioId == null) {
-            return misCursosRepository.findAllWithTemasAndEjercicios()
+            return misCursosRepository.findAllWithTemas()
                     .stream()
                     .map(curso -> convertirCursoADTO(curso))
                     .toList();
@@ -42,7 +42,7 @@ public class MisCursosService {
 
     @Transactional(readOnly = true)
     public List<MisCursosDTO> listarPorNivelYGrado(UsuarioEntity.NivelEducativo nivel, Integer grado) {
-        return misCursosRepository.findByNivelAndGradoWithTemasAndEjercicios(nivel, grado)
+        return misCursosRepository.findByNivelAndGradoWithTemas(nivel, grado)
                 .stream()
                 .map(curso -> convertirCursoADTO(curso))
                 .toList();

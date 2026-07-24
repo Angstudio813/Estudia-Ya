@@ -2,6 +2,7 @@ package ProyectoEstudiaYa.webapp.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import java.util.List;
  
 @Entity
@@ -32,6 +33,7 @@ public class CursoEntity {
     private String icono;     // emoji o nombre del icono
  
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)
+    @BatchSize(size = 25)
     private List<TemaEntity> temas;
  
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL)

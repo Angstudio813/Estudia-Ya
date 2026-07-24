@@ -2,6 +2,7 @@ package ProyectoEstudiaYa.webapp.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import java.util.List;
  
 @Entity
@@ -29,6 +30,7 @@ public class TemaEntity {
     private CursoEntity curso;
  
     @OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)
+    @BatchSize(size = 25)
     private List<EjercicioEntity> ejercicios;
  
     @OneToMany(mappedBy = "tema", cascade = CascadeType.ALL)
