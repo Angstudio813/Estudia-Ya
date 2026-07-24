@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { timeout, finalize } from 'rxjs';
 import { AuthService } from '../../../core/auth.service';
 import { environment } from '../../../../environment';
 
@@ -32,6 +34,7 @@ export class Login {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly loginUrl = `${environment.apiUrl}/api/auth/login`;
   private readonly dashboardUrl = '/inicio';
 
@@ -59,16 +62,20 @@ export class Login {
         email: this.email,
         password: this.password
       }
+    ).pipe(
+      timeout(7000),
+      finalize(() => { this.cargando = false; }),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (respuesta) => {
-        this.cargando = false;
         this.guardarToken(respuesta);
         this.authService.saveProfile(respuesta);
         this.router.navigateByUrl(this.dashboardUrl);
       },
-      error: (error: HttpErrorResponse) => {
-        this.mensajeError = this.obtenerMensajeError(error);
-        this.cargando = false;
+      error: (error: HttpErrorResponse | Error) => {
+        this.mensajeError = !(error instanceof HttpErrorResponse)
+          ? 'Credenciales invalidas.'
+          : this.obtenerMensajeError(error);
       }
     });
   }
