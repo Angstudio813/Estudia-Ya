@@ -1,5 +1,11 @@
 <div class="layout">
-  <aside class="sidebar">
+  <button type="button" class="hamburger" (click)="toggleSidebar()" [class.active]="sidebarAbierto">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="sidebar-overlay" *ngIf="sidebarAbierto" (click)="cerrarSidebar()"></div>
+
+  <aside class="sidebar" [class.open]="sidebarAbierto">
     <div class="sidebar-header">
       <div class="logo">Estudia<span>Ya</span></div>
     </div>
@@ -19,35 +25,35 @@
     </div>
 
     <nav class="nav">
-      <a class="nav-item" routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <a class="nav-item" routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="cerrarSidebar()">
         <div class="nav-dot"></div>
         <span class="nav-label">Inicio</span>
       </a>
-      <a class="nav-item" routerLink="/mis-cursos" routerLinkActive="active">
+      <a class="nav-item" routerLink="/mis-cursos" routerLinkActive="active" (click)="cerrarSidebar()">
         <div class="nav-dot"></div>
         <span class="nav-label">Mis cursos</span>
       </a>
-      <a *ngIf="esAdmin()" class="nav-item" routerLink="/gestion-usuarios" routerLinkActive="active">
+      <a *ngIf="esAdmin()" class="nav-item" routerLink="/gestion-usuarios" routerLinkActive="active" (click)="cerrarSidebar()">
         <div class="nav-dot"></div>
         <span class="nav-label">Usuarios</span>
       </a>
-      <a class="nav-item" routerLink="/practica-inteligente" routerLinkActive="active">
+      <a class="nav-item" routerLink="/practica-inteligente" routerLinkActive="active" (click)="cerrarSidebar()">
         <div class="nav-dot"></div>
         <span class="nav-label">Practica inteligente</span>
       </a>
-      <a class="nav-item" routerLink="/asistente-ia" routerLinkActive="active">
+      <a class="nav-item" routerLink="/asistente-ia" routerLinkActive="active" (click)="cerrarSidebar()">
         <div class="nav-dot"></div>
         <span class="nav-label">Asistente IA</span>
       </a>
-      <a class="nav-item" routerLink="/progreso" routerLinkActive="active">
+      <a class="nav-item" routerLink="/progreso" routerLinkActive="active" (click)="cerrarSidebar()">
         <div class="nav-dot"></div>
         <span class="nav-label">Mi progreso</span>
       </a>
-      <a class="nav-item" routerLink="/plan-estudio" routerLinkActive="active">
+      <a class="nav-item" routerLink="/plan-estudio" routerLinkActive="active" (click)="cerrarSidebar()">
         <div class="nav-dot"></div>
         <span class="nav-label">Plan de estudio</span>
       </a>
-      <a class="nav-item" routerLink="/logros-retos" routerLinkActive="active">
+      <a class="nav-item" routerLink="/logros-retos" routerLinkActive="active" (click)="cerrarSidebar()">
         <div class="nav-dot"></div>
         <span class="nav-label">Logros y retos</span>
       </a>

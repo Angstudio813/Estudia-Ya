@@ -13,6 +13,8 @@ export class StudyLayout {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  sidebarAbierto = false;
+
   protected readonly perfil = computed(() => this.authService.getProfile());
   protected readonly nombreUsuario = computed(() => this.authService.getDisplayName());
   protected readonly iniciales = computed(() => this.obtenerIniciales());
@@ -25,6 +27,14 @@ export class StudyLayout {
   protected cerrarSesion(): void {
     this.authService.clearSession();
     this.router.navigateByUrl('/login');
+  }
+
+  toggleSidebar(): void {
+    this.sidebarAbierto = !this.sidebarAbierto;
+  }
+
+  cerrarSidebar(): void {
+    this.sidebarAbierto = false;
   }
 
   private obtenerIniciales(): string {
